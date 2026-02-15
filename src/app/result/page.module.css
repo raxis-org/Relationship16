@@ -1,165 +1,257 @@
+/* ============================================
+   Result Page - Premium Design
+   World-class quality for global audience
+   ============================================ */
+
 .container {
+  max-width: 100%;
+  background: #fafafa;
+}
+
+/* Hero Section */
+.hero {
+  position: relative;
+  padding: 80px 24px 60px;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.3;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
   max-width: 720px;
   margin: 0 auto;
 }
 
-/* Partners */
+.typeBadge {
+  display: inline-block;
+  padding: 12px 32px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50px;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 8px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(10px);
+}
+
+.typeName {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.typeNameEn {
+  font-size: 18px;
+  opacity: 0.9;
+  margin-bottom: 32px;
+  font-weight: 300;
+  letter-spacing: 2px;
+}
+
 .partners {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 24px;
-  font-size: 15px;
-  color: #666;
+  gap: 16px;
+  font-size: 18px;
 }
 
-.times {
-  color: #ccc;
-  font-weight: 300;
+.heartIcon {
+  opacity: 0.8;
 }
 
-/* Code Section */
-.codeSection {
-  text-align: center;
-  margin-bottom: 24px;
+.heroVisual {
+  position: absolute;
+  right: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.1;
 }
 
-.typeCode {
-  font-size: 56px;
-  font-weight: 800;
-  color: #1a1a1a;
-  letter-spacing: 8px;
-  margin-bottom: 8px;
+.heroIllustration {
+  width: 200px;
+  height: 200px;
 }
 
-.codeLabel {
-  font-size: 14px;
-  color: #999;
-}
-
-/* Main Card */
-.mainCard {
+/* Main Description */
+.mainDescription {
+  max-width: 800px;
+  margin: -40px auto 40px;
+  padding: 40px;
   background: white;
-  border-radius: 16px;
-  padding: 32px;
-  text-align: center;
-  margin-bottom: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f0f0f0;
+  border-radius: 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 2;
 }
 
-.rank {
-  display: inline-block;
-  padding: 6px 16px;
-  background: #1a1a1a;
+.rankBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  border-radius: 50px;
   color: white;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  border-radius: 20px;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
-.typeName {
-  font-size: 28px;
+.descriptionText {
+  font-size: 16px;
+  line-height: 2;
+  color: #333;
+}
+
+.descriptionText p {
+  margin-bottom: 20px;
+}
+
+.descriptionText p:last-child {
+  margin-bottom: 0;
+}
+
+/* Section Title */
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
   font-weight: 700;
   color: #1a1a1a;
-  margin-bottom: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f0f0f0;
 }
 
-.description {
-  font-size: 15px;
+.sectionTitle svg {
   color: #666;
-  line-height: 1.7;
 }
 
-/* Scores Grid */
+/* Scores Section */
+.scoresSection {
+  max-width: 1000px;
+  margin: 0 auto 60px;
+  padding: 0 24px;
+}
+
 .scoresGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
 }
 
 .scoreCard {
   background: white;
-  border-radius: 12px;
-  padding: 20px;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f0f0f0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.scoreLabel {
-  font-size: 12px;
-  color: #999;
-  margin-bottom: 8px;
+.scoreCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
 .scoreValue {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1a1a1a;
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.scoreLabel {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.scoreDesc {
+  font-size: 13px;
+  color: #999;
+  line-height: 1.5;
+}
+
+.scoreBar {
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.scoreFill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s ease;
 }
 
 /* Axis Section */
 .axisSection {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f0f0f0;
-}
-
-.sectionTitle {
-  font-size: 14px;
-  font-weight: 600;
-  color: #999;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 20px;
-  text-align: center;
+  max-width: 1000px;
+  margin: 0 auto 60px;
+  padding: 0 24px;
 }
 
 .axisGrid {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
 }
 
 .axisCard {
-  padding: 16px;
-  background: #fafafa;
-  border-radius: 12px;
+  background: white;
+  padding: 32px;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
 .axisHeader {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .axisCode {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1a1a1a;
+  font-size: 28px;
+  font-weight: 800;
 }
 
 .axisName {
-  font-size: 14px;
-  color: #666;
   flex: 1;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
 }
 
-.axisSide {
-  font-size: 20px;
+.axisResult {
+  font-size: 14px;
   font-weight: 700;
+  color: #666;
+  padding: 6px 14px;
+  background: #f5f5f5;
+  border-radius: 20px;
 }
 
 .axisBarContainer {
-  padding: 0 4px;
+  margin-bottom: 16px;
 }
 
 .axisLabels {
@@ -167,97 +259,263 @@
   justify-content: space-between;
   font-size: 12px;
   color: #999;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  font-weight: 600;
 }
 
-.axisBar {
+.axisTrack {
   position: relative;
-  height: 24px;
-  background: #e0e0e0;
-  border-radius: 12px;
-  overflow: visible;
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
 }
 
-.axisMarker {
+.axisFill {
   position: absolute;
+  height: 100%;
+  border-radius: 4px;
+  transition: all 0.5s ease;
+}
+
+.axisCenter {
+  position: absolute;
+  left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.axisThreshold {
-  position: absolute;
-  top: 0;
-  bottom: 0;
   width: 2px;
-  background: #999;
-  transform: translateX(-50%);
+  height: 16px;
+  background: #ccc;
 }
 
-.axisLegend {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 12px;
+.axisDesc {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
 }
 
-.legendItem {
+/* Characteristics */
+.characteristicsSection {
+  max-width: 1000px;
+  margin: 0 auto 60px;
+  padding: 0 24px;
+}
+
+.characteristicsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.characteristicCard {
+  background: white;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.characteristicCard h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+
+.characteristicCard p {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.8;
+}
+
+/* Strengths & Weaknesses */
+.swSection {
+  max-width: 1000px;
+  margin: 0 auto 60px;
+  padding: 0 24px;
+}
+
+.swGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.swCard {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.swTitle {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #666;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 20px;
 }
 
-.legendDot {
-  width: 10px;
-  height: 10px;
+.swList {
+  list-style: none;
+  padding: 0;
+}
+
+.swList li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.swList li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+/* Daily Section */
+.dailySection {
+  max-width: 1000px;
+  margin: 0 auto 60px;
+  padding: 0 24px;
+}
+
+.dailyGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.dailyCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 24px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.dailyNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #f0f0f0;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.dailyCard p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
 }
 
 /* Recommend Section */
 .recommendSection {
+  max-width: 1000px;
+  margin: 0 auto 60px;
+  padding: 0 24px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 24px;
 }
 
 .recommendCard {
   background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f0f0f0;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border-left: 4px solid;
 }
 
 .recommendCard h3 {
-  font-size: 12px;
-  font-weight: 600;
-  color: #999;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 16px;
 }
 
 .recommendCard p {
   font-size: 14px;
-  color: #1a1a1a;
-  line-height: 1.6;
+  color: #666;
+  line-height: 1.8;
+}
+
+/* Tips & Growth Sections */
+.tipsSection,
+.growthSection {
+  max-width: 1000px;
+  margin: 0 auto 60px;
+  padding: 0 24px;
+}
+
+.tipsCard,
+.growthCard {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  font-size: 15px;
+  line-height: 2;
+  color: #555;
+}
+
+/* Famous Section */
+.famousSection {
+  max-width: 1000px;
+  margin: 0 auto 60px;
+  padding: 0 24px;
+}
+
+.famousGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.famousCard {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.famousCard h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.famousCard p {
+  font-size: 13px;
+  color: #888;
 }
 
 /* Comparison Section */
 .comparisonSection {
-  background: white;
-  border-radius: 16px;
-  margin-bottom: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f0f0f0;
-  overflow: hidden;
+  max-width: 1000px;
+  margin: 0 auto 60px;
+  padding: 0 24px;
 }
 
 .comparisonToggle {
@@ -265,56 +523,51 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
+  padding: 24px 32px;
   background: white;
   border: none;
+  border-radius: 16px;
   font-size: 16px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: #333;
   cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s ease;
 }
 
-.comparisonToggle svg {
-  width: 20px;
-  height: 20px;
-  color: #999;
+.comparisonToggle:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .comparisonContent {
-  padding: 0 24px 24px;
-  border-top: 1px solid #f0f0f0;
+  margin-top: 24px;
 }
 
 .comparisonAxis {
-  margin-top: 20px;
+  margin-bottom: 24px;
 }
 
 .comparisonAxisHeader {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: #fafafa;
-  border-radius: 8px;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #f8f8f8;
+  border-radius: 12px;
   border-left: 4px solid;
   margin-bottom: 12px;
 }
 
 .comparisonAxisCode {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1a1a1a;
+  font-size: 20px;
+  font-weight: 800;
+  color: #333;
 }
 
 .comparisonAxisName {
   font-size: 14px;
+  font-weight: 600;
   color: #666;
-  flex: 1;
-}
-
-.comparisonAxisRange {
-  font-size: 12px;
-  color: #999;
 }
 
 .comparisonQuestions {
@@ -325,53 +578,64 @@
 
 .comparisonRow {
   display: grid;
-  grid-template-columns: 50px 1fr 80px 70px;
-  gap: 12px;
+  grid-template-columns: 60px 1fr 200px;
+  gap: 16px;
   align-items: center;
-  padding: 12px;
-  background: #fafafa;
-  border-radius: 8px;
+  padding: 16px 20px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
 .comparisonQ {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   color: #999;
 }
 
 .comparisonText {
   font-size: 14px;
-  color: #1a1a1a;
+  color: #333;
   line-height: 1.5;
 }
 
 .comparisonValues {
   display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
-.comparisonValue {
-  width: 32px;
-  height: 32px;
+.comparisonUser {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.userLabel {
+  font-size: 12px;
+  color: #666;
+}
+
+.valueBadge {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: white;
-}
-
-.comparisonGap {
-  font-size: 12px;
-  font-weight: 500;
-  text-align: right;
 }
 
 /* Actions */
 .actions {
+  max-width: 600px;
+  margin: 0 auto 80px;
+  padding: 0 24px;
   display: flex;
-  gap: 12px;
+  gap: 16px;
 }
 
 .shareButton,
@@ -380,9 +644,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 16px;
-  border-radius: 10px;
+  gap: 10px;
+  padding: 18px 32px;
+  border-radius: 12px;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -391,68 +655,68 @@
 
 .shareButton {
   background: white;
-  color: #1a1a1a;
-  border: 1px solid #e0e0e0;
+  color: #333;
+  border: 2px solid #e0e0e0;
 }
 
 .shareButton:hover {
+  border-color: #ccc;
   background: #f9f9f9;
 }
 
 .restartButton {
-  background: #3498db;
+  background: #1a1a1a;
   color: white;
-  border: none;
   text-decoration: none;
 }
 
 .restartButton:hover {
-  background: #2980b9;
-}
-
-.actionIcon {
-  width: 18px;
-  height: 18px;
+  background: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Responsive */
-@media (max-width: 640px) {
-  .typeCode {
-    font-size: 44px;
-    letter-spacing: 4px;
+@media (max-width: 768px) {
+  .hero {
+    padding: 60px 20px 40px;
   }
-
-  .mainCard {
-    padding: 24px;
-  }
-
-  .typeName {
+  
+  .typeBadge {
     font-size: 24px;
+    padding: 10px 24px;
   }
-
-  .scoresGrid {
-    grid-template-columns: 1fr;
+  
+  .typeName {
+    font-size: 32px;
   }
-
+  
+  .heroVisual {
+    display: none;
+  }
+  
+  .mainDescription {
+    margin: -20px 16px 32px;
+    padding: 28px;
+  }
+  
+  .axisGrid,
+  .characteristicsGrid,
+  .swGrid,
+  .dailyGrid,
   .recommendSection {
     grid-template-columns: 1fr;
   }
-
+  
   .comparisonRow {
-    grid-template-columns: 40px 1fr 70px;
-    gap: 8px;
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
-
+  
   .comparisonText {
-    grid-column: 1 / -1;
     order: -1;
-    margin-bottom: 4px;
   }
-
-  .comparisonGap {
-    text-align: left;
-  }
-
+  
   .actions {
     flex-direction: column;
   }

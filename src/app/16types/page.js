@@ -1,123 +1,82 @@
 'use client';
 
 import Link from 'next/link';
-import { Flame, Swords, Briefcase, Users, Sparkles, Coffee, Heart, Leaf, Ghost, ArrowRight, Zap, Candy, Scale, Mask, Anchor, ChevronLeft, Grid3X3 } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight } from 'lucide-react';
 import Layout from '../../components/Layout';
-import { relationTypes } from '../../data/relationTypes';
+import { getAllTypes, getTypeAssetPath } from '../../data/relationTypes';
 import styles from './page.module.css';
 
-const iconMap = {
-  Flame, Swords, Briefcase, Users, Sparkles, Coffee,
-  Heart, Leaf, Ghost, ArrowRight, Zap, Candy, Scale, Mask, Anchor,
-};
+export default function TypesPage() {
+  const types = getAllTypes();
 
-// 4軸の組み合わせでグループ化
-const axisGroups = [
-  { 
-    key: 'hot-equal', 
-    label: '熱量：Hot × 重心：Equal', 
-    description: '情熱的で対等な関係',
-    types: ['HOT-EQUAL-VALUE-SYNC', 'HOT-EQUAL-VALUE-DESYNC', 'HOT-EQUAL-LOOSE-SYNC', 'HOT-EQUAL-LOOSE-DESYNC']
-  },
-  { 
-    key: 'hot-lean', 
-    label: '熱量：Hot × 重心：Lean', 
-    description: '情熱的で片方がリードする関係',
-    types: ['HOT-LEAN-VALUE-SYNC', 'HOT-LEAN-VALUE-DESYNC', 'HOT-LEAN-LOOSE-SYNC', 'HOT-LEAN-LOOSE-DESYNC']
-  },
-  { 
-    key: 'cold-equal', 
-    label: '熱量：Cold × 重心：Equal', 
-    description: '冷静で対等な関係',
-    types: ['COLD-EQUAL-VALUE-SYNC', 'COLD-EQUAL-VALUE-DESYNC', 'COLD-EQUAL-LOOSE-SYNC', 'COLD-EQUAL-LOOSE-DESYNC']
-  },
-  { 
-    key: 'cold-lean', 
-    label: '熱量：Cold × 重心：Lean', 
-    description: '冷静で片方がリードする関係',
-    types: ['COLD-LEAN-VALUE-SYNC', 'COLD-LEAN-VALUE-DESYNC', 'COLD-LEAN-LOOSE-SYNC', 'COLD-LEAN-LOOSE-DESYNC']
-  },
-];
+  // ランクごとに分類
+  const ssTypes = types.filter(t => t.rank === 'SS');
+  const sTypes = types.filter(t => t.rank === 'S');
+  const aTypes = types.filter(t => t.rank === 'A');
+  const bTypes = types.filter(t => t.rank === 'B' || t.rank === 'B+');
+  const cTypes = types.filter(t => t.rank === 'C' || t.rank === 'C-' || t.rank === 'C+');
+  const dTypes = types.filter(t => t.rank === 'D' || t.rank === 'D+');
 
-const getGroupColor = (key) => {
-  if (key.startsWith('hot')) return '#f97316';
-  return '#3b82f6';
-  if (rank.startsWith('D')) return '#f87171';
-  if (rank.startsWith('E')) return '#c084fc';
-  return '#6b7280';
-};
+  const renderTypeSection = (title, typeList, color) => (
+    <div className={styles.rankSection}>
+      <h2 className={styles.rankTitle} style={{ color }}>{title}</h2>
+      <div className={styles.typesGrid}>
+        {typeList.map(type => (
+          <Link 
+            key={type.code} 
+            href={`/16types/${type.code}`}
+            className={styles.typeCard}
+          >
+            <div className={styles.typeImageContainer}>
+              <Image 
+                src={getTypeAssetPath(type.code)}
+                alt={type.name}
+                fill
+                className={styles.typeImage}
+              />
+            </div>
+            <div className={styles.typeInfo}>
+              <span className={styles.typeCode}>{type.code}</span>
+              <h3 className={styles.typeName}>{type.name}</h3>
+              <p className={styles.typeDesc}>{type.description.slice(0, 60)}...</p>
+            </div>
+            <ArrowRight className={styles.arrowIcon} size={20} />
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
 
-export default function TypesList() {
   return (
     <Layout>
       <div className={styles.container}>
         {/* Header */}
-        <div className={styles.header}>
-          <Link href="/" className={styles.backLink}>
-            <ChevronLeft className={styles.backIcon} />
-            戻る
-          </Link>
-          <h1 className={styles.title}>
-            <Grid3X3 className={styles.titleIcon} />
-            16タイプ一覧
-          </h1>
+        <section className={styles.header}>
+          <h1 className={styles.title}>16の関係性タイプ</h1>
           <p className={styles.subtitle}>
-            4軸スコアリングによって分類される16種類の関係性タイプ
+            4つの軸（P/M/G/V）の組み合わせによって、あなたたちの関係性を16タイプに分類します。
           </p>
-        </div>
+        </section>
 
-        {/* Axis Groups */}
-        {axisGroups.map((group) => {
-          const types = relationTypes.filter(t => group.types.includes(t.code));
-          
-          return (
-            <section key={group.key} className={styles.rankSection}>
-              <div className={styles.rankHeader}>
-                <span 
-                  className={styles.rankBadge}
-                  style={{ color: getGroupColor(group.key), borderColor: getGroupColor(group.key) }}
-                >
-                  {group.label}
-                </span>
-                <span className={styles.rankDescription}>{group.description}</span>
-              </div>
-              
-              <div className={styles.typeGrid}>
-                {types.map((type) => {
-                  const IconComponent = iconMap[type.icon] || Briefcase;
-                  return (
-                    <Link
-                      key={type.id}
-                      href={`/16types/${type.slug}`}
-                      className={styles.typeCard}
-                    >
-                      <div 
-                        className={styles.iconWrapper}
-                        style={{ background: type.color }}
-                      >
-                        <IconComponent className={styles.icon} />
-                      </div>
-                      <div className={styles.typeInfo}>
-                        <code className={styles.typeCode}>{type.code}</code>
-                        <h3 className={styles.typeName}>{type.name}</h3>
-                        <p className={styles.typeDesc}>{type.tagline}</p>
-                      </div>
-                      <div className={styles.arrow}>→</div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </section>
-          );
-        })}
+        {/* Type Grid */}
+        <section className={styles.typesSection}>
+          {ssTypes.length > 0 && renderTypeSection('SSランク - 理想的な関係', ssTypes, '#9b59b6')}
+          {sTypes.length > 0 && renderTypeSection('Sランク - 素晴らしい関係', sTypes, '#3498db')}
+          {aTypes.length > 0 && renderTypeSection('Aランク - 良好な関係', aTypes, '#27ae60')}
+          {bTypes.length > 0 && renderTypeSection('Bランク - バランスの取れた関係', bTypes, '#f39c12')}
+          {cTypes.length > 0 && renderTypeSection('Cランク - 課題を持つ関係', cTypes, '#e67e22')}
+          {dTypes.length > 0 && renderTypeSection('Dランク - 困難な関係', dTypes, '#e74c3c')}
+        </section>
 
-        {/* Matrix View Link */}
-        <div className={styles.matrixSection}>
-          <Link href="/16types/matrix" className={styles.matrixLink}>
-            <Grid3X3 className={styles.matrixIcon} />
-            マトリックス表示で見る
+        {/* CTA */}
+        <section className={styles.cta}>
+          <h2>あなたの関係性タイプを見つけよう</h2>
+          <Link href="/diagnose" className={styles.ctaButton}>
+            診断を始める
+            <ArrowRight size={20} />
           </Link>
-        </div>
+        </section>
       </div>
     </Layout>
   );

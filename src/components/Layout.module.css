@@ -1,83 +1,145 @@
+/* ============================================
+   Layout - Premium Header & Footer
+   ============================================ */
+
 .container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f5f5f5;
 }
 
 /* Header */
 .header {
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
-  padding: 16px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .headerContent {
-  max-width: 720px;
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.logo:hover {
+  opacity: 0.85;
+}
+
+.logoIcon {
+  border-radius: 10px;
+  object-fit: cover;
 }
 
 .logoText {
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
   color: #1a1a1a;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.5px;
 }
 
 .logoNumber {
   font-size: 20px;
-  font-weight: 700;
-  color: #3498db;
+  font-weight: 800;
+  color: #ff6b6b;
 }
 
-/* Main Content */
+.nav {
+  display: flex;
+  gap: 24px;
+}
+
+.navLink {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  padding: 8px 0;
+}
+
+.navLink:hover {
+  color: #1a1a1a;
+}
+
+/* Main */
 .main {
   flex: 1;
-  padding: 40px 24px;
+  padding-bottom: 64px;
 }
 
 /* Footer */
 .footer {
-  background: white;
-  border-top: 1px solid #e0e0e0;
-  padding: 20px 24px;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: white;
+  padding: 48px 24px;
   margin-top: auto;
 }
 
 .footerContent {
-  max-width: 720px;
+  max-width: 1200px;
   margin: 0 auto;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.footerIcon {
+  border-radius: 12px;
+  object-fit: cover;
 }
 
 .footerText {
+  font-size: 16px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.footerCopyright {
   font-size: 13px;
-  color: #999;
+  opacity: 0.6;
 }
 
 /* Responsive */
-@media (max-width: 640px) {
-  .header {
-    padding: 14px 16px;
+@media (max-width: 768px) {
+  .headerContent {
+    padding: 10px 16px;
   }
-
+  
   .logoText,
   .logoNumber {
-    font-size: 18px;
+    font-size: 16px;
   }
-
-  .main {
-    padding: 24px 16px;
+  
+  .logoIcon {
+    width: 32px;
+    height: 32px;
   }
-
+  
+  .nav {
+    gap: 16px;
+  }
+  
+  .navLink {
+    font-size: 13px;
+  }
+  
   .footer {
-    padding: 16px;
+    padding: 32px 16px;
   }
 }

@@ -5,11 +5,11 @@ import { useRouter, useParams } from 'next/navigation';
 import { ArrowRight, Check } from 'lucide-react';
 import Layout from '../../../../../components/Layout';
 import { useDiagnose } from '../../../../../context/DiagnoseContext';
-import { axes, getQuestionsByAxis } from '../../../../../data/questions';
+import { AXES, getQuestionsByAxis } from '../../../../../data/questions';
 import styles from './page.module.css';
 
-// 6段階のスケール値
-const SCALE_VALUES = [-3, -2, -1, 1, 2, 3];
+// 5段階の回答値
+const SCALE_VALUES = [1, 2, 3, 4, 5];
 
 export default function AxisBlock() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function AxisBlock() {
   } = useDiagnose();
 
   useEffect(() => {
-    if (!axes[axisId]) {
+    if (!AXES[axisId]) {
       router.push('/diagnose/user2');
     }
   }, [axisId, router]);
@@ -37,10 +37,10 @@ export default function AxisBlock() {
     }
   }, [user2Name, router]);
 
-  const axis = axes[axisId];
+  const axis = AXES[axisId];
   const questions = axis ? getQuestionsByAxis(axisId) : [];
   
-  const axisOrder = ['temperature', 'balance', 'purpose', 'sync'];
+  const axisOrder = ['P', 'M', 'G', 'V'];
   const axisIndex = axisOrder.indexOf(axisId);
   const completedCount = getCompletedBlockCount('user2');
 
@@ -101,13 +101,8 @@ export default function AxisBlock() {
 
         {/* Header */}
         <div className={styles.header}>
-          <h1 className={styles.title}>{axis.name}</h1>
-          <p className={styles.subtitle}>{axis.description}</p>
-          <div className={styles.scaleInfo}>
-            <span>{axis.leftLabel}</span>
-            <span className={styles.arrow}>←→</span>
-            <span>{axis.rightLabel}</span>
-          </div>
+          <h1 className={styles.title}>{axis.nameJa}</h1>
+          <p className={styles.subtitle}>{axis.name} - {axis.left.nameJa} ←→ {axis.right.nameJa}</p>
         </div>
 
         {/* Questions */}
@@ -127,7 +122,7 @@ export default function AxisBlock() {
                 </div>
                 
                 <h3 className={styles.questionText}>{question.text}</h3>
-                <p className={styles.questionDesc}>{question.description}</p>
+
                 
                 <div className={styles.scale}>
                   {SCALE_VALUES.map((value) => (
@@ -142,7 +137,7 @@ export default function AxisBlock() {
                         borderColor: currentAnswer === value ? axis.color : undefined,
                       }}
                     >
-                      {value > 0 ? `+${value}` : value}
+                      {value}
                     </button>
                   ))}
                 </div>
