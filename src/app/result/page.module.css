@@ -1,0 +1,408 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.partners {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(26, 26, 46, 0.8);
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.partnerBlue {
+  color: var(--color-blue);
+}
+
+.partnerPurple {
+  color: var(--color-purple);
+}
+
+/* Main Card */
+.mainCard {
+  border-radius: var(--radius-2xl);
+  padding: var(--space-2xl);
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.rank {
+  font-size: 5rem;
+  font-weight: 700;
+  animation: pulse 3s infinite;
+  margin-bottom: var(--space-md);
+}
+
+.typeName {
+  font-size: 2rem;
+  font-weight: 700;
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: var(--space-md);
+}
+
+.typeCode {
+  display: inline-block;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  color: var(--color-text-dim);
+  font-family: monospace;
+  margin-bottom: var(--space-xl);
+}
+
+.iconWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border-radius: var(--radius-xl);
+  margin-bottom: var(--space-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.iconWrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-xl);
+  filter: blur(10px);
+}
+
+.icon {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  color: white;
+}
+
+.description {
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+  max-width: 600px;
+  margin: 0 auto var(--space-xl);
+  line-height: 1.7;
+}
+
+/* Sync Rate */
+.syncRate {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.syncRateHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.syncRateValue {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.syncRateBar {
+  height: 12px;
+  background: var(--color-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.syncRateFill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 1s ease-out;
+  position: relative;
+}
+
+.syncRateFill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+/* Details Grid */
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.detailCard {
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg);
+}
+
+.detailHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.detailHeader h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.detailIconBlue {
+  width: 24px;
+  height: 24px;
+  color: var(--color-blue);
+}
+
+.detailIconPink {
+  width: 24px;
+  height: 24px;
+  color: var(--color-pink);
+}
+
+.advice {
+  font-style: italic;
+  color: var(--color-text-muted);
+}
+
+/* Axis Card */
+.axisCard {
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-xl);
+}
+
+.axisTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-text);
+  margin-bottom: var(--space-lg);
+}
+
+.axisGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.axisItem {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+}
+
+.axisItemHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.axisEmoji {
+  font-size: 1.25rem;
+}
+
+.axisLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.axisValue {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+}
+
+.axisDesc {
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+  margin-bottom: var(--space-sm);
+}
+
+.axisBar {
+  height: 4px;
+  background: var(--color-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.axisBarFill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+/* Comments */
+.comments {
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+.comments h4 {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-md);
+}
+
+.comments ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.comments li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  color: var(--color-text-muted);
+}
+
+.commentIcon {
+  width: 18px;
+  height: 18px;
+  color: var(--color-blue);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Matrix Card */
+.matrixCard {
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-xl);
+}
+
+.matrixTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--color-text);
+  margin-bottom: var(--space-lg);
+}
+
+.matrixGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-sm);
+}
+
+.matrixItem {
+  padding: var(--space-sm);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+  font-size: 0.625rem;
+  color: var(--color-text-dim);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.2s ease;
+}
+
+.matrixItemActive {
+  background: var(--gradient-primary);
+  color: white;
+  font-weight: 600;
+  box-shadow: var(--shadow-glow-blue);
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.shareButton,
+.restartButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shareButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text);
+}
+
+.shareButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.restartButton {
+  background: var(--gradient-primary);
+  border: none;
+  color: white;
+  text-decoration: none;
+}
+
+.restartButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow-blue);
+}
+
+.actionIcon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .rank {
+    font-size: 3.5rem;
+  }
+  
+  .typeName {
+    font-size: 1.5rem;
+  }
+  
+  .detailsGrid,
+  .axisGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .matrixGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

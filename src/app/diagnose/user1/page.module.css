@@ -1,0 +1,220 @@
+.container {
+  flex: 1;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+  width: 100%;
+}
+
+/* Progress */
+.progress {
+  margin-bottom: var(--space-lg);
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+  font-size: 0.875rem;
+}
+
+.progressText {
+  color: var(--color-text-muted);
+}
+
+.userBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-text-muted);
+}
+
+.userIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.progressBar {
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: 4px;
+  transition: width 0.5s ease-out;
+}
+
+/* Card */
+.card {
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-md);
+}
+
+/* Axis Badge */
+.axisBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+
+.badge {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.badgeBlue {
+  background: var(--gradient-primary);
+  color: white;
+}
+
+.helpIcon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-dim);
+}
+
+/* Question */
+.question {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-xl);
+  line-height: 1.6;
+}
+
+/* Options */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.option:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.optionSelected {
+  border-color: var(--color-blue);
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.radio {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-text-dim);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.radioSelected {
+  border-color: var(--color-blue);
+  background: var(--color-blue);
+}
+
+.radioDot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+}
+
+.optionLabel {
+  font-size: 0.9375rem;
+  color: var(--color-text);
+}
+
+.optionSelected .optionLabel {
+  font-weight: 500;
+}
+
+/* Navigation */
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navButtonSecondary {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text);
+}
+
+.navButtonSecondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.navButtonPrimary {
+  background: var(--gradient-primary);
+  border: none;
+  color: white;
+  margin-left: auto;
+}
+
+.navButtonPrimary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow-blue);
+}
+
+.navButtonDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.navButtonHidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.navIcon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Description */
+.description {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-text-dim);
+}
