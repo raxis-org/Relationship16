@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, ChevronLeft, ChevronRight, Check, X } from 'lucide-react';
+import { User, ChevronLeft, ChevronRight } from 'lucide-react';
 import Layout from '../../../components/Layout';
+import ScaleSelector from '../../../components/ScaleSelector';
 import { useDiagnose } from '../../../context/DiagnoseContext';
 import { questions, TOTAL_QUESTIONS } from '../../../data/questions';
 import styles from './page.module.css';
@@ -26,7 +27,7 @@ export default function User1Questions() {
     setUser1Answer(currentQuestion.id, value);
     // 自動で次へ（最後以外）
     if (currentIndex < TOTAL_QUESTIONS - 1) {
-      setTimeout(() => setCurrentIndex(prev => prev + 1), 200);
+      setTimeout(() => setCurrentIndex(prev => prev + 1), 300);
     }
   };
 
@@ -106,36 +107,11 @@ export default function User1Questions() {
           {/* Question */}
           <h2 className={styles.question}>{currentQuestion.text}</h2>
 
-          {/* Binary Options */}
-          <div className={styles.options}>
-            <button
-              onClick={() => handleAnswer(true)}
-              className={`${styles.option} ${styles.optionYes} ${
-                currentAnswer === true ? styles.optionSelected : ''
-              }`}
-            >
-              <div className={`${styles.radio} ${
-                currentAnswer === true ? styles.radioSelected : ''
-              }`}>
-                <Check className={styles.radioIcon} />
-              </div>
-              <span className={styles.optionLabel}>はい</span>
-            </button>
-
-            <button
-              onClick={() => handleAnswer(false)}
-              className={`${styles.option} ${styles.optionNo} ${
-                currentAnswer === false ? styles.optionSelected : ''
-              }`}
-            >
-              <div className={`${styles.radio} ${
-                currentAnswer === false ? styles.radioSelected : ''
-              }`}>
-                <X className={styles.radioIcon} />
-              </div>
-              <span className={styles.optionLabel}>いいえ</span>
-            </button>
-          </div>
+          {/* 5 Scale Selector */}
+          <ScaleSelector 
+            value={currentAnswer} 
+            onChange={handleAnswer}
+          />
 
           {/* Navigation */}
           <div className={styles.navigation}>

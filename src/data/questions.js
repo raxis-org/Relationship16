@@ -1,11 +1,14 @@
 /**
- * 関係性診断質問データ（リニューアル版）
+ * 関係性診断質問データ（5段階評価版）
  * 
  * 【設計方針】
  * - 各軸：2方向（正・負）× 2視点（自分・相手）× 2問 = 32問
- * - 回答：はい/いいえ（true/false）
- * - 潜在的・婉曲的な質問を多用（直接的な質問を避ける）
- * - 乖離度計算：同じ質問に対する二人の回答の差
+ * - 回答：5段階（+2, +1, 0, -1, -2）
+ *   +2: はい（大丸）
+ *   +1: どちらかというとはい（中丸）
+ *   0: どちらでもない（小丸）
+ *   -1: どちらかというといいえ（中丸）
+ *   -2: いいえ（大丸）
  * 
  * 【4軸定義】
  * - temperature（熱量）: 感情的・能動的 ↔ 冷静・ドライ
@@ -13,6 +16,17 @@
  * - purpose（目的）: 成長・生産性 ↔ 安心・安定
  * - sync（同期）: 価値観一致 ↔ 価値観相違
  */
+
+/**
+ * 回答オプション定義
+ */
+export const answerOptions = [
+  { value: 2, label: 'はい', size: 'large', type: 'positive-strong' },
+  { value: 1, label: 'どちらか\nというと\nはい', size: 'medium', type: 'positive-weak' },
+  { value: 0, label: 'どちらで\nもない', size: 'small', type: 'neutral' },
+  { value: -1, label: 'どちらか\nというと\nいいえ', size: 'medium', type: 'negative-weak' },
+  { value: -2, label: 'いいえ', size: 'large', type: 'negative-strong' },
+];
 
 export const questions = [
   // ============================================
@@ -297,38 +311,5 @@ export const TOTAL_QUESTIONS = questions.length;
  * 軸ごとの質問数
  */
 export const QUESTIONS_PER_AXIS = 8;
-
-/**
- * 乖離度計算用ペア
- * 同じ軸・同じ方向・同じ視点の質問ペア
- */
-export function getDivergencePairs() {
-  const pairs = [];
-  const axes = ['temperature', 'balance', 'purpose', 'sync'];
-  
-  axes.forEach(axis => {
-    const axisQuestions = questions.filter(q => q.axis === axis);
-    // 自分視点のペア
-    const selfQuestions = axisQuestions.filter(q => q.perspective === 'self');
-    // 相手視点のペア
-    const otherQuestions = axisQuestions.filter(q => q.perspective === 'other');
-    
-    // 各方向ごとにペアを作成
-    const directions = ['hot', 'cold', 'equal', 'lean', 'value', 'loose', 'sync', 'desync'];
-    directions.forEach(direction => {
-      const selfPair = selfQuestions.filter(q => q.direction === direction);
-      const otherPair = otherQuestions.filter(q => q.direction === direction);
-      
-      if (selfPair.length === 2) {
-        pairs.push({ axis, direction, perspective: 'self', ids: [selfPair[0].id, selfPair[1].id] });
-      }
-      if (otherPair.length === 2) {
-        pairs.push({ axis, direction, perspective: 'other', ids: [otherPair[0].id, otherPair[1].id] });
-      }
-    });
-  });
-  
-  return pairs;
-}
 
 export default questions;

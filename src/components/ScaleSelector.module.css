@@ -1,0 +1,244 @@
+.container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-lg) 0;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: var(--space-sm);
+}
+
+/* Circle sizes */
+.circle {
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Large: はい / いいえ */
+.large .circle {
+  width: 72px;
+  height: 72px;
+  border: 3px solid;
+}
+
+.large .inner {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+/* Medium: どちらかというとはい / いいえ */
+.medium .circle {
+  width: 52px;
+  height: 52px;
+  border: 2.5px solid;
+}
+
+.medium .inner {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+/* Small: どちらでもない */
+.small .circle {
+  width: 36px;
+  height: 36px;
+  border: 2px solid;
+}
+
+.small .inner {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+/* Type colors */
+.positive .circle {
+  border-color: rgba(74, 222, 128, 0.4);
+  background: rgba(74, 222, 128, 0.05);
+}
+
+.positive:hover .circle {
+  border-color: rgba(74, 222, 128, 0.7);
+  background: rgba(74, 222, 128, 0.1);
+  transform: scale(1.05);
+}
+
+.negative .circle {
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.05);
+}
+
+.negative:hover .circle {
+  border-color: rgba(248, 113, 113, 0.7);
+  background: rgba(248, 113, 113, 0.1);
+  transform: scale(1.05);
+}
+
+.neutral .circle {
+  border-color: rgba(156, 163, 175, 0.4);
+  background: rgba(156, 163, 175, 0.05);
+}
+
+.neutral:hover .circle {
+  border-color: rgba(156, 163, 175, 0.7);
+  background: rgba(156, 163, 175, 0.1);
+  transform: scale(1.05);
+}
+
+/* Selected state */
+.selected .circle {
+  border-color: currentColor;
+}
+
+.selected.positive .circle {
+  border-color: #4ade80;
+  background: rgba(74, 222, 128, 0.2);
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.4);
+}
+
+.selected.positive .inner {
+  opacity: 1;
+  background: #4ade80;
+}
+
+.selected.negative .circle {
+  border-color: #f87171;
+  background: rgba(248, 113, 113, 0.2);
+  box-shadow: 0 0 20px rgba(248, 113, 113, 0.4);
+}
+
+.selected.negative .inner {
+  opacity: 1;
+  background: #f87171;
+}
+
+.selected.neutral .circle {
+  border-color: #9ca3af;
+  background: rgba(156, 163, 175, 0.2);
+  box-shadow: 0 0 15px rgba(156, 163, 175, 0.3);
+}
+
+.selected.neutral .inner {
+  opacity: 1;
+  background: #9ca3af;
+}
+
+/* Label */
+.label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 36px;
+}
+
+.mainLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  line-height: 1.2;
+}
+
+.subLabel {
+  font-size: 0.625rem;
+  color: var(--color-text-dim);
+  line-height: 1.2;
+}
+
+/* Selected label colors */
+.selected.positive .mainLabel,
+.selected.positive .subLabel {
+  color: #4ade80;
+}
+
+.selected.negative .mainLabel,
+.selected.negative .subLabel {
+  color: #f87171;
+}
+
+.selected.neutral .mainLabel,
+.selected.neutral .subLabel {
+  color: #9ca3af;
+}
+
+/* Large option label */
+.large .mainLabel {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .container {
+    gap: var(--space-xs);
+    padding: var(--space-md) 0;
+  }
+
+  .large .circle {
+    width: 56px;
+    height: 56px;
+  }
+
+  .large .inner {
+    width: 42px;
+    height: 42px;
+  }
+
+  .medium .circle {
+    width: 44px;
+    height: 44px;
+  }
+
+  .medium .inner {
+    width: 30px;
+    height: 30px;
+  }
+
+  .small .circle {
+    width: 32px;
+    height: 32px;
+  }
+
+  .small .inner {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mainLabel {
+    font-size: 0.625rem;
+  }
+
+  .subLabel {
+    font-size: 0.5rem;
+  }
+
+  .large .mainLabel {
+    font-size: 0.75rem;
+  }
+
+  .label {
+    min-height: 30px;
+  }
+}

@@ -1,15 +1,20 @@
 /**
- * 新診断ロジック（リニューアル版）
+ * 新診断ロジック（5段階評価版）
  * 
  * 【評価システム】
- * - 回答形式: はい(true) / いいえ(false) の2値
- * - 各軸: -3 〜 +3 のスコア（6段階）
+ * - 回答形式: 5段階（+2, +1, 0, -1, -2）
+ *   +2: はい（大丸）
+ *   +1: どちらかというとはい（中丸）
+ *   0: どちらでもない（小丸）
+ *   -1: どちらかというといいえ（中丸）
+ *   -2: いいえ（大丸）
+ * - 各軸: -3 〜 +3 のスコア
  * - 乖離度: 二人の回答の差を考慮した評価
  * 
  * 【計算手順】
- * 1. 各軸の正・負方向の「はい」回答数をカウント
- * 2. 軸スコア = (正方向はい数 - 負方向はい数) / 4問 × 3
- * 3. 乖離度 = 二人の回答が異なる質問数 / 総質問数 × 100%
+ * 1. 各軸の正・負方向の回答値の合計を計算
+ * 2. 軸スコア = (正方向合計 - 負方向合計) / 8問 × 1.5
+ * 3. 乖離度 = Σ|自分の回答 - 相手の回答| / (質問数 × 4) × 100%
  * 4. タイプ判定 = 軸スコアの符号と乖離度から決定
  */
 
@@ -18,7 +23,7 @@ import { questions } from '../data/questions';
 
 /**
  * 各軸のスコアを計算
- * @param {Object} answers - { questionId: boolean }
+ * @param {Object} answers - { questionId: number (-2〜+2) }
  * @returns {Object} 各軸のスコア (-3 〜 +3)
  */
 export function calculateAxisScores(answers) {
@@ -39,13 +44,21 @@ export function calculateAxisScores(answers) {
       q => q.axis === axisName && q.direction === axisConfig.negative
     );
 
-    // 「はい」回答をカウント
-    const positiveYes = positiveQs.filter(q => answers[q.id] === true).length;
-    const negativeYes = negativeQs.filter(q => answers[q.id] === true).length;
+    // 回答値の合計を計算（-2〜+2）
+    const positiveSum = positiveQs.reduce((sum, q) => {
+      const answer = answers[q.id];
+      return sum + (answer !== undefined ? answer : 0);
+    }, 0);
+    
+    const negativeSum = negativeQs.reduce((sum, q) => {
+      const answer = answers[q.id];
+      return sum + (answer !== undefined ? answer : 0);
+    }, 0);
 
-    // スコア計算: (正 - 負) / 4 × 3
-    // 範囲: -3（全て負方向）〜 +3（全て正方向）
-    const rawScore = ((positiveYes - negativeYes) / 4) * 3;
+    // スコア計算: (正方向合計 - 負方向合計) / 8問 × 1.5
+    // 最大: (4問×2 + 4問×2) / 8 × 1.5 = 3
+    // 最小: -(4問×2 + 4問×2) / 8 × 1.5 = -3
+    const rawScore = ((positiveSum - negativeSum) / 8) * 1.5;
     axisConfig.score = Math.round(rawScore * 10) / 10; // 小数点第1位まで
   }
 
@@ -59,6 +72,7 @@ export function calculateAxisScores(answers) {
 
 /**
  * 乖離度を計算（二人の回答の差）
+ * 5段階評価（-2〜+2）の差を考慮
  * @param {Object} answers1 - ユーザー1の回答
  * @param {Object} answers2 - ユーザー2の回答
  * @returns {Object} 各軸の乖離度と総合乖離度
@@ -69,29 +83,29 @@ export function calculateDivergence(answers1, answers2) {
 
   for (const axis of axes) {
     const axisQuestions = questions.filter(q => q.axis === axis);
-    let diffCount = 0;
+    let diffSum = 0;
 
     axisQuestions.forEach(q => {
-      const a1 = answers1[q.id];
-      const a2 = answers2[q.id];
-      // 回答が異なる場合、乖離度+1
-      if (a1 !== a2) {
-        diffCount++;
-      }
+      const a1 = answers1[q.id] || 0;
+      const a2 = answers2[q.id] || 0;
+      // 回答の差の絶対値を加算（最大4）
+      diffSum += Math.abs(a1 - a2);
     });
 
     // 軸ごとの乖離度（0-100%）
-    divergenceByAxis[axis] = Math.round((diffCount / 8) * 100);
+    // 最大差: 8問 × 4 = 32
+    divergenceByAxis[axis] = Math.round((diffSum / 32) * 100);
   }
 
   // 総合乖離度（全質問での差）
   let totalDiff = 0;
   questions.forEach(q => {
-    if (answers1[q.id] !== answers2[q.id]) {
-      totalDiff++;
-    }
+    const a1 = answers1[q.id] || 0;
+    const a2 = answers2[q.id] || 0;
+    totalDiff += Math.abs(a1 - a2);
   });
-  const totalDivergence = Math.round((totalDiff / questions.length) * 100);
+  // 最大差: 32問 × 4 = 128
+  const totalDivergence = Math.round((totalDiff / 128) * 100);
 
   return {
     byAxis: divergenceByAxis,
@@ -303,7 +317,7 @@ function generateResultDetails(type, syncRate, scores1, scores2, divergence) {
 
 /**
  * メイン診断関数
- * @param {Object} answers1 - ユーザー1の回答 { questionId: boolean }
+ * @param {Object} answers1 - ユーザー1の回答 { questionId: number (-2〜+2) }
  * @param {Object} answers2 - ユーザー2の回答
  * @param {string} user1Name - ユーザー1の名前
  * @param {string} user2Name - ユーザー2の名前

@@ -1,6 +1,6 @@
 .container {
   flex: 1;
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
   padding: var(--space-xl);
   width: 100%;
@@ -88,112 +88,13 @@
   font-size: 1.375rem;
   font-weight: 600;
   color: var(--color-text);
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-lg);
   line-height: 1.7;
   text-align: center;
-  min-height: 120px;
+  min-height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-/* Options */
-.options {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
-}
-
-.option {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-xl);
-  background: rgba(0, 0, 0, 0.3);
-  border: 3px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.option:hover {
-  transform: translateY(-2px);
-}
-
-.optionYes {
-  border-color: rgba(74, 222, 128, 0.3);
-}
-
-.optionYes:hover {
-  border-color: rgba(74, 222, 128, 0.6);
-  background: rgba(74, 222, 128, 0.1);
-}
-
-.optionYes.optionSelected {
-  border-color: #4ade80;
-  background: rgba(74, 222, 128, 0.15);
-  box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
-}
-
-.optionNo {
-  border-color: rgba(248, 113, 113, 0.3);
-}
-
-.optionNo:hover {
-  border-color: rgba(248, 113, 113, 0.6);
-  background: rgba(248, 113, 113, 0.1);
-}
-
-.optionNo.optionSelected {
-  border-color: #f87171;
-  background: rgba(248, 113, 113, 0.15);
-  box-shadow: 0 0 20px rgba(248, 113, 113, 0.3);
-}
-
-.radio {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease;
-}
-
-.radioSelected {
-  background: currentColor;
-}
-
-.optionYes .radioSelected {
-  color: #4ade80;
-  background: #4ade80;
-}
-
-.optionNo .radioSelected {
-  color: #f87171;
-  background: #f87171;
-}
-
-.radioIcon {
-  width: 32px;
-  height: 32px;
-  color: white;
-}
-
-.optionLabel {
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.optionYes.optionSelected .optionLabel {
-  color: #4ade80;
-}
-
-.optionNo.optionSelected .optionLabel {
-  color: #f87171;
 }
 
 /* Navigation */
@@ -296,28 +197,6 @@
   .question {
     font-size: 1.125rem;
     min-height: 80px;
-  }
-
-  .options {
-    gap: var(--space-md);
-  }
-
-  .option {
-    padding: var(--space-lg);
-  }
-
-  .radio {
-    width: 48px;
-    height: 48px;
-  }
-
-  .radioIcon {
-    width: 24px;
-    height: 24px;
-  }
-
-  .optionLabel {
-    font-size: 1rem;
   }
 
   .dots {
