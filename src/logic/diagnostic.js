@@ -143,38 +143,48 @@ export function calculateSyncRate(divergence, scores1, scores2) {
 }
 
 /**
- * 軸スコアからラベルを取得
+ * 軸スコアからラベルを取得（2値のみ）
  * @param {number} score - 軸スコア（-3 〜 +3）
- * @param {string} axisType - 軸の種類
- * @returns {string} 'positive' | 'negative' | 'neutral'
+ * @returns {string} 'positive' | 'negative'
+ * 
+ * 【重要】neutralは存在しない。必ず16タイプのどれかに分類される。
+ * スコアが0の場合は、微小なランダム性を加えて振り分ける。
  */
-function classifyAxis(score, axisType) {
-  // スコア範囲に応じて分類
-  // +1.5以上: 正方向（Hot/Equal/Value/Sync）
-  // -1.5以下: 負方向（Cold/Lean/Loose/Desync）
-  // その間: Neutral
+function classifyAxis(score) {
+  // 0ちょうどの場合、微小なランダム性を加える（同点回避）
+  // これにより必ずpositiveまたはnegativeのどちらかになる
+  if (score === 0) {
+    // -0.05 〜 +0.05 のランダム値を加える
+    const randomOffset = (Math.random() - 0.5) * 0.1;
+    score += randomOffset;
+  }
   
-  if (score >= 1.5) return 'positive';
-  if (score <= -1.5) return 'negative';
-  return 'neutral';
+  // 0以上ならpositive、0未満ならnegative（neutralはない）
+  return score >= 0 ? 'positive' : 'negative';
 }
 
 /**
- * タイプコードを生成
- * @param {Object} labels - 各軸の分類
+ * タイプコードを生成（NEUTRALなし）
+ * @param {Object} labels - 各軸の分類（'positive' | 'negative'）
  * @param {number} totalDivergence - 総合乖離度
  * @returns {string} タイプコード
+ * 
+ * 16タイプのうちの1つに必ず該当する（2^4 = 16パターン）
  */
 function generateTypeCode(labels, totalDivergence) {
-  // 乖離度が高い場合、SyncをDesyncに傾ける
-  const syncLabel = totalDivergence > 40 
-    ? (labels.sync === 'positive' ? 'neutral' : 'negative')
-    : labels.sync;
+  // 乖離度が高い場合（40%以上）、SyncをDesyncに傾ける
+  // ただしneutralにはしない（必ずSYNCまたはDESYNCのどちらか）
+  let syncLabel = labels.sync;
+  if (totalDivergence > 40 && labels.sync === 'positive') {
+    // 高乖離度でSyncの場合、Desyncに変更（ただしスコアが同点の場合のみ）
+    syncLabel = 'negative';
+  }
 
-  const tempMap = { positive: 'HOT', neutral: 'NEUTRAL', negative: 'COLD' };
-  const balanceMap = { positive: 'EQUAL', neutral: 'NEUTRAL', negative: 'LEAN' };
-  const purposeMap = { positive: 'VALUE', neutral: 'NEUTRAL', negative: 'LOOSE' };
-  const syncMap = { positive: 'SYNC', neutral: 'NEUTRAL', negative: 'DESYNC' };
+  // 2値マッピング（NEUTRALはなし）
+  const tempMap = { positive: 'HOT', negative: 'COLD' };
+  const balanceMap = { positive: 'EQUAL', negative: 'LEAN' };
+  const purposeMap = { positive: 'VALUE', negative: 'LOOSE' };
+  const syncMap = { positive: 'SYNC', negative: 'DESYNC' };
 
   return `${tempMap[labels.temperature]}-${balanceMap[labels.balance]}-${purposeMap[labels.purpose]}-${syncMap[syncLabel]}`;
 }
@@ -233,29 +243,27 @@ function findRelationType(typeCode, syncRate) {
 function generateResultDetails(type, syncRate, scores1, scores2, divergence) {
   const analysisComments = [];
   
-  // 熱量分析
+  // 熱量分析（neutralなし）
   const avgTemp = (scores1.temperature + scores2.temperature) / 2;
-  if (avgTemp >= 1.5) {
+  if (avgTemp >= 0) {
     analysisComments.push('二人の間には熱い情熱が流れています。感情の高ぶりを共有している関係です。');
-  } else if (avgTemp <= -1.5) {
-    analysisComments.push('冷静で落ち着いた関係です。感情的にならず、安定したやり取りが特徴です。');
   } else {
-    analysisComments.push('適度な熱量でバランスが取れています。');
+    analysisComments.push('冷静で落ち着いた関係です。感情的にならず、安定したやり取りが特徴です。');
   }
 
-  // 重心分析
+  // 重心分析（neutralなし）
   const avgBalance = (scores1.balance + scores2.balance) / 2;
-  if (avgBalance >= 1.5) {
+  if (avgBalance >= 0) {
     analysisComments.push('対等なパートナー関係です。お互いに尊重し合っています。');
-  } else if (avgBalance <= -1.5) {
+  } else {
     analysisComments.push('どちらかがリードし、もう一方が従う構図です。依存関係が見られます。');
   }
 
-  // 目的分析
+  // 目的分析（neutralなし）
   const avgPurpose = (scores1.purpose + scores2.purpose) / 2;
-  if (avgPurpose >= 1.5) {
+  if (avgPurpose >= 0) {
     analysisComments.push('共に成長し、何かを生み出すことを目指しています。前向きな関係です。');
-  } else if (avgPurpose <= -1.5) {
+  } else {
     analysisComments.push('心地よさを大切にする、リラックスした関係です。無理のない付き合いが特徴です。');
   }
 
@@ -280,30 +288,32 @@ function generateResultDetails(type, syncRate, scores1, scores2, divergence) {
       score: avgTemp,
       user1: scores1.temperature,
       user2: scores2.temperature,
-      label: avgTemp >= 1.5 ? 'Hot' : avgTemp <= -1.5 ? 'Cold' : 'Neutral',
-      description: avgTemp >= 1.5 ? '情熱的で感情的' : avgTemp <= -1.5 ? '冷静でドライ' : 'バランス型',
+      // neutralなし：0以上ならHot、0未満ならCold
+      label: avgTemp >= 0 ? 'Hot' : 'Cold',
+      description: avgTemp >= 0 ? '情熱的で感情的' : '冷静でドライ',
       divergence: divergence.byAxis.temperature,
     },
     balance: {
       score: avgBalance,
       user1: scores1.balance,
       user2: scores2.balance,
-      label: avgBalance >= 1.5 ? 'Equal' : avgBalance <= -1.5 ? 'Lean' : 'Neutral',
-      description: avgBalance >= 1.5 ? '対等な関係' : avgBalance <= -1.5 ? 'どちらかに偏りあり' : 'バランス型',
+      label: avgBalance >= 0 ? 'Equal' : 'Lean',
+      description: avgBalance >= 0 ? '対等な関係' : 'どちらかに偏りあり',
       divergence: divergence.byAxis.balance,
     },
     purpose: {
       score: avgPurpose,
       user1: scores1.purpose,
       user2: scores2.purpose,
-      label: avgPurpose >= 1.5 ? 'Value' : avgPurpose <= -1.5 ? 'Loose' : 'Neutral',
-      description: avgPurpose >= 1.5 ? '成長・生産性重視' : avgPurpose <= -1.5 ? '心地よさ・安定重視' : 'バランス型',
+      label: avgPurpose >= 0 ? 'Value' : 'Loose',
+      description: avgPurpose >= 0 ? '成長・生産性重視' : '心地よさ・安定重視',
       divergence: divergence.byAxis.purpose,
     },
     sync: {
       score: syncRate / 100 * 3 - 1.5, // -1.5 ~ +1.5に変換
-      label: syncRate >= 70 ? 'Sync' : syncRate <= 40 ? 'Desync' : 'Neutral',
-      description: syncRate >= 70 ? '高い同期' : syncRate <= 40 ? '非同期' : '中庸',
+      // neutralなし：55%以上ならSync、それ未満ならDesync
+      label: syncRate >= 55 ? 'Sync' : 'Desync',
+      description: syncRate >= 55 ? '高い同期' : '非同期',
       divergence: divergence.byAxis.sync,
     },
   };
