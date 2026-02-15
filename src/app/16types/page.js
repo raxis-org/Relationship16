@@ -1,33 +1,47 @@
 'use client';
 
 import Link from 'next/link';
-import { Crown, Swords, Briefcase, Users, Sparkles, Coffee, Heart, Leaf, Dog, Eye, UserCircle, Anchor, Ghost, ArrowRight, UserX, Bot, ChevronLeft, Grid3X3 } from 'lucide-react';
+import { Flame, Swords, Briefcase, Users, Sparkles, Coffee, Heart, Leaf, Ghost, ArrowRight, Zap, Candy, Scale, Mask, Anchor, ChevronLeft, Grid3X3 } from 'lucide-react';
 import Layout from '../../components/Layout';
 import { relationTypes } from '../../data/relationTypes';
 import styles from './page.module.css';
 
 const iconMap = {
-  Crown, Swords, Briefcase, Users, Sparkles, Coffee,
-  Heart, Leaf, Dog, Eye, Mask: UserCircle, Anchor,
-  UFO: Ghost, ArrowRight, UserX, Bot,
+  Flame, Swords, Briefcase, Users, Sparkles, Coffee,
+  Heart, Leaf, Ghost, ArrowRight, Zap, Candy, Scale, Mask, Anchor,
 };
 
-const rankGroups = [
-  { rank: 'SS', label: 'SSランク', description: '究極の相性' },
-  { rank: 'S', label: 'Sランク', description: '最高のパートナー' },
-  { rank: 'A', label: 'Aランク', description: '素晴らしい関係' },
-  { rank: 'B', label: 'Bランク', description: '安定した関係' },
-  { rank: 'C', label: 'Cランク', description: '要注意' },
-  { rank: 'D', label: 'Dランク', description: '改善が必要' },
-  { rank: 'E', label: 'Eランク', description: '深刻な状況' },
-  { rank: 'F', label: 'Fランク', description: '危険水域' },
+// 4軸の組み合わせでグループ化
+const axisGroups = [
+  { 
+    key: 'hot-equal', 
+    label: '熱量：Hot × 重心：Equal', 
+    description: '情熱的で対等な関係',
+    types: ['HOT-EQUAL-VALUE-SYNC', 'HOT-EQUAL-VALUE-DESYNC', 'HOT-EQUAL-LOOSE-SYNC', 'HOT-EQUAL-LOOSE-DESYNC']
+  },
+  { 
+    key: 'hot-lean', 
+    label: '熱量：Hot × 重心：Lean', 
+    description: '情熱的で片方がリードする関係',
+    types: ['HOT-LEAN-VALUE-SYNC', 'HOT-LEAN-VALUE-DESYNC', 'HOT-LEAN-LOOSE-SYNC', 'HOT-LEAN-LOOSE-DESYNC']
+  },
+  { 
+    key: 'cold-equal', 
+    label: '熱量：Cold × 重心：Equal', 
+    description: '冷静で対等な関係',
+    types: ['COLD-EQUAL-VALUE-SYNC', 'COLD-EQUAL-VALUE-DESYNC', 'COLD-EQUAL-LOOSE-SYNC', 'COLD-EQUAL-LOOSE-DESYNC']
+  },
+  { 
+    key: 'cold-lean', 
+    label: '熱量：Cold × 重心：Lean', 
+    description: '冷静で片方がリードする関係',
+    types: ['COLD-LEAN-VALUE-SYNC', 'COLD-LEAN-VALUE-DESYNC', 'COLD-LEAN-LOOSE-SYNC', 'COLD-LEAN-LOOSE-DESYNC']
+  },
 ];
 
-const getRankColor = (rank) => {
-  if (rank.startsWith('S')) return '#facc15';
-  if (rank.startsWith('A')) return '#22d3ee';
-  if (rank.startsWith('B')) return '#4ade80';
-  if (rank.startsWith('C')) return '#fb923c';
+const getGroupColor = (key) => {
+  if (key.startsWith('hot')) return '#f97316';
+  return '#3b82f6';
   if (rank.startsWith('D')) return '#f87171';
   if (rank.startsWith('E')) return '#c084fc';
   return '#6b7280';
@@ -52,22 +66,16 @@ export default function TypesList() {
           </p>
         </div>
 
-        {/* Rank Groups */}
-        {rankGroups.map((group) => {
-          const types = relationTypes.filter(t => 
-            group.rank === 'S' 
-              ? t.rank.startsWith('S') 
-              : t.rank.startsWith(group.rank)
-          );
+        {/* Axis Groups */}
+        {axisGroups.map((group) => {
+          const types = relationTypes.filter(t => group.types.includes(t.code));
           
-          if (types.length === 0) return null;
-
           return (
-            <section key={group.rank} className={styles.rankSection}>
+            <section key={group.key} className={styles.rankSection}>
               <div className={styles.rankHeader}>
                 <span 
                   className={styles.rankBadge}
-                  style={{ color: getRankColor(group.rank), borderColor: getRankColor(group.rank) }}
+                  style={{ color: getGroupColor(group.key), borderColor: getGroupColor(group.key) }}
                 >
                   {group.label}
                 </span>
@@ -76,7 +84,7 @@ export default function TypesList() {
               
               <div className={styles.typeGrid}>
                 {types.map((type) => {
-                  const IconComponent = iconMap[type.icon] || Bot;
+                  const IconComponent = iconMap[type.icon] || Briefcase;
                   return (
                     <Link
                       key={type.id}
@@ -90,17 +98,9 @@ export default function TypesList() {
                         <IconComponent className={styles.icon} />
                       </div>
                       <div className={styles.typeInfo}>
-                        <span 
-                          className={styles.typeRank}
-                          style={{ color: getRankColor(type.rank) }}
-                        >
-                          {type.rank}
-                        </span>
+                        <code className={styles.typeCode}>{type.code}</code>
                         <h3 className={styles.typeName}>{type.name}</h3>
-                        <p className={styles.typeDesc}>{type.description.slice(0, 40)}...</p>
-                        <div className={styles.syncRate}>
-                          シンクロ率: {type.syncRate.min}~{type.syncRate.max}%
-                        </div>
+                        <p className={styles.typeDesc}>{type.tagline}</p>
                       </div>
                       <div className={styles.arrow}>→</div>
                     </Link>

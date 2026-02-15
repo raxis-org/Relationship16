@@ -4,35 +4,24 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import {
-  Crown, Swords, Briefcase, Users, Sparkles, Coffee,
-  Heart, Leaf, Dog, Eye, UserCircle, Anchor, Ghost, ArrowRight,
-  UserX, Bot, ChevronLeft, ChevronRight, Share2, Activity
+  Flame, Swords, Briefcase, Users, Sparkles, Coffee,
+  Heart, Leaf, Ghost, ArrowRight, Zap, Candy, Scale,
+  Mask, Anchor, ChevronLeft, ChevronRight, Share2, Activity
 } from 'lucide-react';
 import Layout from '../../../components/Layout';
 import { relationTypes } from '../../../data/relationTypes';
 import styles from './page.module.css';
 
 const iconMap = {
-  Crown, Swords, Briefcase, Users, Sparkles, Coffee,
-  Heart, Leaf, Dog, Eye, Mask: UserCircle, Anchor,
-  UFO: Ghost, ArrowRight, UserX, Bot,
+  Flame, Swords, Briefcase, Users, Sparkles, Coffee,
+  Heart, Leaf, Ghost, ArrowRight, Zap, Candy, Scale, Mask, Anchor,
 };
 
 const axisLabels = {
-  temperature: { hot: 'Hot（熱い）', cold: 'Cold（冷たい）', neutral: 'Neutral（普通）' },
-  balance: { equal: 'Equal（対等）', lean: 'Lean（偏り）', neutral: 'Neutral（普通）' },
-  purpose: { value: 'Value（価値重視）', loose: 'Loose（緩やか）', neutral: 'Neutral（普通）' },
-  sync: { sync: 'Sync（同期）', desync: 'Desync（非同期）', neutral: 'Neutral（普通）' },
-};
-
-const getRankColor = (rank) => {
-  if (rank.startsWith('S')) return '#facc15';
-  if (rank.startsWith('A')) return '#22d3ee';
-  if (rank.startsWith('B')) return '#4ade80';
-  if (rank.startsWith('C')) return '#fb923c';
-  if (rank.startsWith('D')) return '#f87171';
-  if (rank.startsWith('E')) return '#c084fc';
-  return '#6b7280';
+  temperature: { hot: 'Hot（熱い）', cold: 'Cold（冷たい）' },
+  balance: { equal: 'Equal（対等）', lean: 'Lean（偏り）' },
+  purpose: { value: 'Value（価値重視）', loose: 'Loose（緩やか）' },
+  sync: { sync: 'Sync（同期）', desync: 'Desync（非同期）' },
 };
 
 export default function TypeDetail() {
@@ -45,7 +34,7 @@ export default function TypeDetail() {
     notFound();
   }
 
-  const IconComponent = iconMap[type.icon] || Bot;
+  const IconComponent = iconMap[type.icon] || Briefcase;
   const currentIndex = relationTypes.findIndex(t => t.slug === slug);
   const prevType = currentIndex > 0 ? relationTypes[currentIndex - 1] : null;
   const nextType = currentIndex < relationTypes.length - 1 ? relationTypes[currentIndex + 1] : null;
@@ -69,13 +58,8 @@ export default function TypeDetail() {
 
         {/* Main Card */}
         <div className={`glass ${styles.mainCard}`}>
-          {/* Rank Badge */}
-          <div 
-            className={styles.rankBadge}
-            style={{ color: getRankColor(type.rank), borderColor: getRankColor(type.rank) }}
-          >
-            {type.rank}ランク
-          </div>
+          {/* Type Code Badge */}
+          <code className={styles.typeCodeBadge}>{type.code}</code>
 
           {/* Icon */}
           <div 
@@ -88,37 +72,60 @@ export default function TypeDetail() {
           {/* Type Name */}
           <h1 className={styles.typeName}>{type.name}</h1>
 
-          {/* Code */}
-          <code className={styles.typeCode}>{type.code}</code>
+          {/* Tagline */}
+          <p className={styles.tagline}>{type.tagline}</p>
 
           {/* Description */}
           <p className={styles.description}>{type.description}</p>
-
-          {/* Sync Rate */}
-          <div className={styles.syncRate}>
-            <Activity className={styles.syncIcon} />
-            <span>シンクロ率: <strong>{type.syncRate.min}~{type.syncRate.max}%</strong></span>
-          </div>
         </div>
 
         {/* Details Grid */}
         <div className={styles.detailsGrid}>
-          {/* Recommended Activity */}
+          {/* Strengths */}
           <div className={`glass ${styles.detailCard}`}>
             <h2 className={styles.detailTitle}>
               <Sparkles className={styles.detailIcon} />
-              おすすめの過ごし方
+              強み
             </h2>
-            <p className={styles.detailContent}>{type.recommendedActivity}</p>
+            <ul className={styles.detailList}>
+              {type.strengths.map((strength, idx) => (
+                <li key={idx}>{strength}</li>
+              ))}
+            </ul>
           </div>
 
-          {/* Sarcastic Advice */}
+          {/* Weaknesses */}
           <div className={`glass ${styles.detailCard}`}>
             <h2 className={styles.detailTitle}>
-              <Swords className={styles.detailIconPink} />
-              毒舌アドバイス
+              <Activity className={styles.detailIconPink} />
+              弱点
             </h2>
-            <p className={styles.adviceContent}>「{type.sarcasticAdvice}」</p>
+            <ul className={styles.detailList}>
+              {type.weaknesses.map((weakness, idx) => (
+                <li key={idx}>{weakness}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Advice & Activity */}
+        <div className={styles.detailsGrid}>
+          {/* Advice */}
+          <div className={`glass ${styles.detailCard}`}>
+            <h2 className={styles.detailTitle}>
+              <Swords className={styles.detailIconOrange} />
+              アドバイス
+            </h2>
+            <p className={styles.detailContent}>{type.advice}</p>
+          </div>
+
+          {/* Activity */}
+          <div className={`glass ${styles.detailCard}`}>
+            <h2 className={styles.detailTitle}>
+              <Coffee className={styles.detailIconBlue} />
+              おすすめの過ごし方
+            </h2>
+            <p className={styles.detailContent}>{type.activity}</p>
           </div>
         </div>
 

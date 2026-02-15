@@ -4,37 +4,37 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Crown, Swords, Briefcase, Users, Sparkles, Coffee,
-  Heart, Leaf, Dog, Eye, UserCircle, Anchor, Ghost, ArrowRight,
-  UserX, Bot, Share2, RefreshCw, ChevronRight
+  Flame, Swords, Briefcase, Users, Sparkles, Coffee,
+  Heart, Leaf, Ghost, ArrowRight, Zap, Candy, Scale,
+  Mask, Anchor, Share2, RefreshCw, ChevronRight
 } from 'lucide-react';
 import Layout from '../../components/Layout';
 import { useDiagnose } from '../../context/DiagnoseContext';
 import styles from './page.module.css';
 
 const iconMap = {
-  Crown, Swords, Briefcase, Users, Sparkles, Coffee,
-  Heart, Leaf, Dog, Eye, Mask: UserCircle, Anchor,
-  UFO: Ghost, ArrowRight, UserX, Bot,
+  Flame, Swords, Briefcase, Users, Sparkles, Coffee,
+  Heart, Leaf, Ghost, ArrowRight, Zap, Candy, Scale,
+  Mask, Anchor,
 };
 
 const typeNames = {
   1: '伝説のバディ',
   2: '宿命のライバル',
-  3: '最強のビジネスパートナー',
-  4: '師弟を超えた共犯者',
-  5: '魂の双子',
-  6: '陽だまりの老夫婦',
-  7: '全肯定型サンクチュアリ',
-  8: '放牧中の幼馴染',
-  9: '飼い主と忠犬',
-  10: '相互監視型メンヘラ',
-  11: '利害一致の仮面夫婦',
-  12: '共依存の泥舟',
-  13: '平行線を辿る宇宙人',
-  14: '一方通行の片想い',
-  15: '昨日会った親友',
-  16: 'NPCとプレイヤー',
+  3: '魂の双子',
+  4: '温もりの聖域',
+  5: '情熱のリーダーと従者',
+  6: '一方通行の情熱',
+  7: '甘やかしの共依存',
+  8: '燃える執着',
+  9: '最強のビジネスパートナー',
+  10: '合理性の共同体',
+  11: '陽だまりの老夫婦',
+  12: '形だけの関係',
+  13: '師弟を超えた共犯者',
+  14: '利害一致の仮面',
+  15: '静かな避難所',
+  16: '共依存の泥舟',
 };
 
 export default function Result() {
