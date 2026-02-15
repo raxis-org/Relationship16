@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Sparkles, Heart, ArrowRight } from 'lucide-react';
+import { Sparkles, Heart, ArrowRight, Grid3X3 } from 'lucide-react';
 import Layout from '../components/Layout';
 import styles from './page.module.css';
 
@@ -79,12 +79,20 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Start Button */}
-          <Link href="/diagnose" className={styles.startButton}>
-            <Heart className={styles.startIcon} />
-            診断を開始する
-            <ArrowRight className={styles.startIcon} />
-          </Link>
+          {/* Action Buttons */}
+          <div className={styles.actionButtons}>
+            <Link href="/diagnose" className={styles.startButton}>
+              <Heart className={styles.startIcon} />
+              診断を開始する
+              <ArrowRight className={styles.startIcon} />
+            </Link>
+            
+            <Link href="/16types" className={styles.typesButton}>
+              <Grid3X3 className={styles.startIcon} />
+              16タイプ一覧を見る
+              <ArrowRight className={styles.startIcon} />
+            </Link>
+          </div>
 
           <p className={styles.timeEstimate}>所要時間: 約3分（1人16問）</p>
         </div>

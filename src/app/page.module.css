@@ -144,15 +144,21 @@
   text-overflow: ellipsis;
 }
 
-/* Start Button */
-.startButton {
+/* Action Buttons */
+.actionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.startButton,
+.typesButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-md);
   padding: var(--space-md) var(--space-xl);
-  background: var(--gradient-primary);
-  color: white;
   font-size: 1.125rem;
   font-weight: 700;
   border-radius: var(--radius-xl);
@@ -160,9 +166,25 @@
   box-shadow: var(--shadow-md);
 }
 
+.startButton {
+  background: var(--gradient-primary);
+  color: white;
+}
+
 .startButton:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5);
+}
+
+.typesButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text);
+}
+
+.typesButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
 }
 
 .startIcon {

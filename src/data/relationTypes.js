@@ -7,6 +7,7 @@ export const relationTypes = [
   // ========== タイプ1: 伝説のバディ ==========
   {
     id: 1,
+    slug: 'legend-buddy',
     name: '伝説のバディ',
     code: 'HOT-EQUAL-VALUE-SYNC',
     axes: {
@@ -27,6 +28,7 @@ export const relationTypes = [
   // ========== タイプ2: 宿命のライバル ==========
   {
     id: 2,
+    slug: 'fated-rival',
     name: '宿命のライバル',
     code: 'HOT-EQUAL-VALUE-DESYNC',
     axes: {
@@ -47,6 +49,7 @@ export const relationTypes = [
   // ========== タイプ3: 最強のビジネスパートナー ==========
   {
     id: 3,
+    slug: 'business-partner',
     name: '最強のビジネスパートナー',
     code: 'COLD-EQUAL-VALUE-SYNC',
     axes: {
@@ -67,6 +70,7 @@ export const relationTypes = [
   // ========== タイプ4: 師弟を超えた共犯者 ==========
   {
     id: 4,
+    slug: 'accomplice',
     name: '師弟を超えた共犯者',
     code: 'COLD-LEAN-VALUE-SYNC',
     axes: {
@@ -87,6 +91,7 @@ export const relationTypes = [
   // ========== タイプ5: 魂の双子（ソウルツイン） ==========
   {
     id: 5,
+    slug: 'soul-twin',
     name: '魂の双子（ソウルツイン）',
     code: 'HOT-EQUAL-LOOSE-SYNC',
     axes: {
@@ -107,6 +112,7 @@ export const relationTypes = [
   // ========== タイプ6: 陽だまりの老夫婦 ==========
   {
     id: 6,
+    slug: 'sunny-old-couple',
     name: '陽だまりの老夫婦',
     code: 'COLD-EQUAL-LOOSE-SYNC',
     axes: {
@@ -127,6 +133,7 @@ export const relationTypes = [
   // ========== タイプ7: 全肯定型サンクチュアリ ==========
   {
     id: 7,
+    slug: 'sanctuary',
     name: '全肯定型サンクチュアリ',
     code: 'HOT-EQUAL-LOOSE-DESYNC',
     axes: {
@@ -147,6 +154,7 @@ export const relationTypes = [
   // ========== タイプ8: 放牧中の幼馴染 ==========
   {
     id: 8,
+    slug: 'grazing-friend',
     name: '放牧中の幼馴染',
     code: 'COLD-EQUAL-LOOSE-DESYNC',
     axes: {
@@ -167,6 +175,7 @@ export const relationTypes = [
   // ========== タイプ9: 飼い主と忠犬 ==========
   {
     id: 9,
+    slug: 'master-dog',
     name: '飼い主と忠犬',
     code: 'HOT-LEAN-VALUE-SYNC',
     axes: {
@@ -187,6 +196,7 @@ export const relationTypes = [
   // ========== タイプ10: 相互監視型メンヘラ ==========
   {
     id: 10,
+    slug: 'mutual-menhera',
     name: '相互監視型メンヘラ',
     code: 'HOT-LEAN-VALUE-DESYNC',
     axes: {
@@ -207,6 +217,7 @@ export const relationTypes = [
   // ========== タイプ11: 利害一致の仮面夫婦 ==========
   {
     id: 11,
+    slug: 'masked-couple',
     name: '利害一致の仮面夫婦',
     code: 'COLD-LEAN-VALUE-SYNC',
     axes: {
@@ -227,6 +238,7 @@ export const relationTypes = [
   // ========== タイプ12: 共依存の泥舟 ==========
   {
     id: 12,
+    slug: 'codependent-boat',
     name: '共依存の泥舟',
     code: 'COLD-LEAN-VALUE-DESYNC',
     axes: {
@@ -247,6 +259,7 @@ export const relationTypes = [
   // ========== タイプ13: 平行線を辿る宇宙人 ==========
   {
     id: 13,
+    slug: 'parallel-alien',
     name: '平行線を辿る宇宙人',
     code: 'COLD-LEAN-LOOSE-SYNC',
     axes: {
@@ -267,6 +280,7 @@ export const relationTypes = [
   // ========== タイプ14: 一方通行の片想いごっこ ==========
   {
     id: 14,
+    slug: 'one-way-love',
     name: '一方通行の片想いごっこ',
     code: 'HOT-LEAN-LOOSE-DESYNC',
     axes: {
@@ -287,6 +301,7 @@ export const relationTypes = [
   // ========== タイプ15: 昨日会ったばかりの親友 ==========
   {
     id: 15,
+    slug: 'fake-friend',
     name: '昨日会ったばかりの親友',
     code: 'COLD-LEAN-LOOSE-DESYNC',
     axes: {
@@ -307,6 +322,7 @@ export const relationTypes = [
   // ========== タイプ16: NPCとプレイヤー ==========
   {
     id: 16,
+    slug: 'npc-player',
     name: 'NPCとプレイヤー',
     code: 'NEUTRAL-NEUTRAL-NEUTRAL-NEUTRAL',
     axes: {

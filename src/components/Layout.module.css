@@ -113,20 +113,33 @@
   color: var(--color-text-muted);
 }
 
-.headerIcons {
+.nav {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
   color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
 }
 
-.icon {
-  width: 20px;
-  height: 20px;
+.navLink:hover {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.heart {
-  color: var(--color-pink);
+.navIcon {
+  width: 18px;
+  height: 18px;
 }
 
 /* Main */

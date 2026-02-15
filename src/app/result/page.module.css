@@ -63,7 +63,26 @@
   font-size: 0.875rem;
   color: var(--color-text-dim);
   font-family: monospace;
+  margin-bottom: var(--space-md);
+}
+
+.detailLink {
+  display: inline-block;
   margin-bottom: var(--space-xl);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid var(--color-blue);
+  border-radius: var(--radius-md);
+  color: var(--color-blue);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.detailLink:hover {
+  background: rgba(59, 130, 246, 0.2);
+  transform: translateY(-1px);
 }
 
 .iconWrapper {

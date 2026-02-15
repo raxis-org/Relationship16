@@ -104,6 +104,11 @@ export default function Result() {
           {/* Type Code */}
           <code className={styles.typeCode}>{type.code}</code>
 
+          {/* Detail Link */}
+          <Link href={`/16types/${type.slug}`} className={styles.detailLink}>
+            このタイプの詳細を見る →
+          </Link>
+
           {/* Icon */}
           <div className={styles.iconWrapper} style={{ background: type.color }}>
             <IconComponent className={styles.icon} />

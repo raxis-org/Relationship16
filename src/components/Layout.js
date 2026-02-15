@@ -1,6 +1,7 @@
 'use client';
 
-import { Sparkles, Heart, Users } from 'lucide-react';
+import Link from 'next/link';
+import { Sparkles, Heart, Users, Grid3X3 } from 'lucide-react';
 import styles from './Layout.module.css';
 
 export default function Layout({ children, showHeader = true, showFooter = true }) {
@@ -26,10 +27,16 @@ export default function Layout({ children, showHeader = true, showFooter = true 
                 <p className={styles.subtitle}>16タイプ関係性診断</p>
               </div>
             </div>
-            <div className={styles.headerIcons}>
-              <Users className={styles.icon} />
-              <Heart className={`${styles.icon} ${styles.heart}`} />
-            </div>
+            <nav className={styles.nav}>
+              <Link href="/16types" className={styles.navLink}>
+                <Grid3X3 className={styles.navIcon} />
+                <span>16タイプ</span>
+              </Link>
+              <Link href="/diagnose" className={styles.navLink}>
+                <Users className={styles.navIcon} />
+                <span>診断</span>
+              </Link>
+            </nav>
           </div>
         </header>
       )}
