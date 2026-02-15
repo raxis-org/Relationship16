@@ -36,30 +36,158 @@
   z-index: 2;
   max-width: 800px;
   margin: 0 auto;
-  height: 100%;
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Flow Section */
+.flowSection {
+  margin-bottom: 48px;
+}
+
+.flowGrid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.flowStep {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  min-width: 140px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+  position: relative;
+}
+
+.stepNumber {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 24px;
+  background: #3498db;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepIcon {
+  width: 32px;
+  height: 32px;
+  color: #3498db;
+  margin: 0 auto 12px;
+}
+
+.stepTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.stepDesc {
+  font-size: 12px;
+  color: #999;
+}
+
+.flowArrow {
+  font-size: 24px;
+  color: #ccc;
+  font-weight: 300;
+}
+
+/* Axes Section */
+.axesSection {
+  margin-bottom: 48px;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.axesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.axisCard {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-align: center;
-  padding: 0 24px;
-  color: white;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
 }
 
-.heroTitle {
-  font-size: 48px;
-  font-weight: 800;
+.axisColor {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.axisContent {
+  flex: 1;
+}
+
+.axisName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.axisLabels {
+  font-size: 13px;
+  color: #999;
+}
+
+/* Buttons Section */
+.buttonsSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 16px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  letter-spacing: -1px;
-}
-
-.heroSubtitle {
-  font-size: 18px;
-  margin-bottom: 32px;
-  opacity: 0.95;
-  max-width: 500px;
-  line-height: 1.6;
 }
 
 .startButton {
@@ -73,8 +201,7 @@
   font-weight: 600;
   border-radius: 50px;
   text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
 }
 
 .startButton:hover {
@@ -83,10 +210,31 @@
   background: #f8f8f8;
 }
 
-/* Features Section */
-.featuresSection {
-  padding: 80px 24px;
-  background: #fafafa;
+.typesButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 36px;
+  background: transparent;
+  color: #3498db;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 2px solid #3498db;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.typesButton:hover {
+  background: rgba(52, 152, 219, 0.1);
+  transform: translateY(-1px);
+}
+
+.startIcon,
+.typesIcon {
+  width: 20px;
+  height: 20px;
 }
 
 .container {
@@ -151,48 +299,7 @@
 .axisLabels {
   font-size: 12px;
   color: #999;
-  font-weight: 500;
-}
-
-/* CTA Section */
-.ctaSection {
-  padding: 100px 24px;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  color: white;
   text-align: center;
-}
-
-.ctaTitle {
-  font-size: 36px;
-  font-weight: 700;
-  margin-bottom: 16px;
-}
-
-.ctaText {
-  font-size: 16px;
-  opacity: 0.85;
-  margin-bottom: 32px;
-  line-height: 1.8;
-}
-
-.ctaButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 18px 48px;
-  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 50px;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(255, 107, 107, 0.4);
-}
-
-.ctaButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(255, 107, 107, 0.5);
 }
 
 /* Responsive */
@@ -210,11 +317,22 @@
   .heroTitle {
     font-size: 32px;
   }
-  
-  .heroSubtitle {
-    font-size: 16px;
+
+  .flowGrid {
+    flex-direction: column;
+    gap: 8px;
   }
-  
+
+  .flowArrow {
+    transform: rotate(90deg);
+  }
+
+  .flowStep {
+    width: 100%;
+    max-width: 280px;
+    padding: 20px;
+  }
+
   .axesGrid {
     grid-template-columns: 1fr;
   }

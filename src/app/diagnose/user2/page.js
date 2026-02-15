@@ -1,112 +1,114 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { ArrowRight } from 'lucide-react';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Users, ArrowRight } from 'lucide-react';
 import Layout from '../../../components/Layout';
-import { useDiagnose } from '../../../context/DiagnoseContext';
+import { getSession } from '../../../lib/db';
 import styles from './page.module.css';
 
-export default function User2Page() {
+function User2LandingContent() {
   const router = useRouter();
-  const { 
-    user1Name, 
-    user2Name, 
-    setUser2Name, 
-    getCompletedBlockCount,
-  } = useDiagnose();
-
+  const searchParams = useSearchParams();
+  const sid = searchParams.get('sid');
+  
   const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [hostName, setHostName] = useState('');
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    if (!user1Name) {
-      router.push('/diagnose');
+    if (!sid) {
+      router.push('/');
       return;
     }
 
-    // 名前が入力済みの場合は自動遷移
-    if (user2Name) {
-      const completedCount = getCompletedBlockCount('user2');
-      
-      if (completedCount >= 4) {
-        router.push('/diagnose/loading');
-      } else {
-        const axisOrder = ['temperature', 'balance', 'purpose', 'sync'];
-        const nextAxis = axisOrder[completedCount];
-        router.push(`/diagnose/user2/block/${nextAxis}`);
-      }
-    }
-  }, [user1Name, user2Name, getCompletedBlockCount, router]);
+    getSession(sid).then(session => {
+      setHostName(session.host_name);
+      setChecking(false);
+    }).catch(() => {
+      alert('無効なURLです');
+      router.push('/');
+    });
+  }, [sid, router]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (name.trim()) {
-      setUser2Name(name.trim());
+    if (!name.trim()) {
+      setError('名前を入力してください');
+      return;
     }
+
+    setLoading(true);
+    localStorage.setItem(`user2_name_${sid}`, name.trim());
+    router.push(`/diagnose/user2/questions?sid=${sid}`);
   };
 
-  if (!user1Name) return null;
-
-  // 入力済みの場合はローディング表示
-  if (user2Name) {
+  if (checking) {
     return (
-      <Layout>
+      <div className={styles.container}>
         <div className={styles.loading}>読み込み中...</div>
-      </Layout>
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <div className={styles.container}>
-        {/* Progress Steps */}
-        <div className={styles.steps}>
-          <div className={styles.stepComplete}>✓</div>
-          <div className={styles.stepLineComplete}></div>
-          <div className={styles.stepActive}>2</div>
-          <div className={styles.stepLine}></div>
-          <div className={styles.stepInactive}>3</div>
+    <div className={styles.container}>
+      <div className={`glass ${styles.card}`}>
+        <div className={styles.header}>
+          <div className={`${styles.iconBox} ${styles.iconPurple}`}>
+            <Users className={styles.icon} />
+          </div>
+          <h1 className={styles.title}>{hostName}さんからの招待です</h1>
+          <p className={styles.subtitle}>
+            {hostName}さんとの関係性を診断します。<br />
+            あなたの名前を入力してください。
+          </p>
         </div>
 
-        {/* Card */}
-        <div className={styles.card}>
-          <div className={styles.header}>
-            <span className={styles.badge}>パートナーB</span>
-            <h1 className={styles.title}>相手の名前を入力</h1>
-            <p className={styles.description}>
-              もう一方のパートナーのお名前を教えてください
-            </p>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.inputGroup}>
+            <label className={styles.label}>あなたの名前（ニックネーム可）</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                setError('');
+              }}
+              placeholder="佐藤花子"
+              className={styles.input}
+              disabled={loading}
+              autoFocus
+            />
+            {error && <p className={styles.error}>{error}</p>}
           </div>
 
-          <div className={styles.partnerInfo}>
-            <span className={styles.partnerLabel}>パートナーA</span>
-            <span className={styles.partnerName}>{user1Name}</span>
-          </div>
-
-          <form onSubmit={handleSubmit} className={styles.form}>
-            <div className={styles.inputGroup}>
-              <label className={styles.label}>お名前（ニックネーム可）</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="例：田中花子"
-                className={styles.input}
-                autoFocus
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={!name.trim()}
-              className={styles.submitButton}
-            >
-              診断を開始する
-              <ArrowRight className={styles.submitIcon} />
-            </button>
-          </form>
-        </div>
+          <button
+            type="submit"
+            disabled={!name.trim() || loading}
+            className={styles.submitButton}
+          >
+            {loading ? '読み込み中...' : (
+              <>
+                診断を始める
+                <ArrowRight className={styles.submitIcon} />
+              </>
+            )}
+          </button>
+        </form>
       </div>
+    </div>
+  );
+}
+
+export default function User2Landing() {
+  return (
+    <Layout>
+      <Suspense fallback={<div className={styles.container}><div className={styles.loading}>読み込み中...</div></div>}>
+        <User2LandingContent />
+      </Suspense>
     </Layout>
   );
 }

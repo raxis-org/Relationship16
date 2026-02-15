@@ -27,9 +27,9 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-xs) var(--space-sm);
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(139, 92, 246, 0.1);
   border-radius: var(--radius-md);
-  color: var(--color-blue);
+  color: var(--color-purple);
   font-weight: 500;
 }
 
@@ -48,7 +48,7 @@
 
 .progressFill {
   height: 100%;
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
   border-radius: 4px;
   transition: width 0.5s ease-out;
 }
@@ -126,14 +126,14 @@
 }
 
 .navButtonPrimary {
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
   color: white;
   margin-left: auto;
 }
 
 .navButtonPrimary:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-glow-blue);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
 }
 
 .navButtonHidden {
@@ -171,7 +171,7 @@
 }
 
 .dotActive {
-  background: var(--color-blue);
+  background: var(--color-purple);
   transform: scale(1.3);
 }
 
@@ -180,7 +180,7 @@
 }
 
 .dotAnswered.dotActive {
-  background: var(--color-blue);
+  background: var(--color-purple);
 }
 
 @media (max-width: 600px) {

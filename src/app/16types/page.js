@@ -18,35 +18,10 @@ export default function TypesPage() {
   const cTypes = types.filter(t => t.rank === 'C' || t.rank === 'C-' || t.rank === 'C+');
   const dTypes = types.filter(t => t.rank === 'D' || t.rank === 'D+');
 
-  const renderTypeSection = (title, typeList, color) => (
-    <div className={styles.rankSection}>
-      <h2 className={styles.rankTitle} style={{ color }}>{title}</h2>
-      <div className={styles.typesGrid}>
-        {typeList.map(type => (
-          <Link 
-            key={type.code} 
-            href={`/16types/${type.code}`}
-            className={styles.typeCard}
-          >
-            <div className={styles.typeImageContainer}>
-              <Image 
-                src={getTypeAssetPath(type.code)}
-                alt={type.name}
-                fill
-                className={styles.typeImage}
-              />
-            </div>
-            <div className={styles.typeInfo}>
-              <span className={styles.typeCode}>{type.code}</span>
-              <h3 className={styles.typeName}>{type.name}</h3>
-              <p className={styles.typeDesc}>{type.description.slice(0, 60)}...</p>
-            </div>
-            <ArrowRight className={styles.arrowIcon} size={20} />
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
+const getGroupColor = (key) => {
+  if (key.startsWith('hot')) return '#f97316';
+  return '#3b82f6';
+};
 
   return (
     <Layout>

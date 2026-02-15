@@ -1,0 +1,273 @@
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+}
+
+.progress {
+  margin-bottom: var(--space-lg);
+}
+
+.progressHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+}
+
+.progressText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.userBadge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-primary);
+  background: rgba(52, 152, 219, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+}
+
+.userIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.progressBar {
+  height: 6px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: var(--space-sm);
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.axisIndicator {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+}
+
+.axisIcon {
+  font-size: 16px;
+}
+
+.axisName {
+  font-weight: 600;
+}
+
+.axisDirection {
+  color: var(--color-text-secondary);
+}
+
+.card {
+  padding: var(--space-xl);
+  margin-bottom: var(--space-lg);
+}
+
+.question {
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  margin-bottom: var(--space-xl);
+  line-height: 1.6;
+}
+
+.navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-xl);
+}
+
+.navButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.navButtonPrimary {
+  background: var(--color-primary);
+  color: white;
+}
+
+.navButtonPrimary:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.navButtonSecondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text);
+}
+
+.navButtonSecondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.navButtonHidden {
+  visibility: hidden;
+}
+
+.navButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.navIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dotActive {
+  background: var(--color-primary);
+  transform: scale(1.2);
+}
+
+.dotAnswered {
+  background: rgba(52, 152, 219, 0.5);
+}
+
+/* 共有画面 */
+.shareCard {
+  text-align: center;
+  padding: var(--space-2xl);
+}
+
+.shareIcon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto var(--space-lg);
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkIcon {
+  width: 40px;
+  height: 40px;
+  color: white;
+}
+
+.shareTitle {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+}
+
+.shareText {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xl);
+  line-height: 1.6;
+}
+
+.urlBox {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.urlInput {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+}
+
+.copyButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copyButton:hover {
+  background: #2980b9;
+}
+
+.copyIcon {
+  width: 16px;
+  height: 16px;
+}
+
+.shareHint {
+  background: rgba(255, 255, 255, 0.05);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  text-align: left;
+}
+
+.shareHint p {
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+}
+
+.shareHint ol {
+  padding-left: var(--space-lg);
+  color: var(--color-text-secondary);
+}
+
+.shareHint li {
+  margin-bottom: var(--space-xs);
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: var(--space-md);
+  }
+
+  .card {
+    padding: var(--space-lg);
+  }
+
+  .question {
+    font-size: var(--font-size-md);
+  }
+
+  .urlBox {
+    flex-direction: column;
+  }
+}

@@ -30,21 +30,67 @@ export function processAnswer(questionId, value) {
 export function calculateRawScores(answers) {
   const scores = { P: [], M: [], G: [], V: [] };
   
-  QUESTIONS.forEach(q => {
-    const answer = answers[q.id];
-    if (answer !== undefined) {
-      const processed = processAnswer(q.id, answer);
-      scores[q.axis].push(processed);
-    }
-  });
+  // 0以上ならpositive、0未満ならnegative（neutralはない）
+  return score >= 0 ? 'positive' : 'negative';
+}
+
+/**
+ * タイプコードを生成（NEUTRALなし）
+ * @param {Object} labels - 各軸の分類（'positive' | 'negative'）
+ * @param {number} totalDivergence - 総合乖離度
+ * @returns {string} タイプコード
+ * 
+ * 16タイプのうちの1つに必ず該当する（2^4 = 16パターン）
+ */
+function generateTypeCode(labels, totalDivergence) {
+  // 乖離度が高い場合（40%以上）、SyncをDesyncに傾ける
+  // ただしneutralにはしない（必ずSYNCまたはDESYNCのどちらか）
+  let syncLabel = labels.sync;
+  if (totalDivergence > 40 && labels.sync === 'positive') {
+    // 高乖離度でSyncの場合、Desyncに変更（ただしスコアが同点の場合のみ）
+    syncLabel = 'negative';
+  }
+
+  // 2値マッピング（NEUTRALはなし）
+  const tempMap = { positive: 'HOT', negative: 'COLD' };
+  const balanceMap = { positive: 'EQUAL', negative: 'LEAN' };
+  const purposeMap = { positive: 'VALUE', negative: 'LOOSE' };
+  const syncMap = { positive: 'SYNC', negative: 'DESYNC' };
+
+  return `${tempMap[labels.temperature]}-${balanceMap[labels.balance]}-${purposeMap[labels.purpose]}-${syncMap[syncLabel]}`;
+}
+
+/**
+ * タイプコードから16タイプを特定
+ * @param {string} typeCode - タイプコード
+ * @returns {Object} 関係性タイプ
+ */
+function findRelationType(typeCode) {
+  // 完全一致を探す
+  let match = relationTypes.find(t => t.code === typeCode);
   
-  const result = {};
-  for (const [axis, values] of Object.entries(scores)) {
-    if (values.length > 0) {
-      result[axis] = values.reduce((a, b) => a + b, 0) / values.length;
-    } else {
-      result[axis] = 3.0; // デフォルト値
+  if (!match) {
+    // 近似タイプを探す
+    const [temp, balance, purpose, sync] = typeCode.split('-');
+    let bestMatch = null;
+    let bestScore = -1;
+    
+    for (const type of relationTypes) {
+      let score = 0;
+      const [tTemp, tBalance, tPurpose, tSync] = type.code.split('-');
+      
+      if (tTemp === temp) score += 2;
+      if (tBalance === balance) score += 2;
+      if (tPurpose === purpose) score += 2;
+      if (tSync === sync) score += 2;
+      
+      if (score > bestScore) {
+        bestScore = score;
+        bestMatch = type;
+      }
     }
+    
+    match = bestMatch || relationTypes[0];
   }
   
   return result;
@@ -173,28 +219,33 @@ export function generateAnswerComparison(answers1, answers2) {
  * 診断を実行
  */
 export function diagnose(answers1, answers2, user1Name = 'パートナーA', user2Name = 'パートナーB') {
-  // 生スコア計算
-  const rawScores1 = calculateRawScores(answers1);
-  const rawScores2 = calculateRawScores(answers2);
-  
-  // ペアスコア計算
-  const { pair: pairScores, gap: gapScores } = calculatePairScores(rawScores1, rawScores2);
-  
-  // シンクロ率計算
-  const syncRate = calculateSyncRate(answers1, answers2);
-  
-  // タイプコード生成
-  const typeCode = generateTypeCode(pairScores);
-  
-  // タイプ情報取得
-  const type = getTypeByCode(typeCode);
-  
-  // 軸詳細生成
-  const axisDetails = generateAxisDetails(pairScores, gapScores);
-  
-  // 回答比較生成
-  const answerComparison = generateAnswerComparison(answers1, answers2);
-  
+  // 各ユーザーの軸スコアを計算
+  const scores1 = calculateAxisScores(answers1);
+  const scores2 = calculateAxisScores(answers2);
+
+  // 乖離度を計算
+  const divergence = calculateDivergence(answers1, answers2);
+
+  // シンクロ率を計算（乖離度ベース）
+  const syncRate = calculateSyncRate(divergence, scores1, scores2);
+
+  // 各軸を分類
+  const labels = {
+    temperature: classifyAxis((scores1.temperature + scores2.temperature) / 2, 'temperature'),
+    balance: classifyAxis((scores1.balance + scores2.balance) / 2, 'balance'),
+    purpose: classifyAxis((scores1.purpose + scores2.purpose) / 2, 'purpose'),
+    sync: classifyAxis((scores1.sync + scores2.sync) / 2, 'sync'),
+  };
+
+  // タイプコードを生成
+  const typeCode = generateTypeCode(labels, divergence.total);
+
+  // 16タイプを特定
+  const relationType = findRelationType(typeCode);
+
+  // 詳細結果を生成
+  const details = generateResultDetails(relationType, syncRate, scores1, scores2, divergence);
+
   return {
     type,
     typeCode,
