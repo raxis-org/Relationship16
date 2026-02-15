@@ -133,6 +133,23 @@ export default function Result() {
               />
             </div>
           </div>
+
+          {/* Divergence */}
+          <div className={styles.divergence}>
+            <div className={styles.divergenceHeader}>
+              <span>乖離度</span>
+              <span className={styles.divergenceValue}>{result.divergence}%</span>
+            </div>
+            <div className={styles.divergenceBar}>
+              <div
+                className={styles.divergenceFill}
+                style={{ width: `${result.divergence}%` }}
+              />
+            </div>
+            <p className={styles.divergenceHelp}>
+              二人の回答が異なる質問の割合。低いほど感覚が似ている。
+            </p>
+          </div>
         </div>
 
         {/* Details Grid */}
@@ -159,10 +176,10 @@ export default function Result() {
           <h3 className={styles.axisTitle}>4軸分析</h3>
           
           <div className={styles.axisGrid}>
-            {renderAxisCard('temperature', '熱量', details.axisDetails.temperature)}
-            {renderAxisCard('balance', '重心', details.axisDetails.balance)}
-            {renderAxisCard('purpose', '目的', details.axisDetails.purpose)}
-            {renderAxisCard('sync', '同期', details.axisDetails.sync)}
+            {renderAxisCard('temperature', '熱量', details.axisDetails.temperature, user1Name, user2Name)}
+            {renderAxisCard('balance', '重心', details.axisDetails.balance, user1Name, user2Name)}
+            {renderAxisCard('purpose', '目的', details.axisDetails.purpose, user1Name, user2Name)}
+            {renderAxisCard('sync', '同期', details.axisDetails.sync, user1Name, user2Name)}
           </div>
 
           <div className={styles.comments}>
@@ -211,7 +228,7 @@ export default function Result() {
   );
 }
 
-function renderAxisCard(key, label, detail) {
+function renderAxisCard(key, label, detail, user1Name, user2Name) {
   const colors = {
     temperature: 'linear-gradient(135deg, #ef4444, #f97316)',
     balance: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
@@ -231,6 +248,7 @@ function renderAxisCard(key, label, detail) {
       <div className={styles.axisItemHeader}>
         <span className={styles.axisEmoji}>{emojis[key]}</span>
         <span className={styles.axisLabel}>{label}</span>
+        <span className={styles.axisDivergence}>乖離: {detail.divergence}%</span>
       </div>
       <div
         className={styles.axisValue}
@@ -238,11 +256,15 @@ function renderAxisCard(key, label, detail) {
       >
         {detail.label}
       </div>
+      <div className={styles.axisScores}>
+        <span className={styles.axisScore}>{user1Name}: {detail.user1 > 0 ? '+' : ''}{detail.user1}</span>
+        <span className={styles.axisScore}>{user2Name}: {detail.user2 > 0 ? '+' : ''}{detail.user2}</span>
+      </div>
       <div className={styles.axisDesc}>{detail.description}</div>
       <div className={styles.axisBar}>
         <div
           className={styles.axisBarFill}
-          style={{ width: `${(detail.score / 2) * 100}%`, background: colors[key] }}
+          style={{ width: `${Math.min(100, Math.max(0, (detail.score + 3) / 6 * 100))}%`, background: colors[key] }}
         />
       </div>
     </div>

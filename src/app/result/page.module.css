@@ -145,6 +145,49 @@
   background: var(--color-border);
   border-radius: 6px;
   overflow: hidden;
+  margin-bottom: var(--space-lg);
+}
+
+/* Divergence */
+.divergence {
+  max-width: 400px;
+  margin: 0 auto;
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+.divergenceHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.divergenceValue {
+  font-weight: 700;
+  color: #f87171;
+}
+
+.divergenceBar {
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: var(--space-sm);
+}
+
+.divergenceFill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80, #fbbf24, #ef4444);
+  border-radius: 4px;
+  transition: width 1s ease-out;
+}
+
+.divergenceHelp {
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+  margin: 0;
 }
 
 .syncRateFill {
@@ -247,12 +290,32 @@
 .axisLabel {
   font-size: 0.75rem;
   color: var(--color-text-muted);
+  flex: 1;
+}
+
+.axisDivergence {
+  font-size: 0.6875rem;
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
 .axisValue {
   font-size: 1.125rem;
   font-weight: 700;
   margin-bottom: var(--space-xs);
+}
+
+.axisScores {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xs);
+}
+
+.axisScore {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
 }
 
 .axisDesc {

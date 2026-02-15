@@ -1,178 +1,334 @@
 /**
- * 診断用質問データ
- * 4軸（熱量・重心・目的・同期）を測定する質問群
+ * 関係性診断質問データ（リニューアル版）
+ * 
+ * 【設計方針】
+ * - 各軸：2方向（正・負）× 2視点（自分・相手）× 2問 = 32問
+ * - 回答：はい/いいえ（true/false）
+ * - 潜在的・婉曲的な質問を多用（直接的な質問を避ける）
+ * - 乖離度計算：同じ質問に対する二人の回答の差
+ * 
+ * 【4軸定義】
+ * - temperature（熱量）: 感情的・能動的 ↔ 冷静・ドライ
+ * - balance（重心）: 対等・相互 ↔ 依存・一方通行
+ * - purpose（目的）: 成長・生産性 ↔ 安心・安定
+ * - sync（同期）: 価値観一致 ↔ 価値観相違
  */
 
 export const questions = [
-  // ========== 熱量軸 (Hot/Cold) ==========
+  // ============================================
+  // 熱量軸（Hot/Cold）- 8問
+  // ============================================
+  
+  // --- Hot方向（自分）---
   {
     id: 1,
     axis: 'temperature',
-    text: '二人でいる時、感情の起伏はどう感じますか？',
-    options: [
-      { value: 2, label: 'とても盛り上がり、感情的になれる', type: 'hot' },
-      { value: 1, label: '適度に楽しく、穏やか', type: 'neutral' },
-      { value: 0, label: '冷静で、感情的にはならない', type: 'cold' },
-    ],
+    direction: 'hot',
+    perspective: 'self',
+    text: '相手と過ごした後、帰り道にふと笑顔になっている自分に気づくことがある',
   },
   {
     id: 2,
     axis: 'temperature',
-    text: '意見が食い違った時、どう対応しますか？',
-    options: [
-      { value: 2, label: '熱く議論し、お互いの主張をぶつけ合う', type: 'hot' },
-      { value: 1, label: '落ち着いて話し合う', type: 'neutral' },
-      { value: 0, label: '冷めた目で事実を確認する', type: 'cold' },
-    ],
+    direction: 'hot',
+    perspective: 'self',
+    text: '相手の話を聞いていると、つい身振り手振りが大きくなってしまう',
   },
+  
+  // --- Cold方向（自分）---
   {
     id: 3,
     axis: 'temperature',
-    text: '相手の成功を聞いた時の反応は？',
-    options: [
-      { value: 2, label: '自分のことのように喜び、祝いたくなる', type: 'hot' },
-      { value: 1, label: '素直に祝福する', type: 'neutral' },
-      { value: 0, label: '冷静に評価・分析する', type: 'cold' },
-    ],
+    direction: 'cold',
+    perspective: 'self',
+    text: '相手といる時、時計を気にせずゆっくり時間が過ぎる感覚がある',
   },
-
-  // ========== 重心軸 (Equal/Lean) ==========
   {
     id: 4,
-    axis: 'balance',
-    text: '会話の主導権は？',
-    options: [
-      { value: 2, label: 'お互いに対等に話す', type: 'equal' },
-      { value: 1, label: '場面による', type: 'neutral' },
-      { value: 0, label: 'どちらかが主導することが多い', type: 'lean' },
-    ],
+    axis: 'temperature',
+    direction: 'cold',
+    perspective: 'self',
+    text: '相手との会話中、感情のまま言葉を発する前に一度考える時間が生まれる',
   },
+  
+  // --- Hot方向（相手）---
   {
     id: 5,
-    axis: 'balance',
-    text: '決断をする時、どちらの意見が優先されますか？',
-    options: [
-      { value: 2, label: '常に話し合い、共通の決断をする', type: 'equal' },
-      { value: 1, label: '場面による', type: 'neutral' },
-      { value: 0, label: 'どちらかの意見が自然と通る', type: 'lean' },
-    ],
+    axis: 'temperature',
+    direction: 'hot',
+    perspective: 'other',
+    text: '相手は話す時、目を輝かせて身を乗り出すことが多い',
   },
   {
     id: 6,
-    axis: 'balance',
-    text: '支え合いのバランスは？',
-    options: [
-      { value: 2, label: '常に対等に支え合っている', type: 'equal' },
-      { value: 1, label: '時々頼り切ることもある', type: 'neutral' },
-      { value: 0, label: '基本的に一方が支える構図', type: 'lean' },
-    ],
+    axis: 'temperature',
+    direction: 'hot',
+    perspective: 'other',
+    text: '相手は思い立ったらすぐ行動に移すタイプだと感じる',
   },
-
-  // ========== 目的軸 (Value/Loose) ==========
+  
+  // --- Cold方向（相手）---
   {
     id: 7,
-    axis: 'purpose',
-    text: '二人でいる時、何を重視しますか？',
-    options: [
-      { value: 2, label: '何かを生み出すこと・成長すること', type: 'value' },
-      { value: 1, label: 'バランス良く楽しむこと', type: 'neutral' },
-      { value: 0, label: '何もしないで心地よく過ごすこと', type: 'loose' },
-    ],
+    axis: 'temperature',
+    direction: 'cold',
+    perspective: 'other',
+    text: '相手は物事を分析する時、まるで他人事のように客観的に語ることがある',
   },
   {
     id: 8,
-    axis: 'purpose',
-    text: '二人の時間をどう使いたいですか？',
-    options: [
-      { value: 2, label: 'スキルアップや目標達成に使いたい', type: 'value' },
-      { value: 1, label: 'その時の気分で決める', type: 'neutral' },
-      { value: 0, label: '特に何もせず、ぼーっとしていたい', type: 'loose' },
-    ],
-  },
-  {
-    id: 9,
-    axis: 'purpose',
-    text: 'この関係性に対する将来のイメージは？',
-    options: [
-      { value: 2, label: '一緒に何か大きなことを成し遂げたい', type: 'value' },
-      { value: 1, label: '自然体で変わらずいたい', type: 'neutral' },
-      { value: 0, label: '今を楽しめればそれで良い', type: 'loose' },
-    ],
+    axis: 'temperature',
+    direction: 'cold',
+    perspective: 'other',
+    text: '相手は感情が高ぶっている時でも、声のトーンがあまり変わらない',
   },
 
-  // ========== 同期軸 (Sync/Desync) ==========
+  // ============================================
+  // 重心軸（Equal/Lean）- 8問
+  // ============================================
+  
+  // --- Equal方向（自分）---
   {
-    id: 10,
-    axis: 'sync',
-    text: '価値観や感性は似ていますか？',
-    options: [
-      { value: 2, label: '驚くほど似ている', type: 'sync' },
-      { value: 1, label: '部分部分で似ている', type: 'neutral' },
-      { value: 0, label: '基本的に異なる', type: 'desync' },
-    ],
+    id: 9,
+    axis: 'balance',
+    direction: 'equal',
+    perspective: 'self',
+    text: '相手に頼み事をする時、断られることを気にせず気軽に言える',
   },
   {
+    id: 10,
+    axis: 'balance',
+    direction: 'equal',
+    perspective: 'self',
+    text: '二人で何かを決める時、どちらかが我慢している感覚がない',
+  },
+  
+  // --- Lean方向（自分）---
+  {
     id: 11,
-    axis: 'sync',
-    text: '同じ話題について、お互いの意見は？',
-    options: [
-      { value: 2, label: 'ほぼ同じ考え・感想になる', type: 'sync' },
-      { value: 1, label: '時々意見が分かれる', type: 'neutral' },
-      { value: 0, label: 'よく意見が食い違う', type: 'desync' },
-    ],
+    axis: 'balance',
+    direction: 'lean',
+    perspective: 'self',
+    text: '相手の意見を聞くと、自分の考えが自然と後回しになってしまうことがある',
   },
   {
     id: 12,
-    axis: 'sync',
-    text: '「空気」を読む能力は？',
-    options: [
-      { value: 2, label: '言葉にしない気持ちも伝わる', type: 'sync' },
-      { value: 1, label: '大体わかる', type: 'neutral' },
-      { value: 0, label: '言わないとわからないことも多い', type: 'desync' },
-    ],
+    axis: 'balance',
+    direction: 'lean',
+    perspective: 'self',
+    text: '相手が困っている時、自分が助けないと気が済まない感覚がある',
   },
+  
+  // --- Equal方向（相手）---
   {
     id: 13,
-    axis: 'sync',
-    text: '会話の噛み合い具合は？',
-    options: [
-      { value: 2, label: '完璧に噛み合い、話が通じる', type: 'sync' },
-      { value: 1, label: '大体噛み合う', type: 'neutral' },
-      { value: 0, label: '会話がずれることも多い', type: 'desync' },
-    ],
+    axis: 'balance',
+    direction: 'equal',
+    perspective: 'other',
+    text: '相手は自分の意見に対して、必ず「どう思う？」と聞いてくる',
   },
-
-  // ========== 追加質問（シンクロ率計算用） ==========
   {
     id: 14,
-    axis: 'compatibility',
-    text: '二人の「理想の休日の過ごし方」は近いですか？',
-    options: [
-      { value: 2, label: 'ほぼ同じ', type: 'high' },
-      { value: 1, label: '似ている部分もある', type: 'medium' },
-      { value: 0, label: '全く異なる', type: 'low' },
-    ],
+    axis: 'balance',
+    direction: 'equal',
+    perspective: 'other',
+    text: '相手は自分が拒否した時、同等の拒否を恐れない様子を見せる',
   },
+  
+  // --- Lean方向（相手）---
   {
     id: 15,
-    axis: 'compatibility',
-    text: '「人生で大切にしているもの」は一致しますか？',
-    options: [
-      { value: 2, label: '驚くほど一致する', type: 'high' },
-      { value: 1, label: '一部一致する', type: 'medium' },
-      { value: 0, label: '異なる', type: 'low' },
-    ],
+    axis: 'balance',
+    direction: 'lean',
+    perspective: 'other',
+    text: '相手は自分の前では、少し子供っぽく見える面がある',
   },
   {
     id: 16,
-    axis: 'compatibility',
-    text: '相手の「言わない本音」をどの程度察せますか？',
-    options: [
-      { value: 2, label: 'ほぼ察せる', type: 'high' },
-      { value: 1, label: '時々察せる', type: 'medium' },
-      { value: 0, label: 'ほぼ察せない', type: 'low' },
-    ],
+    axis: 'balance',
+    direction: 'lean',
+    perspective: 'other',
+    text: '相手は自分の決断を待っているような、期待に満ちた視線を向けることがある',
+  },
+
+  // ============================================
+  // 目的軸（Value/Loose）- 8問
+  // ============================================
+  
+  // --- Value方向（自分）---
+  {
+    id: 17,
+    axis: 'purpose',
+    direction: 'value',
+    perspective: 'self',
+    text: '相手と会うと、普段やらない新しいことに挑戦したくなる',
+  },
+  {
+    id: 18,
+    axis: 'purpose',
+    direction: 'value',
+    perspective: 'self',
+    text: 'この関係を「成長の機会」と感じる瞬間がある',
+  },
+  
+  // --- Loose方向（自分）---
+  {
+    id: 19,
+    axis: 'purpose',
+    direction: 'loose',
+    perspective: 'self',
+    text: '相手といると、何も考えずにぼーっとしたくなる',
+  },
+  {
+    id: 20,
+    axis: 'purpose',
+    direction: 'loose',
+    perspective: 'self',
+    text: '相手との時間は、成果を求められない「逃げ場」のような感覚がある',
+  },
+  
+  // --- Value方向（相手）---
+  {
+    id: 21,
+    axis: 'purpose',
+    direction: 'value',
+    perspective: 'other',
+    text: '相手は「次は何をしようか」と積極的に提案してくる',
+  },
+  {
+    id: 22,
+    axis: 'purpose',
+    direction: 'value',
+    perspective: 'other',
+    text: '相手は二人で「何かを成し遂げたい」という言葉を口にする',
+  },
+  
+  // --- Loose方向（相手）---
+  {
+    id: 23,
+    axis: 'purpose',
+    direction: 'loose',
+    perspective: 'other',
+    text: '相手は「何もしない時間」こそが大切だと語ることがある',
+  },
+  {
+    id: 24,
+    axis: 'purpose',
+    direction: 'loose',
+    perspective: 'other',
+    text: '相手は今の関係を「変えたい」とはあまり言わない',
+  },
+
+  // ============================================
+  // 同期軸（Sync/Desync）- 8問
+  // ============================================
+  
+  // --- Sync方向（自分）---
+  {
+    id: 25,
+    axis: 'sync',
+    direction: 'sync',
+    perspective: 'self',
+    text: '相手が言いかけたことを、自分も同時に言おうとしていたことがある',
+  },
+  {
+    id: 26,
+    axis: 'sync',
+    direction: 'sync',
+    perspective: 'self',
+    text: '相手の好きなものを、理由を説明せずに「わかる」と感じる',
+  },
+  
+  // --- Desync方向（自分）---
+  {
+    id: 27,
+    axis: 'sync',
+    direction: 'desync',
+    perspective: 'self',
+    text: '相手が感動している時、自分はそこまで感じていないことがある',
+  },
+  {
+    id: 28,
+    axis: 'sync',
+    direction: 'desync',
+    perspective: 'self',
+    text: '相手の価値観に、どこか違和感を覚える部分がある',
+  },
+  
+  // --- Sync方向（相手）---
+  {
+    id: 29,
+    axis: 'sync',
+    direction: 'sync',
+    perspective: 'other',
+    text: '相手は自分の言葉の「間」や「言わない部分」を読み取ってくれる',
+  },
+  {
+    id: 30,
+    axis: 'sync',
+    direction: 'sync',
+    perspective: 'other',
+    text: '相手は「そうそう、それ！」と自分の感覚を肯定してくれることが多い',
+  },
+  
+  // --- Desync方向（相手）---
+  {
+    id: 31,
+    axis: 'sync',
+    direction: 'desync',
+    perspective: 'other',
+    text: '相手は自分が面白いと思う話を、別の角度から解釈することがある',
+  },
+  {
+    id: 32,
+    axis: 'sync',
+    direction: 'desync',
+    perspective: 'other',
+    text: '相手は自分が気にしないことを、意外と気にしている様子を見せる',
   },
 ];
+
+/**
+ * 質問の総数
+ */
+export const TOTAL_QUESTIONS = questions.length;
+
+/**
+ * 軸ごとの質問数
+ */
+export const QUESTIONS_PER_AXIS = 8;
+
+/**
+ * 乖離度計算用ペア
+ * 同じ軸・同じ方向・同じ視点の質問ペア
+ */
+export function getDivergencePairs() {
+  const pairs = [];
+  const axes = ['temperature', 'balance', 'purpose', 'sync'];
+  
+  axes.forEach(axis => {
+    const axisQuestions = questions.filter(q => q.axis === axis);
+    // 自分視点のペア
+    const selfQuestions = axisQuestions.filter(q => q.perspective === 'self');
+    // 相手視点のペア
+    const otherQuestions = axisQuestions.filter(q => q.perspective === 'other');
+    
+    // 各方向ごとにペアを作成
+    const directions = ['hot', 'cold', 'equal', 'lean', 'value', 'loose', 'sync', 'desync'];
+    directions.forEach(direction => {
+      const selfPair = selfQuestions.filter(q => q.direction === direction);
+      const otherPair = otherQuestions.filter(q => q.direction === direction);
+      
+      if (selfPair.length === 2) {
+        pairs.push({ axis, direction, perspective: 'self', ids: [selfPair[0].id, selfPair[1].id] });
+      }
+      if (otherPair.length === 2) {
+        pairs.push({ axis, direction, perspective: 'other', ids: [otherPair[0].id, otherPair[1].id] });
+      }
+    });
+  });
+  
+  return pairs;
+}
 
 export default questions;

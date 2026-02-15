@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, HelpCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { User, ChevronLeft, ChevronRight, Check, X } from 'lucide-react';
 import Layout from '../../../components/Layout';
 import { useDiagnose } from '../../../context/DiagnoseContext';
-import { questions } from '../../../data/questions';
+import { questions, TOTAL_QUESTIONS } from '../../../data/questions';
 import styles from './page.module.css';
 
 export default function User1Questions() {
@@ -13,7 +13,6 @@ export default function User1Questions() {
   const { user1Name, user1Answers, setUser1Answer } = useDiagnose();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 未ログイン時はリダイレクト
   useEffect(() => {
     if (!user1Name) {
       router.push('/diagnose');
@@ -21,17 +20,20 @@ export default function User1Questions() {
   }, [user1Name, router]);
 
   const currentQuestion = questions[currentIndex];
-  const progress = ((currentIndex + 1) / questions.length) * 100;
+  const progress = ((currentIndex + 1) / TOTAL_QUESTIONS) * 100;
 
   const handleAnswer = (value) => {
     setUser1Answer(currentQuestion.id, value);
+    // 自動で次へ（最後以外）
+    if (currentIndex < TOTAL_QUESTIONS - 1) {
+      setTimeout(() => setCurrentIndex(prev => prev + 1), 200);
+    }
   };
 
   const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
+    if (currentIndex < TOTAL_QUESTIONS - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
-      // 全質問終了 → パートナーBの名前入力へ
       router.push('/diagnose/user2');
     }
   };
@@ -44,7 +46,33 @@ export default function User1Questions() {
 
   const currentAnswer = user1Answers[currentQuestion?.id];
 
+  // 軸と方向の日本語表示
+  const getAxisInfo = (q) => {
+    const axisNames = {
+      temperature: { name: '熱量', icon: '🔥' },
+      balance: { name: '重心', icon: '⚖️' },
+      purpose: { name: '目的', icon: '🎯' },
+      sync: { name: '同期', icon: '🔗' },
+    };
+    const directionLabels = {
+      hot: '熱い', cold: '冷たい',
+      equal: '対等', lean: '偏り',
+      value: '価値', loose: '緩やか',
+      sync: '同期', desync: '非同期',
+    };
+    const perspectiveLabels = { self: '自分', other: '相手' };
+    
+    const axis = axisNames[q.axis];
+    return {
+      ...axis,
+      direction: directionLabels[q.direction],
+      perspective: perspectiveLabels[q.perspective],
+    };
+  };
+
   if (!user1Name || !currentQuestion) return null;
+
+  const axisInfo = getAxisInfo(currentQuestion);
 
   return (
     <Layout>
@@ -53,11 +81,11 @@ export default function User1Questions() {
         <div className={styles.progress}>
           <div className={styles.progressHeader}>
             <span className={styles.progressText}>
-              質問 {currentIndex + 1} / {questions.length}
+              質問 {currentIndex + 1} / {TOTAL_QUESTIONS}
             </span>
             <span className={styles.userBadge}>
               <User className={styles.userIcon} />
-              {user1Name}の回答
+              {user1Name}
             </span>
           </div>
           <div className={styles.progressBar}>
@@ -66,41 +94,47 @@ export default function User1Questions() {
               style={{ width: `${progress}%` }}
             />
           </div>
+          <div className={styles.axisIndicator}>
+            <span className={styles.axisIcon}>{axisInfo.icon}</span>
+            <span className={styles.axisName}>{axisInfo.name}軸</span>
+            <span className={styles.axisDirection}>({axisInfo.direction}・{axisInfo.perspective})</span>
+          </div>
         </div>
 
         {/* Question Card */}
         <div className={`glass ${styles.card} animate-slide-up`}>
-          {/* Axis Badge */}
-          <div className={styles.axisBadge}>
-            <span className={`${styles.badge} ${styles.badgeBlue}`}>
-              {getAxisLabel(currentQuestion.axis)}
-            </span>
-            <HelpCircle className={styles.helpIcon} />
-          </div>
-
           {/* Question */}
           <h2 className={styles.question}>{currentQuestion.text}</h2>
 
-          {/* Options */}
+          {/* Binary Options */}
           <div className={styles.options}>
-            {currentQuestion.options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleAnswer(option.value)}
-                className={`${styles.option} ${
-                  currentAnswer === option.value ? styles.optionSelected : ''
-                }`}
-              >
-                <div className={`${styles.radio} ${
-                  currentAnswer === option.value ? styles.radioSelected : ''
-                }`}>
-                  {currentAnswer === option.value && (
-                    <div className={styles.radioDot} />
-                  )}
-                </div>
-                <span className={styles.optionLabel}>{option.label}</span>
-              </button>
-            ))}
+            <button
+              onClick={() => handleAnswer(true)}
+              className={`${styles.option} ${styles.optionYes} ${
+                currentAnswer === true ? styles.optionSelected : ''
+              }`}
+            >
+              <div className={`${styles.radio} ${
+                currentAnswer === true ? styles.radioSelected : ''
+              }`}>
+                <Check className={styles.radioIcon} />
+              </div>
+              <span className={styles.optionLabel}>はい</span>
+            </button>
+
+            <button
+              onClick={() => handleAnswer(false)}
+              className={`${styles.option} ${styles.optionNo} ${
+                currentAnswer === false ? styles.optionSelected : ''
+              }`}
+            >
+              <div className={`${styles.radio} ${
+                currentAnswer === false ? styles.radioSelected : ''
+              }`}>
+                <X className={styles.radioIcon} />
+              </div>
+              <span className={styles.optionLabel}>いいえ</span>
+            </button>
           </div>
 
           {/* Navigation */}
@@ -116,44 +150,31 @@ export default function User1Questions() {
               前へ
             </button>
 
-            <button
-              onClick={handleNext}
-              disabled={currentAnswer === undefined}
-              className={`${styles.navButton} ${styles.navButtonPrimary} ${
-                currentAnswer === undefined ? styles.navButtonDisabled : ''
-              }`}
-            >
-              {currentIndex === questions.length - 1 ? '回答完了' : '次へ'}
-              <ChevronRight className={styles.navIcon} />
-            </button>
+            {currentAnswer !== undefined && currentIndex === TOTAL_QUESTIONS - 1 && (
+              <button
+                onClick={handleNext}
+                className={`${styles.navButton} ${styles.navButtonPrimary}`}
+              >
+                回答完了
+                <ChevronRight className={styles.navIcon} />
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Axis Description */}
-        <p className={styles.description}>{getAxisDescription(currentQuestion.axis)}</p>
+        {/* Progress Dots */}
+        <div className={styles.dots}>
+          {questions.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentIndex(idx)}
+              className={`${styles.dot} ${
+                idx === currentIndex ? styles.dotActive : ''
+              } ${user1Answers[questions[idx].id] !== undefined ? styles.dotAnswered : ''}`}
+            />
+          ))}
+        </div>
       </div>
     </Layout>
   );
-}
-
-function getAxisLabel(axis) {
-  const labels = {
-    temperature: '熱量軸',
-    balance: '重心軸',
-    purpose: '目的軸',
-    sync: '同期軸',
-    compatibility: '互換性',
-  };
-  return labels[axis] || axis;
-}
-
-function getAxisDescription(axis) {
-  const descriptions = {
-    temperature: '感情的・能動的か、冷静・ドライか',
-    balance: '対等か、どちらかに偏っているか',
-    purpose: '高め合い・生産性か、心地よさ・惰性か',
-    sync: '二人の回答内容が一致しているか、ズレているか',
-    compatibility: '価値観や感性の近さを測定します',
-  };
-  return descriptions[axis] || '';
 }
