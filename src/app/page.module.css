@@ -78,9 +78,13 @@
   color: #999;
 }
 
-/* Start Section */
-.startSection {
-  text-align: center;
+/* Buttons Section */
+.buttonsSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .startButton {
@@ -96,7 +100,6 @@
   border-radius: 8px;
   text-decoration: none;
   transition: all 0.2s ease;
-  margin-bottom: 16px;
 }
 
 .startButton:hover {
@@ -104,7 +107,29 @@
   transform: translateY(-1px);
 }
 
-.startIcon {
+.typesButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 36px;
+  background: transparent;
+  color: #3498db;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 2px solid #3498db;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.typesButton:hover {
+  background: rgba(52, 152, 219, 0.1);
+  transform: translateY(-1px);
+}
+
+.startIcon,
+.typesIcon {
   width: 20px;
   height: 20px;
 }
@@ -112,6 +137,7 @@
 .timeEstimate {
   font-size: 14px;
   color: #999;
+  text-align: center;
 }
 
 /* Responsive */

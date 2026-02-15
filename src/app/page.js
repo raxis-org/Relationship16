@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Grid3X3 } from 'lucide-react';
 import Layout from '../components/Layout';
 import styles from './page.module.css';
 
@@ -52,14 +52,18 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Start Button */}
-        <div className={styles.startSection}>
+        {/* Buttons */}
+        <div className={styles.buttonsSection}>
           <Link href="/diagnose" className={styles.startButton}>
             診断を開始する
             <ArrowRight className={styles.startIcon} />
           </Link>
-          <p className={styles.timeEstimate}>所要時間: 約5分</p>
+          <Link href="/16types" className={styles.typesButton}>
+            <Grid3X3 className={styles.typesIcon} />
+            16タイプ一覧を見る
+          </Link>
         </div>
+        <p className={styles.timeEstimate}>所要時間: 約5分</p>
       </div>
     </Layout>
   );
