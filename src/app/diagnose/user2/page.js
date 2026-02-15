@@ -2,219 +2,111 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Users, User, HelpCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Layout from '../../../components/Layout';
 import { useDiagnose } from '../../../context/DiagnoseContext';
-import { questions } from '../../../data/questions';
 import styles from './page.module.css';
 
-export default function User2Questions() {
+export default function User2Page() {
   const router = useRouter();
-  const { user1Name, user2Name, setUser2Name, user2Answers, setUser2Answer } = useDiagnose();
-  const [name, setName] = useState(user2Name);
-  const [showNameInput, setShowNameInput] = useState(!user2Name);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [error, setError] = useState('');
+  const { 
+    user1Name, 
+    user2Name, 
+    setUser2Name, 
+    getCompletedBlockCount,
+  } = useDiagnose();
+
+  const [name, setName] = useState('');
 
   useEffect(() => {
     if (!user1Name) {
       router.push('/diagnose');
-    }
-  }, [user1Name, router]);
-
-  const handleNameSubmit = (e) => {
-    e.preventDefault();
-    if (!name.trim()) {
-      setError('名前を入力してください');
       return;
     }
-    setUser2Name(name.trim());
-    setShowNameInput(false);
-  };
 
-  const currentQuestion = questions[currentIndex];
-  const progress = ((currentIndex + 1) / questions.length) * 100;
+    // 名前が入力済みの場合は自動遷移
+    if (user2Name) {
+      const completedCount = getCompletedBlockCount('user2');
+      
+      if (completedCount >= 4) {
+        router.push('/diagnose/loading');
+      } else {
+        const axisOrder = ['temperature', 'balance', 'purpose', 'sync'];
+        const nextAxis = axisOrder[completedCount];
+        router.push(`/diagnose/user2/block/${nextAxis}`);
+      }
+    }
+  }, [user1Name, user2Name, getCompletedBlockCount, router]);
 
-  const handleAnswer = (value) => {
-    setUser2Answer(currentQuestion.id, value);
-  };
-
-  const handleNext = () => {
-    if (currentIndex < questions.length - 1) {
-      setCurrentIndex(prev => prev + 1);
-    } else {
-      router.push('/diagnose/loading');
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (name.trim()) {
+      setUser2Name(name.trim());
     }
   };
-
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(prev => prev - 1);
-    }
-  };
-
-  const currentAnswer = user2Answers[currentQuestion?.id];
 
   if (!user1Name) return null;
 
-  // Name Input Mode
-  if (showNameInput) {
+  // 入力済みの場合はローディング表示
+  if (user2Name) {
     return (
       <Layout>
-        <div className={styles.container}>
-          <div className={`glass ${styles.card} animate-fade-in`}>
-            <div className={styles.header}>
-              <div className={`${styles.iconBox} ${styles.iconPurple}`}>
-                <Users className={styles.icon} />
-              </div>
-              <div>
-                <h2 className={styles.title}>パートナーB</h2>
-                <p className={styles.subtitle}>{user1Name}さんとの関係性を診断します</p>
-              </div>
-            </div>
-
-            <form onSubmit={handleNameSubmit} className={styles.form}>
-              <div className={styles.inputGroup}>
-                <label className={styles.label}>お名前（ニックネーム可）</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                    setError('');
-                  }}
-                  placeholder="佐藤花子"
-                  className={styles.input}
-                  autoFocus
-                />
-                {error && <p className={styles.error}>{error}</p>}
-              </div>
-
-              <div className={styles.infoBox}>
-                <p className={styles.infoText}>
-                  <span className={styles.infoHighlight}>{user1Name}</span> さんと
-                  <span className={styles.infoHighlightPurple}> {name || 'パートナー'}</span> さんの
-                  関係性を診断します。
-                </p>
-              </div>
-
-              <button
-                type="submit"
-                disabled={!name.trim()}
-                className={styles.submitButton}
-              >
-                診断を始める
-                <ChevronRight className={styles.submitIcon} />
-              </button>
-            </form>
-          </div>
-        </div>
+        <div className={styles.loading}>読み込み中...</div>
       </Layout>
     );
   }
 
-  // Question Mode
   return (
     <Layout>
       <div className={styles.container}>
-        {/* Progress */}
-        <div className={styles.progress}>
-          <div className={styles.progressHeader}>
-            <span className={styles.progressText}>
-              質問 {currentIndex + 1} / {questions.length}
-            </span>
-            <span className={styles.userBadge}>
-              <User className={styles.userIcon} />
-              {user2Name}の回答
-            </span>
-          </div>
-          <div className={styles.progressBar}>
-            <div
-              className={`${styles.progressFill} ${styles.progressFillPurple}`}
-              style={{ width: `${progress}%` }}
-            />
-          </div>
+        {/* Progress Steps */}
+        <div className={styles.steps}>
+          <div className={styles.stepComplete}>✓</div>
+          <div className={styles.stepLineComplete}></div>
+          <div className={styles.stepActive}>2</div>
+          <div className={styles.stepLine}></div>
+          <div className={styles.stepInactive}>3</div>
         </div>
 
-        {/* Question Card */}
-        <div className={`glass ${styles.card} animate-slide-up`}>
-          <div className={styles.axisBadge}>
-            <span className={`${styles.badge} ${styles.badgePurple}`}>
-              {getAxisLabel(currentQuestion.axis)}
-            </span>
-            <HelpCircle className={styles.helpIcon} />
+        {/* Card */}
+        <div className={styles.card}>
+          <div className={styles.header}>
+            <span className={styles.badge}>パートナーB</span>
+            <h1 className={styles.title}>相手の名前を入力</h1>
+            <p className={styles.description}>
+              もう一方のパートナーのお名前を教えてください
+            </p>
           </div>
 
-          <h2 className={styles.question}>{currentQuestion.text}</h2>
-
-          <div className={styles.options}>
-            {currentQuestion.options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleAnswer(option.value)}
-                className={`${styles.option} ${
-                  currentAnswer === option.value ? styles.optionSelected : ''
-                }`}
-              >
-                <div className={`${styles.radio} ${
-                  currentAnswer === option.value ? styles.radioSelected : ''
-                }`}>
-                  {currentAnswer === option.value && <div className={styles.radioDot} />}
-                </div>
-                <span className={styles.optionLabel}>{option.label}</span>
-              </button>
-            ))}
+          <div className={styles.partnerInfo}>
+            <span className={styles.partnerLabel}>パートナーA</span>
+            <span className={styles.partnerName}>{user1Name}</span>
           </div>
 
-          <div className={styles.navigation}>
-            <button
-              onClick={handlePrev}
-              disabled={currentIndex === 0}
-              className={`${styles.navButton} ${styles.navButtonSecondary} ${
-                currentIndex === 0 ? styles.navButtonHidden : ''
-              }`}
-            >
-              <ChevronLeft className={styles.navIcon} />
-              前へ
-            </button>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.inputGroup}>
+              <label className={styles.label}>お名前（ニックネーム可）</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="例：田中花子"
+                className={styles.input}
+                autoFocus
+              />
+            </div>
 
             <button
-              onClick={handleNext}
-              disabled={currentAnswer === undefined}
-              className={`${styles.navButton} ${styles.navButtonPrimary} ${
-                currentAnswer === undefined ? styles.navButtonDisabled : ''
-              }`}
+              type="submit"
+              disabled={!name.trim()}
+              className={styles.submitButton}
             >
-              {currentIndex === questions.length - 1 ? '回答完了' : '次へ'}
-              <ChevronRight className={styles.navIcon} />
+              診断を開始する
+              <ArrowRight className={styles.submitIcon} />
             </button>
-          </div>
+          </form>
         </div>
-
-        <p className={styles.description}>{getAxisDescription(currentQuestion.axis)}</p>
       </div>
     </Layout>
   );
-}
-
-function getAxisLabel(axis) {
-  const labels = {
-    temperature: '熱量軸',
-    balance: '重心軸',
-    purpose: '目的軸',
-    sync: '同期軸',
-    compatibility: '互換性',
-  };
-  return labels[axis] || axis;
-}
-
-function getAxisDescription(axis) {
-  const descriptions = {
-    temperature: '感情的・能動的か、冷静・ドライか',
-    balance: '対等か、どちらかに偏っているか',
-    purpose: '高め合い・生産性か、心地よさ・惰性か',
-    sync: '二人の回答内容が一致しているか、ズレているか',
-    compatibility: '価値観や感性の近さを測定します',
-  };
-  return descriptions[axis] || '';
 }

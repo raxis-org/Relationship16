@@ -1,24 +1,23 @@
 /**
- * 診断ロジック
- * 4軸スコアリングシステム: 熱量・重心・目的・同期
+ * Kizuna-Mode 診断ロジック
+ * 4軸（P/M/G/V）スコアリングシステム
  */
 
-import { relationTypes, axisThresholds } from '../data/relationTypes';
-import questions from '../data/questions';
+import { QUESTIONS, REVERSE_ITEMS, processAnswer, generateTypeCode, getTypeByCode } from '../data/questions';
 
-export function calculateAxisScores(answers) {
-  const axisScores = {
-    temperature: [],
-    balance: [],
-    purpose: [],
-    sync: [],
-    compatibility: [],
-  };
+/**
+ * 個人の回答から各軸の生スコアを計算
+ * @param {Object} answers - { questionId: answerValue }
+ * @returns {Object} - { P: number, M: number, G: number, V: number }
+ */
+export function calculateRawScores(answers) {
+  const axisScores = { P: [], M: [], G: [], V: [] };
 
-  questions.forEach((q) => {
+  QUESTIONS.forEach((q) => {
     const answer = answers[q.id];
-    if (answer !== undefined && axisScores[q.axis] !== undefined) {
-      axisScores[q.axis].push(answer);
+    if (answer !== undefined) {
+      const processedValue = processAnswer(q.id, answer);
+      axisScores[q.axis].push(processedValue);
     }
   });
 
@@ -27,244 +26,246 @@ export function calculateAxisScores(answers) {
     if (scores.length > 0) {
       averages[axis] = scores.reduce((a, b) => a + b, 0) / scores.length;
     } else {
-      averages[axis] = 1;
+      averages[axis] = 3.0; // デフォルト値
     }
   }
 
   return averages;
 }
 
-function classifyAxis(score, axisType) {
-  const thresholds = axisThresholds[axisType];
-  if (!thresholds) return 'neutral';
+/**
+ * MBTIに基づく補正値を計算
+ * @param {string} mbti - 例: "INTJ"
+ * @returns {Object} - { P: number, M: number, G: number, V: number }
+ */
+export function calculateMBTICorrection(mbti) {
+  if (!mbti || mbti.length !== 4) {
+    return { P: 0, M: 0, G: 0, V: 0 };
+  }
 
-  if (score >= thresholds.hot || score >= thresholds.equal || 
-      score >= thresholds.value || score >= thresholds.sync) {
-    return 'high';
-  }
-  if (score <= thresholds.cold || score <= thresholds.lean || 
-      score <= thresholds.loose || score <= thresholds.desync) {
-    return 'low';
-  }
-  return 'neutral';
+  const corrections = { P: 0, M: 0, G: 0, V: 0 };
+  const type = mbti.toUpperCase();
+
+  // I/EによるP軸補正
+  if (type[0] === 'I') corrections.P += 0.3;
+  else if (type[0] === 'E') corrections.P -= 0.1;
+
+  // T/FによるM軸補正
+  if (type[2] === 'T') corrections.M += 0.25;
+  else if (type[2] === 'F') corrections.M -= 0.1;
+
+  // J/PによるG軸補正
+  if (type[3] === 'J') corrections.G += 0.15;
+  else if (type[3] === 'P') corrections.G -= 0.1;
+
+  // S/NによるV軸補正
+  if (type[1] === 'S') corrections.V += 0.1;
+  else if (type[1] === 'N') corrections.V -= 0.1;
+
+  return corrections;
 }
 
-function getAxisLabels(scores) {
+/**
+ * 年齢差に基づくP軸閾値補正
+ * @param {number} age1 
+ * @param {number} age2 
+ * @returns {number} - 閾値への補正値
+ */
+export function calculateAgeGapCorrection(age1, age2) {
+  if (!age1 || !age2) return 0;
+  
+  const ageDiff = Math.abs(age1 - age2);
+  
+  if (ageDiff <= 3) return 0;
+  if (ageDiff <= 10) return -0.15;
+  return -0.3;
+}
+
+/**
+ * 調整済みスコアを計算
+ * @param {Object} rawScores 
+ * @param {Object} mbtiCorrections 
+ * @returns {Object} - 調整済みスコア
+ */
+export function calculateAdjustedScores(rawScores, mbtiCorrections) {
+  const adjusted = {};
+  for (const axis of ['P', 'M', 'G', 'V']) {
+    adjusted[axis] = Math.max(1.0, Math.min(5.0, 
+      rawScores[axis] + (mbtiCorrections[axis] || 0)
+    ));
+  }
+  return adjusted;
+}
+
+/**
+ * ペアスコアを計算
+ * @param {Object} scores1 - 調整済みスコアA
+ * @param {Object} scores2 - 調整済みスコアB
+ * @returns {Object} - { pair: {}, gap: {} }
+ */
+export function calculatePairScores(scores1, scores2) {
+  const pair = {};
+  const gap = {};
+
+  for (const axis of ['P', 'M', 'G', 'V']) {
+    pair[axis] = (scores1[axis] + scores2[axis]) / 2;
+    gap[axis] = Math.abs(scores1[axis] - scores2[axis]);
+  }
+
+  return { pair, gap };
+}
+
+/**
+ * 関係性カテゴリに基づく閾値を取得
+ * @param {string} category - lover/friend/work/family
+ * @returns {Object} - { P: number, M: number, G: number, V: number }
+ */
+export function getThresholdsByCategory(category) {
+  const thresholds = {
+    lover: { P: 3.0, M: 3.2, G: 3.0, V: 2.8 },
+    friend: { P: 3.0, M: 2.8, G: 2.8, V: 3.0 },
+    work: { P: 3.2, M: 2.5, G: 3.2, V: 2.8 },
+    family: { P: 2.8, M: 3.0, G: 2.8, V: 3.0 },
+  };
+  return thresholds[category] || thresholds.friend;
+}
+
+/**
+ * 総合スコアを計算
+ * @param {Object} pairScores 
+ * @param {Object} gapScores 
+ * @param {Object} thresholds 
+ * @returns {Object} - { fitScore, stabilityScore, kizunaScore }
+ */
+export function calculateOverallScores(pairScores, gapScores, thresholds) {
+  // Fit Score: 各軸のスコアが閾値からどれだけ明確に離れているか
+  let fitSum = 0;
+  for (const axis of ['P', 'M', 'G', 'V']) {
+    fitSum += Math.abs(pairScores[axis] - thresholds[axis]);
+  }
+  const fitScore = (fitSum / 4) / 2.0 * 100;
+
+  // Stability Score: 認識のズレがどれだけ小さいか
+  let stabilitySum = 0;
+  for (const axis of ['P', 'M', 'G', 'V']) {
+    stabilitySum += 1 - gapScores[axis] / 4.0;
+  }
+  const stabilityScore = (stabilitySum / 4) * 100;
+
+  // Kizuna Score
+  const kizunaScore = 0.4 * fitScore + 0.6 * stabilityScore;
+
   return {
-    temperature: classifyAxis(scores.temperature, 'temperature'),
-    balance: classifyAxis(scores.balance, 'balance'),
-    purpose: classifyAxis(scores.purpose, 'purpose'),
-    sync: classifyAxis(scores.sync, 'sync'),
+    fitScore: Math.round(fitScore),
+    stabilityScore: Math.round(stabilityScore),
+    kizunaScore: Math.round(kizunaScore),
   };
 }
 
-export function calculateSyncRate(answers1, answers2) {
-  let totalMatch = 0;
-  let totalQuestions = 0;
-  let compatibilityScore = 0;
-  let compatibilityCount = 0;
+/**
+ * 診断を実行
+ * @param {Object} params
+ * @returns {Object} - 診断結果
+ */
+export function diagnose({
+  answers1,
+  answers2,
+  user1Name = 'パートナーA',
+  user2Name = 'パートナーB',
+  user1MBTI = '',
+  user2MBTI = '',
+  user1Age = 0,
+  user2Age = 0,
+  category = 'friend',
+}) {
+  // 1. 生スコア計算
+  const rawScores1 = calculateRawScores(answers1);
+  const rawScores2 = calculateRawScores(answers2);
 
-  const syncQuestions = questions.filter(q => q.axis === 'sync');
-  syncQuestions.forEach((q) => {
-    const a1 = answers1[q.id];
-    const a2 = answers2[q.id];
-    if (a1 !== undefined && a2 !== undefined) {
-      const diff = Math.abs(a1 - a2);
-      totalMatch += (2 - diff) / 2;
-      totalQuestions++;
-    }
+  // 2. MBTI補正
+  const mbtiCorr1 = calculateMBTICorrection(user1MBTI);
+  const mbtiCorr2 = calculateMBTICorrection(user2MBTI);
+
+  // 3. 調整済みスコア
+  const adjustedScores1 = calculateAdjustedScores(rawScores1, mbtiCorr1);
+  const adjustedScores2 = calculateAdjustedScores(rawScores2, mbtiCorr2);
+
+  // 4. ペアスコア
+  const { pair: pairScores, gap: gapScores } = calculatePairScores(adjustedScores1, adjustedScores2);
+
+  // 5. 閾値取得と年齢差補正
+  const thresholds = { ...getThresholdsByCategory(category) };
+  const ageCorrection = calculateAgeGapCorrection(user1Age, user2Age);
+  thresholds.P += ageCorrection;
+
+  // 6. タイプコード判定
+  const typeCode = generateTypeCode({
+    P: pairScores.P,
+    M: pairScores.M,
+    G: pairScores.G,
+    V: pairScores.V,
   });
 
-  const compatibilityQuestions = questions.filter(q => q.axis === 'compatibility');
-  compatibilityQuestions.forEach((q) => {
+  // 7. タイプ情報取得
+  const typeInfo = getTypeByCode(typeCode);
+
+  // 8. 総合スコア計算
+  const overallScores = calculateOverallScores(pairScores, gapScores, thresholds);
+
+  // 9. 回答比較データ作成
+  const answerComparison = QUESTIONS.map(q => {
     const a1 = answers1[q.id];
     const a2 = answers2[q.id];
-    if (a1 !== undefined && a2 !== undefined) {
-      compatibilityScore += a1 + a2;
-      compatibilityCount += 2;
-    }
+    const p1 = processAnswer(q.id, a1);
+    const p2 = processAnswer(q.id, a2);
+    return {
+      questionId: q.id,
+      axis: q.axis,
+      code: q.code,
+      text: q.text,
+      user1: { raw: a1, processed: p1 },
+      user2: { raw: a2, processed: p2 },
+      gap: Math.abs(p1 - p2),
+    };
   });
 
-  const syncMatchRate = totalQuestions > 0 ? totalMatch / totalQuestions : 0.5;
-  const compatibilityRate = compatibilityCount > 0 ? 
-    compatibilityScore / compatibilityCount / 2 : 0.5;
-
-  const rawSyncRate = (syncMatchRate * 0.6 + compatibilityRate * 0.4) * 100;
-
-  const scores1 = calculateAxisScores(answers1);
-  const scores2 = calculateAxisScores(answers2);
-  
-  const temperatureDiff = Math.abs(scores1.temperature - scores2.temperature);
-  const purposeDiff = Math.abs(scores1.purpose - scores2.purpose);
-  const penalty = (temperatureDiff + purposeDiff) * 5;
-  
-  let finalSyncRate = Math.max(5, Math.min(100, rawSyncRate - penalty));
-  return Math.round(finalSyncRate);
-}
-
-function generateTypeCode(labels) {
-  const tempMap = { high: 'HOT', neutral: 'NEUTRAL', low: 'COLD' };
-  const balanceMap = { high: 'EQUAL', neutral: 'NEUTRAL', low: 'LEAN' };
-  const purposeMap = { high: 'VALUE', neutral: 'NEUTRAL', low: 'LOOSE' };
-  const syncMap = { high: 'SYNC', neutral: 'NEUTRAL', low: 'DESYNC' };
-
-  return `${tempMap[labels.temperature]}-${balanceMap[labels.balance]}-${purposeMap[labels.purpose]}-${syncMap[labels.sync]}`;
-}
-
-function findRelationType(typeCode, syncRate) {
-  let match = relationTypes.find(t => t.code === typeCode);
-  
-  if (!match) {
-    const [temp, balance, purpose, sync] = typeCode.split('-');
-    let bestMatch = null;
-    let bestScore = -1;
-    
-    for (const type of relationTypes) {
-      let score = 0;
-      const [tTemp, tBalance, tPurpose, tSync] = type.code.split('-');
-      
-      if (tTemp === temp) score += 2;
-      if (tBalance === balance) score += 2;
-      if (tPurpose === purpose) score += 2;
-      if (tSync === sync) score += 2;
-      
-      if (syncRate >= type.syncRate.min && syncRate <= type.syncRate.max) {
-        score += 3;
-      }
-      
-      if (score > bestScore) {
-        bestScore = score;
-        bestMatch = type;
-      }
-    }
-    
-    match = bestMatch || relationTypes[relationTypes.length - 1];
+  // 10. 軸ごとの詳細
+  const axisDetails = {};
+  for (const axis of ['P', 'M', 'G', 'V']) {
+    axisDetails[axis] = {
+      user1: adjustedScores1[axis],
+      user2: adjustedScores2[axis],
+      pair: pairScores[axis],
+      gap: gapScores[axis],
+      threshold: thresholds[axis],
+      isRight: pairScores[axis] >= thresholds[axis],
+    };
   }
-  
-  return match;
-}
-
-function generateResultDetails(type, syncRate, scores1, scores2) {
-  const analysisComments = [];
-  
-  const avgTemp = (scores1.temperature + scores2.temperature) / 2;
-  if (avgTemp >= 1.5) {
-    analysisComments.push('二人の間には熱い情熱が流れています。');
-  } else if (avgTemp <= 0.5) {
-    analysisComments.push('冷静で理性的な関係です。');
-  } else {
-    analysisComments.push('適度な熱量でバランスが取れています。');
-  }
-
-  const avgBalance = (scores1.balance + scores2.balance) / 2;
-  if (avgBalance >= 1.5) {
-    analysisComments.push('対等なパートナー関係です。');
-  } else if (avgBalance <= 0.5) {
-    analysisComments.push('どちらかがリードする構図です。');
-  }
-
-  const avgPurpose = (scores1.purpose + scores2.purpose) / 2;
-  if (avgPurpose >= 1.5) {
-    analysisComments.push('共に成長し、何かを生み出すことを目指しています。');
-  } else if (avgPurpose <= 0.5) {
-    analysisComments.push('心地よさを大切にする、リラックスした関係です。');
-  }
-
-  if (syncRate >= 80) {
-    analysisComments.push('驚くほど価値観や感性が一致しています。');
-  } else if (syncRate >= 50) {
-    analysisComments.push('部分的に共通点があります。');
-  } else {
-    analysisComments.push('価値観や感性に違いがあるようです。');
-  }
-
-  const axisDetails = {
-    temperature: {
-      score: avgTemp,
-      label: avgTemp >= 1.5 ? 'Hot' : avgTemp <= 0.5 ? 'Cold' : 'Neutral',
-      description: avgTemp >= 1.5 ? '情熱的で感情的' : avgTemp <= 0.5 ? '冷静でドライ' : 'バランス型',
-    },
-    balance: {
-      score: avgBalance,
-      label: avgBalance >= 1.5 ? 'Equal' : avgBalance <= 0.5 ? 'Lean' : 'Neutral',
-      description: avgBalance >= 1.5 ? '対等な関係' : avgBalance <= 0.5 ? 'どちらかに偏りあり' : 'バランス型',
-    },
-    purpose: {
-      score: avgPurpose,
-      label: avgPurpose >= 1.5 ? 'Value' : avgPurpose <= 0.5 ? 'Loose' : 'Neutral',
-      description: avgPurpose >= 1.5 ? '成長・生産性重視' : avgPurpose <= 0.5 ? '心地よさ・惰性重視' : 'バランス型',
-    },
-    sync: {
-      score: syncRate / 100 * 2,
-      label: syncRate >= 60 ? 'Sync' : syncRate <= 40 ? 'Desync' : 'Neutral',
-      description: syncRate >= 60 ? '高い同期' : syncRate <= 40 ? '非同期' : '中庸',
-    },
-  };
 
   return {
-    analysisComments,
-    axisDetails,
-  };
-}
-
-export function diagnose(answers1, answers2, user1Name = 'パートナーA', user2Name = 'パートナーB') {
-  const scores1 = calculateAxisScores(answers1);
-  const scores2 = calculateAxisScores(answers2);
-  const syncRate = calculateSyncRate(answers1, answers2);
-
-  const avgLabels = {
-    temperature: classifyAxis((scores1.temperature + scores2.temperature) / 2, 'temperature'),
-    balance: classifyAxis((scores1.balance + scores2.balance) / 2, 'balance'),
-    purpose: classifyAxis((scores1.purpose + scores2.purpose) / 2, 'purpose'),
-    sync: syncRate >= 60 ? 'high' : syncRate <= 40 ? 'low' : 'neutral',
-  };
-
-  const typeCode = generateTypeCode(avgLabels);
-  const relationType = findRelationType(typeCode, syncRate);
-  const details = generateResultDetails(relationType, syncRate, scores1, scores2);
-
-  return {
-    type: relationType,
-    syncRate,
+    type: typeInfo,
     typeCode,
-    user1: { name: user1Name, scores: scores1 },
-    user2: { name: user2Name, scores: scores2 },
-    details,
+    codeDescription: `${pairScores.P >= thresholds.P ? 'E' : 'H'}${pairScores.M >= thresholds.M ? 'B' : 'I'}${pairScores.G >= thresholds.G ? 'S' : 'A'}${pairScores.V >= thresholds.V ? 'C' : 'D'}`,
+    scores: {
+      fitScore: overallScores.fitScore,
+      stabilityScore: overallScores.stabilityScore,
+      kizunaScore: overallScores.kizunaScore,
+      axisDetails,
+    },
+    users: {
+      user1: { name: user1Name, mbti: user1MBTI, age: user1Age },
+      user2: { name: user2Name, mbti: user2MBTI, age: user2Age },
+    },
+    answerComparison,
+    category,
     timestamp: new Date().toISOString(),
   };
 }
 
-export function serializeResult(result) {
-  const data = {
-    typeId: result.type.id,
-    syncRate: result.syncRate,
-    user1Name: result.user1.name,
-    user2Name: result.user2.name,
-    timestamp: result.timestamp,
-  };
-  return btoa(JSON.stringify(data));
-}
-
-export function deserializeResult(serialized) {
-  try {
-    const data = JSON.parse(atob(serialized));
-    const type = relationTypes.find(t => t.id === data.typeId);
-    return {
-      type,
-      syncRate: data.syncRate,
-      user1: { name: data.user1Name },
-      user2: { name: data.user2Name },
-      timestamp: data.timestamp,
-    };
-  } catch (e) {
-    return null;
-  }
-}
-
 export default {
   diagnose,
-  calculateAxisScores,
-  calculateSyncRate,
-  serializeResult,
-  deserializeResult,
+  calculateRawScores,
+  calculateAdjustedScores,
+  calculatePairScores,
+  calculateOverallScores,
 };

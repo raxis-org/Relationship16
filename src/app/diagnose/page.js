@@ -2,15 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Users, ChevronRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Layout from '../../components/Layout';
 import { useDiagnose } from '../../context/DiagnoseContext';
 import styles from './page.module.css';
 
 export default function DiagnoseStart() {
   const router = useRouter();
-  const { user1Name, setUser1Name } = useDiagnose();
-  const [name, setName] = useState(user1Name);
+  const { setUser1Name } = useDiagnose();
+  const [name, setName] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
@@ -26,22 +26,28 @@ export default function DiagnoseStart() {
   return (
     <Layout>
       <div className={styles.container}>
-        <div className={`glass ${styles.card} animate-fade-in`}>
+        {/* Progress Steps */}
+        <div className={styles.steps}>
+          <div className={styles.stepActive}>1</div>
+          <div className={styles.stepLine}></div>
+          <div className={styles.stepInactive}>2</div>
+          <div className={styles.stepLine}></div>
+          <div className={styles.stepInactive}>3</div>
+        </div>
+
+        {/* Card */}
+        <div className={styles.card}>
           <div className={styles.header}>
-            <div className={`${styles.iconBox} ${styles.iconBlue}`}>
-              <Users className={styles.icon} />
-            </div>
-            <div>
-              <h2 className={styles.title}>パートナーA</h2>
-              <p className={styles.subtitle}>まずあなたの名前を教えてください</p>
-            </div>
+            <span className={styles.badge}>パートナーA</span>
+            <h1 className={styles.title}>あなたの名前を入力</h1>
+            <p className={styles.description}>
+              診断を始める前に、まずあなたのお名前を教えてください
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.inputGroup}>
-              <label className={styles.label}>
-                お名前（ニックネーム可）
-              </label>
+              <label className={styles.label}>お名前（ニックネーム可）</label>
               <input
                 type="text"
                 value={name}
@@ -49,7 +55,7 @@ export default function DiagnoseStart() {
                   setName(e.target.value);
                   setError('');
                 }}
-                placeholder="山田太郎"
+                placeholder="例：山田太郎"
                 className={styles.input}
                 autoFocus
               />
@@ -61,10 +67,15 @@ export default function DiagnoseStart() {
               disabled={!name.trim()}
               className={styles.submitButton}
             >
-              次へ
-              <ChevronRight className={styles.submitIcon} />
+              次へ進む
+              <ArrowRight className={styles.submitIcon} />
             </button>
           </form>
+        </div>
+
+        {/* Info */}
+        <div className={styles.info}>
+          <p>30問の質問に答えて、あなたと相手の関係性タイプを診断します</p>
         </div>
       </div>
     </Layout>

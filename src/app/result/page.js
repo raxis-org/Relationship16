@@ -1,45 +1,18 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import {
-  Crown, Swords, Briefcase, Users, Sparkles, Coffee,
-  Heart, Leaf, Dog, Eye, UserCircle, Anchor, Ghost, ArrowRight,
-  UserX, Bot, Share2, RefreshCw, ChevronRight
-} from 'lucide-react';
+import { RefreshCw, Share2, ChevronDown, ChevronUp } from 'lucide-react';
 import Layout from '../../components/Layout';
 import { useDiagnose } from '../../context/DiagnoseContext';
+import { AXES } from '../../data/questions';
 import styles from './page.module.css';
-
-const iconMap = {
-  Crown, Swords, Briefcase, Users, Sparkles, Coffee,
-  Heart, Leaf, Dog, Eye, Mask: UserCircle, Anchor,
-  UFO: Ghost, ArrowRight, UserX, Bot,
-};
-
-const typeNames = {
-  1: '伝説のバディ',
-  2: '宿命のライバル',
-  3: '最強のビジネスパートナー',
-  4: '師弟を超えた共犯者',
-  5: '魂の双子',
-  6: '陽だまりの老夫婦',
-  7: '全肯定型サンクチュアリ',
-  8: '放牧中の幼馴染',
-  9: '飼い主と忠犬',
-  10: '相互監視型メンヘラ',
-  11: '利害一致の仮面夫婦',
-  12: '共依存の泥舟',
-  13: '平行線を辿る宇宙人',
-  14: '一方通行の片想い',
-  15: '昨日会った親友',
-  16: 'NPCとプレイヤー',
-};
 
 export default function Result() {
   const router = useRouter();
-  const { result, reset, user1Name, user2Name } = useDiagnose();
+  const { result, reset } = useDiagnose();
+  const [showComparison, setShowComparison] = useState(false);
 
   useEffect(() => {
     if (!result) {
@@ -49,26 +22,7 @@ export default function Result() {
 
   if (!result) return null;
 
-  const { type, syncRate, details } = result;
-  const IconComponent = iconMap[type.icon] || Bot;
-
-  const getSyncRateColor = (rate) => {
-    if (rate >= 80) return 'linear-gradient(90deg, #4ade80, #10b981)';
-    if (rate >= 60) return 'linear-gradient(90deg, #60a5fa, #06b6d4)';
-    if (rate >= 40) return 'linear-gradient(90deg, #fbbf24, #f97316)';
-    if (rate >= 20) return 'linear-gradient(90deg, #f97316, #ef4444)';
-    return 'linear-gradient(90deg, #ef4444, #be123c)';
-  };
-
-  const getRankColor = (rank) => {
-    if (rank.startsWith('S')) return '#facc15';
-    if (rank.startsWith('A')) return '#22d3ee';
-    if (rank.startsWith('B')) return '#4ade80';
-    if (rank.startsWith('C')) return '#fb923c';
-    if (rank.startsWith('D')) return '#f87171';
-    if (rank.startsWith('E')) return '#c084fc';
-    return '#6b7280';
-  };
+  const { type, typeCode, scores, users, answerComparison } = result;
 
   const handleShare = () => {
     const url = window.location.href;
@@ -77,118 +31,199 @@ export default function Result() {
     });
   };
 
+  // 軸データ
+  const axisData = [
+    { key: 'P', ...AXES.P },
+    { key: 'M', ...AXES.M },
+    { key: 'G', ...AXES.G },
+    { key: 'V', ...AXES.V },
+  ];
+
+  // スコアを0-100%に変換
+  const normalizeScore = (score) => ((score - 1) / 4) * 100;
+
   return (
     <Layout>
       <div className={styles.container}>
-        {/* Header */}
-        <div className={styles.header}>
-          <div className={styles.partners}>
-            <span>診断結果</span>
-            <span>|</span>
-            <span className={styles.partnerBlue}>{user1Name}</span>
-            <span>×</span>
-            <span className={styles.partnerPurple}>{user2Name}</span>
-          </div>
+        {/* Partners */}
+        <div className={styles.partners}>
+          <span>{users.user1.name}</span>
+          <span className={styles.times}>×</span>
+          <span>{users.user2.name}</span>
         </div>
 
-        {/* Main Result Card */}
-        <div className={`glass ${styles.mainCard}`}>
-          {/* Rank */}
-          <div className={styles.rank} style={{ color: getRankColor(type.rank) }}>
-            {type.rank}
-          </div>
+        {/* Type Code */}
+        <div className={styles.codeSection}>
+          <div className={styles.typeCode}>{typeCode}</div>
+          <div className={styles.codeLabel}>あなたたちの関係性タイプ</div>
+        </div>
 
-          {/* Type Name */}
+        {/* Main Result */}
+        <div className={styles.mainCard}>
+          <div className={styles.rank}>{type.rank}ランク</div>
           <h1 className={styles.typeName}>{type.name}</h1>
-
-          {/* Type Code */}
-          <code className={styles.typeCode}>{type.code}</code>
-
-          {/* Icon */}
-          <div className={styles.iconWrapper} style={{ background: type.color }}>
-            <IconComponent className={styles.icon} />
-          </div>
-
-          {/* Description */}
           <p className={styles.description}>{type.description}</p>
+        </div>
 
-          {/* Sync Rate */}
-          <div className={styles.syncRate}>
-            <div className={styles.syncRateHeader}>
-              <span>シンクロ率</span>
-              <span className={styles.syncRateValue}>{syncRate}%</span>
-            </div>
-            <div className={styles.syncRateBar}>
-              <div
-                className={styles.syncRateFill}
-                style={{ 
-                  width: `${syncRate}%`,
-                  background: getSyncRateColor(syncRate)
-                }}
-              />
-            </div>
+        {/* Scores */}
+        <div className={styles.scoresGrid}>
+          <div className={styles.scoreCard}>
+            <div className={styles.scoreLabel}>関係性フィット度</div>
+            <div className={styles.scoreValue}>{scores.fitScore}%</div>
+          </div>
+          <div className={styles.scoreCard}>
+            <div className={styles.scoreLabel}>関係性安定度</div>
+            <div className={styles.scoreValue}>{scores.stabilityScore}%</div>
+          </div>
+          <div className={styles.scoreCard}>
+            <div className={styles.scoreLabel}>絆スコア</div>
+            <div className={styles.scoreValue}>{scores.kizunaScore}%</div>
           </div>
         </div>
 
-        {/* Details Grid */}
-        <div className={styles.detailsGrid}>
-          <div className={`glass ${styles.detailCard}`}>
-            <div className={styles.detailHeader}>
-              <Sparkles className={styles.detailIconBlue} />
-              <h3>おすすめの過ごし方</h3>
-            </div>
+        {/* 4 Axis Scores */}
+        <div className={styles.axisSection}>
+          <h2 className={styles.sectionTitle}>4軸分析</h2>
+          <div className={styles.axisGrid}>
+            {axisData.map((axis) => {
+              const detail = scores.axisDetails[axis.key];
+              const u1Pct = normalizeScore(detail.user1);
+              const u2Pct = normalizeScore(detail.user2);
+              
+              return (
+                <div key={axis.key} className={styles.axisCard}>
+                  <div className={styles.axisHeader}>
+                    <span className={styles.axisCode}>{axis.key}</span>
+                    <span className={styles.axisName}>{axis.nameJa}</span>
+                    <span 
+                      className={styles.axisSide}
+                      style={{ color: axis.color }}
+                    >
+                      {detail.isRight ? axis.right.code : axis.left.code}
+                    </span>
+                  </div>
+                  <div className={styles.axisBarContainer}>
+                    <div className={styles.axisLabels}>
+                      <span>{axis.left.code}</span>
+                      <span>{axis.right.code}</span>
+                    </div>
+                    <div className={styles.axisBar}>
+                      <div 
+                        className={styles.axisMarker}
+                        style={{ 
+                          left: `${u1Pct}%`,
+                          background: '#666',
+                        }}
+                        title={`${users.user1.name}: ${detail.user1.toFixed(1)}`}
+                      />
+                      <div 
+                        className={styles.axisMarker}
+                        style={{ 
+                          left: `${u2Pct}%`,
+                          background: axis.color,
+                        }}
+                        title={`${users.user2.name}: ${detail.user2.toFixed(1)}`}
+                      />
+                      <div 
+                        className={styles.axisThreshold}
+                        style={{ 
+                          left: `${normalizeScore(detail.threshold)}%`,
+                        }}
+                      />
+                    </div>
+                    <div className={styles.axisLegend}>
+                      <span className={styles.legendItem}>
+                        <span className={styles.legendDot} style={{ background: '#666' }} />
+                        {users.user1.name}
+                      </span>
+                      <span className={styles.legendItem}>
+                        <span className={styles.legendDot} style={{ background: axis.color }} />
+                        {users.user2.name}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Recommendations */}
+        <div className={styles.recommendSection}>
+          <div className={styles.recommendCard}>
+            <h3>おすすめの過ごし方</h3>
             <p>{type.recommendedActivity}</p>
           </div>
-
-          <div className={`glass ${styles.detailCard}`}>
-            <div className={styles.detailHeader}>
-              <Swords className={styles.detailIconPink} />
-              <h3>毒舌アドバイス</h3>
-            </div>
-            <p className={styles.advice}>「{type.sarcasticAdvice}」</p>
+          <div className={styles.recommendCard}>
+            <h3>避けるべきこと</h3>
+            <p>{type.badActivity}</p>
           </div>
         </div>
 
-        {/* 4 Axis Analysis */}
-        <div className={`glass ${styles.axisCard}`}>
-          <h3 className={styles.axisTitle}>4軸分析</h3>
+        {/* Answer Comparison */}
+        <div className={styles.comparisonSection}>
+          <button 
+            className={styles.comparisonToggle}
+            onClick={() => setShowComparison(!showComparison)}
+          >
+            <span>質問ごとの回答比較</span>
+            {showComparison ? <ChevronUp /> : <ChevronDown />}
+          </button>
           
-          <div className={styles.axisGrid}>
-            {renderAxisCard('temperature', '熱量', details.axisDetails.temperature)}
-            {renderAxisCard('balance', '重心', details.axisDetails.balance)}
-            {renderAxisCard('purpose', '目的', details.axisDetails.purpose)}
-            {renderAxisCard('sync', '同期', details.axisDetails.sync)}
-          </div>
-
-          <div className={styles.comments}>
-            <h4>分析コメント</h4>
-            <ul>
-              {details.analysisComments.map((comment, index) => (
-                <li key={index}>
-                  <ChevronRight className={styles.commentIcon} />
-                  <span>{comment}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Type Matrix */}
-        <div className={`glass ${styles.matrixCard}`}>
-          <h3 className={styles.matrixTitle}>16タイプ・マトリックス</h3>
-          <div className={styles.matrixGrid}>
-            {[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16].map((id) => (
-              <div
-                key={id}
-                className={`${styles.matrixItem} ${
-                  id === type.id ? styles.matrixItemActive : ''
-                }`}
-              >
-                {typeNames[id]}
-              </div>
-            ))}
-          </div>
-        </div>
+          {showComparison && (
+            <div className={styles.comparisonContent}>
+              {['P', 'M', 'G', 'V'].map(axisKey => {
+                const axis = AXES[axisKey];
+                const axisQuestions = answerComparison.filter(q => q.axis === axisKey);
+                
+                return (
+                  <div key={axisKey} className={styles.comparisonAxis}>
+                    <div 
+                      className={styles.comparisonAxisHeader}
+                      style={{ borderLeftColor: axis.color }}
+                    >
+                      <span className={styles.comparisonAxisCode}>{axisKey}</span>
+                      <span className={styles.comparisonAxisName}>{axis.nameJa}</span>
+                      <span className={styles.comparisonAxisRange}>
+                        {axis.left.code} ←→ {axis.right.code}
+                      </span>
+                    </div>
+                    <div className={styles.comparisonQuestions}>
+                      {axisQuestions.map((q) => (
+                        <div key={q.questionId} className={styles.comparisonRow}>
+                          <div className={styles.comparisonQ}>{q.code}</div>
+                          <div className={styles.comparisonText}>{q.text}</div>
+                          <div className={styles.comparisonValues}>
+                            <div 
+                              className={styles.comparisonValue}
+                              style={{ background: '#666' }}
+                            >
+                              {q.user1.raw}
+                            </div>
+                            <div 
+                                      className={styles.comparisonValue}
+                                      style={{ background: axis.color }}
+                                    >
+                                      {q.user2.raw}
+                                    </div>
+                                  </div>
+                                  <div 
+                                    className={styles.comparisonGap}
+                                    style={{ 
+                                      color: q.gap > 2 ? '#e74c3c' : q.gap > 1 ? '#f1c40f' : '#27ae60'
+                                    }}
+                                  >
+                                    差: {q.gap.toFixed(1)}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
 
         {/* Actions */}
         <div className={styles.actions}>
@@ -203,43 +238,5 @@ export default function Result() {
         </div>
       </div>
     </Layout>
-  );
-}
-
-function renderAxisCard(key, label, detail) {
-  const colors = {
-    temperature: 'linear-gradient(135deg, #ef4444, #f97316)',
-    balance: 'linear-gradient(135deg, #3b82f6, #06b6d4)',
-    purpose: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
-    sync: 'linear-gradient(135deg, #22c55e, #10b981)',
-  };
-
-  const emojis = {
-    temperature: '🔥',
-    balance: '⚖️',
-    purpose: '🎯',
-    sync: '🔗',
-  };
-
-  return (
-    <div className={styles.axisItem}>
-      <div className={styles.axisItemHeader}>
-        <span className={styles.axisEmoji}>{emojis[key]}</span>
-        <span className={styles.axisLabel}>{label}</span>
-      </div>
-      <div
-        className={styles.axisValue}
-        style={{ background: colors[key], WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}
-      >
-        {detail.label}
-      </div>
-      <div className={styles.axisDesc}>{detail.description}</div>
-      <div className={styles.axisBar}>
-        <div
-          className={styles.axisBarFill}
-          style={{ width: `${(detail.score / 2) * 100}%`, background: colors[key] }}
-        />
-      </div>
-    </div>
   );
 }

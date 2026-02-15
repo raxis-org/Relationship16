@@ -1,203 +1,144 @@
 .container {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-xl);
+  max-width: 640px;
+  margin: 0 auto;
 }
 
-.content {
+/* Hero Section */
+.hero {
   text-align: center;
-  max-width: 600px;
-  animation: fadeIn 0.5s ease-out;
+  margin-bottom: 48px;
 }
 
-/* Visual */
-.visual {
-  position: relative;
-  margin-bottom: var(--space-xl);
-}
-
-.visualGlow {
-  position: absolute;
-  inset: 0;
-  background: var(--gradient-text);
-  border-radius: 50%;
-  filter: blur(40px);
-  opacity: 0.3;
-  animation: pulse 3s infinite;
-}
-
-.visualBox {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 120px;
-  height: 120px;
-  background: var(--color-bg-card);
-  border-radius: var(--radius-2xl);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: var(--shadow-lg);
-}
-
-.visualIcon {
-  font-size: 4rem;
-}
-
-/* Title */
 .title {
-  font-size: 3rem;
+  font-size: 32px;
   font-weight: 700;
-  background: var(--gradient-text);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: var(--space-sm);
+  color: #1a1a1a;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
-  font-size: 1.25rem;
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-xl);
+  font-size: 16px;
+  color: #666;
+  line-height: 1.6;
 }
 
-/* Description */
-.description {
-  border-radius: var(--radius-xl);
-  padding: var(--space-lg);
-  margin-bottom: var(--space-lg);
-  text-align: left;
+/* Axes Section */
+.axesSection {
+  margin-bottom: 48px;
 }
 
-.descriptionTitle {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--color-text);
-  margin-bottom: var(--space-md);
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
-.descriptionIcon {
-  width: 20px;
-  height: 20px;
-  color: var(--color-blue);
-}
-
-.axisGrid {
+.axesGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-md);
+  gap: 12px;
 }
 
-.axisItem {
+.axisCard {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  font-size: 0.875rem;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
 }
 
-.axisEmoji {
-  font-size: 1.5rem;
+.axisColor {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.axisContent {
+  flex: 1;
 }
 
 .axisName {
-  font-weight: 500;
-  color: var(--color-text);
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
 }
 
-.axisLabel {
-  color: var(--color-text-dim);
-  font-size: 0.75rem;
+.axisLabels {
+  font-size: 13px;
+  color: #999;
 }
 
-/* Matrix */
-.matrix {
-  border-radius: var(--radius-xl);
-  padding: var(--space-lg);
-  margin-bottom: var(--space-xl);
+/* Start Section */
+.startSection {
+  text-align: center;
 }
 
-.matrixTitle {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-md);
-}
-
-.matrixGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-sm);
-}
-
-.matrixItem {
-  padding: var(--space-sm);
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: var(--radius-sm);
-  font-size: 0.625rem;
-  color: var(--color-text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Start Button */
 .startButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-md);
-  padding: var(--space-md) var(--space-xl);
-  background: var(--gradient-primary);
+  gap: 10px;
+  padding: 16px 48px;
+  background: #3498db;
   color: white;
-  font-size: 1.125rem;
-  font-weight: 700;
-  border-radius: var(--radius-xl);
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-md);
+  font-size: 17px;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
 }
 
 .startButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.5);
+  background: #2980b9;
+  transform: translateY(-1px);
 }
 
 .startIcon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
 .timeEstimate {
-  margin-top: var(--space-lg);
-  font-size: 0.875rem;
-  color: var(--color-text-dim);
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.5; }
+  font-size: 14px;
+  color: #999;
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .title {
-    font-size: 2rem;
+    font-size: 26px;
   }
-  
-  .axisGrid {
+
+  .subtitle {
+    font-size: 15px;
+  }
+
+  .axesGrid {
     grid-template-columns: 1fr;
   }
-  
-  .matrixGrid {
-    grid-template-columns: repeat(2, 1fr);
+
+  .axisCard {
+    padding: 16px;
+  }
+
+  .axisColor {
+    width: 40px;
+    height: 40px;
+  }
+
+  .startButton {
+    width: 100%;
+    padding: 16px 24px;
   }
 }

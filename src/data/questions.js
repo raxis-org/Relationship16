@@ -1,178 +1,115 @@
 /**
- * 診断用質問データ
- * 4軸（熱量・重心・目的・同期）を測定する質問群
+ * Kizuna-Mode（絆モード）診断用質問データ
+ * 4軸（P/M/G/V）× 8問 = 32問
+ * 
+ * 回答形式: 1〜5の5段階
+ * 逆転項目: 1, 4, 9, 24, 28（計算時に 6-R に変換）
  */
 
-export const questions = [
-  // ========== 熱量軸 (Hot/Cold) ==========
-  {
-    id: 1,
-    axis: 'temperature',
-    text: '二人でいる時、感情の起伏はどう感じますか？',
-    options: [
-      { value: 2, label: 'とても盛り上がり、感情的になれる', type: 'hot' },
-      { value: 1, label: '適度に楽しく、穏やか', type: 'neutral' },
-      { value: 0, label: '冷静で、感情的にはならない', type: 'cold' },
-    ],
+// 4軸コード定義
+export const AXES = {
+  P: {
+    id: 'P',
+    name: 'Power',
+    nameJa: '権力均衡',
+    left: { code: 'H', name: 'Hierarchical', nameJa: '主従・依存', desc: '主従・依存・先導' },
+    right: { code: 'E', name: 'Equal', nameJa: '対等・共治', desc: '対等・共治・フラット' },
+    color: '#e74c3c',
+    bgColor: '#fdf2f2',
   },
-  {
-    id: 2,
-    axis: 'temperature',
-    text: '意見が食い違った時、どう対応しますか？',
-    options: [
-      { value: 2, label: '熱く議論し、お互いの主張をぶつけ合う', type: 'hot' },
-      { value: 1, label: '落ち着いて話し合う', type: 'neutral' },
-      { value: 0, label: '冷めた目で事実を確認する', type: 'cold' },
-    ],
+  M: {
+    id: 'M',
+    name: 'Motive',
+    nameJa: '関与動機',
+    left: { code: 'I', name: 'Instrumental', nameJa: '手段的', desc: '目的達成の道具・利害' },
+    right: { code: 'B', name: 'Being', nameJa: '存在的', desc: '相手の存在自体が目的・愛' },
+    color: '#f1c40f',
+    bgColor: '#fefcf3',
   },
-  {
-    id: 3,
-    axis: 'temperature',
-    text: '相手の成功を聞いた時の反応は？',
-    options: [
-      { value: 2, label: '自分のことのように喜び、祝いたくなる', type: 'hot' },
-      { value: 1, label: '素直に祝福する', type: 'neutral' },
-      { value: 0, label: '冷静に評価・分析する', type: 'cold' },
-    ],
+  G: {
+    id: 'G',
+    name: 'Goal',
+    nameJa: '目的整合',
+    left: { code: 'A', name: 'Autonomous', nameJa: '独立', desc: '個別の目標・干渉しない' },
+    right: { code: 'S', name: 'Synergetic', nameJa: '共鳴', desc: '同じ目標・ビジョンの共有' },
+    color: '#27ae60',
+    bgColor: '#f2f9f5',
   },
+  V: {
+    id: 'V',
+    name: 'Value',
+    nameJa: '価値共感',
+    left: { code: 'D', name: 'Diverse', nameJa: '多様性', desc: '異なる価値観・補完関係' },
+    right: { code: 'C', name: 'Congruent', nameJa: '一致', desc: '似た価値観・同質性' },
+    color: '#3498db',
+    bgColor: '#f0f7fb',
+  },
+};
 
-  // ========== 重心軸 (Equal/Lean) ==========
-  {
-    id: 4,
-    axis: 'balance',
-    text: '会話の主導権は？',
-    options: [
-      { value: 2, label: 'お互いに対等に話す', type: 'equal' },
-      { value: 1, label: '場面による', type: 'neutral' },
-      { value: 0, label: 'どちらかが主導することが多い', type: 'lean' },
-    ],
-  },
-  {
-    id: 5,
-    axis: 'balance',
-    text: '決断をする時、どちらの意見が優先されますか？',
-    options: [
-      { value: 2, label: '常に話し合い、共通の決断をする', type: 'equal' },
-      { value: 1, label: '場面による', type: 'neutral' },
-      { value: 0, label: 'どちらかの意見が自然と通る', type: 'lean' },
-    ],
-  },
-  {
-    id: 6,
-    axis: 'balance',
-    text: '支え合いのバランスは？',
-    options: [
-      { value: 2, label: '常に対等に支え合っている', type: 'equal' },
-      { value: 1, label: '時々頼り切ることもある', type: 'neutral' },
-      { value: 0, label: '基本的に一方が支える構図', type: 'lean' },
-    ],
-  },
+// 逆転項目のID
+export const REVERSE_ITEMS = [1, 4, 9, 24, 28];
 
-  // ========== 目的軸 (Value/Loose) ==========
-  {
-    id: 7,
-    axis: 'purpose',
-    text: '二人でいる時、何を重視しますか？',
-    options: [
-      { value: 2, label: '何かを生み出すこと・成長すること', type: 'value' },
-      { value: 1, label: 'バランス良く楽しむこと', type: 'neutral' },
-      { value: 0, label: '何もしないで心地よく過ごすこと', type: 'loose' },
-    ],
-  },
-  {
-    id: 8,
-    axis: 'purpose',
-    text: '二人の時間をどう使いたいですか？',
-    options: [
-      { value: 2, label: 'スキルアップや目標達成に使いたい', type: 'value' },
-      { value: 1, label: 'その時の気分で決める', type: 'neutral' },
-      { value: 0, label: '特に何もせず、ぼーっとしていたい', type: 'loose' },
-    ],
-  },
-  {
-    id: 9,
-    axis: 'purpose',
-    text: 'この関係性に対する将来のイメージは？',
-    options: [
-      { value: 2, label: '一緒に何か大きなことを成し遂げたい', type: 'value' },
-      { value: 1, label: '自然体で変わらずいたい', type: 'neutral' },
-      { value: 0, label: '今を楽しめればそれで良い', type: 'loose' },
-    ],
-  },
+// 質問データ
+export const QUESTIONS = [
+  // ===== P軸（Power/権力均衡）8問 =====
+  { id: 1, axis: 'P', code: 'P1', text: '何か決める時、どちらか一方の意見が最終的に通ることが多い。', isReverse: true },
+  { id: 2, axis: 'P', code: 'P2', text: '相手に対して、自分の本音を遠慮なく伝えることができる。', isReverse: false },
+  { id: 3, axis: 'P', code: 'P3', text: '二人の関係において、パワーバランスは常に50:50であると感じる。', isReverse: false },
+  { id: 4, axis: 'P', code: 'P4', text: '相手の顔色を伺って、自分の行動を無意識に変えてしまうことがある。', isReverse: true },
+  { id: 5, axis: 'P', code: 'P5', text: 'お互いにお願いごとをされた時、断ることに心理的な抵抗がない。', isReverse: false },
+  { id: 6, axis: 'P', code: 'P6', text: '二人は精神的に自立しており、過度に依存し合っていない。', isReverse: false },
+  { id: 7, axis: 'P', code: 'P7', text: '相手の意見が自分と異なっていても、それを尊重し、受け入れることができる。', isReverse: false },
+  { id: 8, axis: 'P', code: 'P8', text: '私は、この関係性において、より多くの責任や負担を担っていると感じる。', isReverse: false },
 
-  // ========== 同期軸 (Sync/Desync) ==========
-  {
-    id: 10,
-    axis: 'sync',
-    text: '価値観や感性は似ていますか？',
-    options: [
-      { value: 2, label: '驚くほど似ている', type: 'sync' },
-      { value: 1, label: '部分部分で似ている', type: 'neutral' },
-      { value: 0, label: '基本的に異なる', type: 'desync' },
-    ],
-  },
-  {
-    id: 11,
-    axis: 'sync',
-    text: '同じ話題について、お互いの意見は？',
-    options: [
-      { value: 2, label: 'ほぼ同じ考え・感想になる', type: 'sync' },
-      { value: 1, label: '時々意見が分かれる', type: 'neutral' },
-      { value: 0, label: 'よく意見が食い違う', type: 'desync' },
-    ],
-  },
-  {
-    id: 12,
-    axis: 'sync',
-    text: '「空気」を読む能力は？',
-    options: [
-      { value: 2, label: '言葉にしない気持ちも伝わる', type: 'sync' },
-      { value: 1, label: '大体わかる', type: 'neutral' },
-      { value: 0, label: '言わないとわからないことも多い', type: 'desync' },
-    ],
-  },
-  {
-    id: 13,
-    axis: 'sync',
-    text: '会話の噛み合い具合は？',
-    options: [
-      { value: 2, label: '完璧に噛み合い、話が通じる', type: 'sync' },
-      { value: 1, label: '大体噛み合う', type: 'neutral' },
-      { value: 0, label: '会話がずれることも多い', type: 'desync' },
-    ],
-  },
+  // ===== M軸（Motive/関与動機）8問 =====
+  { id: 9, axis: 'M', code: 'M1', text: '相手と一緒にいるのは、何らかの目的やメリットがあるからだ。', isReverse: true },
+  { id: 10, axis: 'M', code: 'M2', text: '相手が何かを成し遂げた時、自分のことのように嬉しい。', isReverse: false },
+  { id: 11, axis: 'M', code: 'M3', text: '相手の欠点や弱さも含めて、その人自身に深い興味がある。', isReverse: false },
+  { id: 12, axis: 'M', code: 'M4', text: '二人で過ごす時間は、効率や目的達成よりも「ただ一緒にいる心地よさ」を重視している。', isReverse: false },
+  { id: 13, axis: 'M', code: 'M5', text: 'たとえ相手に何のメリットも提供できなくなったとしても、この関係は続くと信じている。', isReverse: false },
+  { id: 14, axis: 'M', code: 'M6', text: '相手が本当に困っているなら、自分を多少犠牲にしてでも助けたいと思う。', isReverse: false },
+  { id: 15, axis: 'M', code: 'M7', text: '相手との関係は、恋愛や友情といった言葉だけでは表現できない、特別なつながりだと感じる。', isReverse: false },
+  { id: 16, axis: 'M', code: 'M8', text: '相手の存在そのものが、自分の日々の活力になっている。', isReverse: false },
 
-  // ========== 追加質問（シンクロ率計算用） ==========
-  {
-    id: 14,
-    axis: 'compatibility',
-    text: '二人の「理想の休日の過ごし方」は近いですか？',
-    options: [
-      { value: 2, label: 'ほぼ同じ', type: 'high' },
-      { value: 1, label: '似ている部分もある', type: 'medium' },
-      { value: 0, label: '全く異なる', type: 'low' },
-    ],
-  },
-  {
-    id: 15,
-    axis: 'compatibility',
-    text: '「人生で大切にしているもの」は一致しますか？',
-    options: [
-      { value: 2, label: '驚くほど一致する', type: 'high' },
-      { value: 1, label: '一部一致する', type: 'medium' },
-      { value: 0, label: '異なる', type: 'low' },
-    ],
-  },
-  {
-    id: 16,
-    axis: 'compatibility',
-    text: '相手の「言わない本音」をどの程度察せますか？',
-    options: [
-      { value: 2, label: 'ほぼ察せる', type: 'high' },
-      { value: 1, label: '時々察せる', type: 'medium' },
-      { value: 0, label: 'ほぼ察せない', type: 'low' },
-    ],
-  },
+  // ===== G軸（Goal/目的整合）8問 =====
+  { id: 17, axis: 'G', code: 'G1', text: '二人で共有している具体的な「目標」や「夢」が存在する。', isReverse: false },
+  { id: 18, axis: 'G', code: 'G2', text: '私たちは「一つのチーム」として、共通の課題に取り組んでいる感覚がある。', isReverse: false },
+  { id: 19, axis: 'G', code: 'G3', text: '個人の成功よりも、二人の共通の目標が達成されることを優先したい。', isReverse: false },
+  { id: 20, axis: 'G', code: 'G4', text: '相手の夢や目標をサポートすることが、自分の喜びにも繋がっている。', isReverse: false },
+  { id: 21, axis: 'G', code: 'G5', text: '二人が目指している将来の方向性は、驚くほど似ている。', isReverse: false },
+  { id: 22, axis: 'G', code: 'G6', text: '困難に直面した時、二人の解決策は自然と同じ方向を向くことが多い。', isReverse: false },
+  { id: 23, axis: 'G', code: 'G7', text: '二人の未来について具体的に話す時、ワクワクした気持ちになる。', isReverse: false },
+  { id: 24, axis: 'G', code: 'G8', text: '正直なところ、二人の長期的な目標は異なっていると感じる。', isReverse: true },
+
+  // ===== V軸（Value/価値共感）8問 =====
+  { id: 25, axis: 'V', code: 'V1', text: '金銭感覚や時間の使い方が、相手と非常に近いと感じる。', isReverse: false },
+  { id: 26, axis: 'V', code: 'V2', text: '大切にしている倫理観や道徳観が、根本的に一致している。', isReverse: false },
+  { id: 27, axis: 'V', code: 'V3', text: 'ユーモアのセンスや笑いのツボが似ていて、一緒にいて心から笑える。', isReverse: false },
+  { id: 28, axis: 'V', code: 'V4', text: '相手の考え方や価値観に、時々ついていけないと感じることがある。', isReverse: true },
+  { id: 29, axis: 'V', code: 'V5', text: '「何が正しいか」という議論で、意見が真っ向から対立することは少ない。', isReverse: false },
+  { id: 30, axis: 'V', code: 'V6', text: '生活のリズムや休日の過ごし方が似ており、一緒にいてストレスを感じない。', isReverse: false },
+  { id: 31, axis: 'V', code: 'V7', text: '相手の持つ独特な価値観は、自分にとって新しい発見や刺激になっている。', isReverse: false },
+  { id: 32, axis: 'V', code: 'V8', text: '相手の価値観を理解し、尊重することは、自分自身の成長にも繋がると感じる。', isReverse: false },
 ];
 
-export default questions;
+// 軸ごとの質問を取得
+export function getQuestionsByAxis(axisId) {
+  return QUESTIONS.filter(q => q.axis === axisId);
+}
+
+// 回答を処理（逆転項目を変換）
+export function processAnswer(questionId, value) {
+  const question = QUESTIONS.find(q => q.id === questionId);
+  if (!question) return value;
+  
+  // 逆転項目は 6 - R に変換
+  if (question.isReverse) {
+    return 6 - value;
+  }
+  return value;
+}
+
+// 旧データ互換用（非推奨）
+export const questions = QUESTIONS;
+export const axes = AXES;
+export default QUESTIONS;

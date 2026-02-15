@@ -1,408 +1,459 @@
 .container {
-  max-width: 800px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: var(--space-xl);
 }
 
-/* Header */
-.header {
-  text-align: center;
-  margin-bottom: var(--space-xl);
-}
-
+/* Partners */
 .partners {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  background: rgba(26, 26, 46, 0.8);
-  border-radius: 9999px;
-  border: 1px solid var(--color-border);
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  font-size: 15px;
+  color: #666;
 }
 
-.partnerBlue {
-  color: var(--color-blue);
+.times {
+  color: #ccc;
+  font-weight: 300;
 }
 
-.partnerPurple {
-  color: var(--color-purple);
+/* Code Section */
+.codeSection {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.typeCode {
+  font-size: 56px;
+  font-weight: 800;
+  color: #1a1a1a;
+  letter-spacing: 8px;
+  margin-bottom: 8px;
+}
+
+.codeLabel {
+  font-size: 14px;
+  color: #999;
 }
 
 /* Main Card */
 .mainCard {
-  border-radius: var(--radius-2xl);
-  padding: var(--space-2xl);
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
   text-align: center;
-  margin-bottom: var(--space-xl);
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
 }
 
 .rank {
-  font-size: 5rem;
+  display: inline-block;
+  padding: 6px 16px;
+  background: #1a1a1a;
+  color: white;
+  font-size: 13px;
   font-weight: 700;
-  animation: pulse 3s infinite;
-  margin-bottom: var(--space-md);
+  border-radius: 20px;
+  margin-bottom: 16px;
 }
 
 .typeName {
-  font-size: 2rem;
+  font-size: 28px;
   font-weight: 700;
-  background: var(--gradient-text);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: var(--space-md);
-}
-
-.typeCode {
-  display: inline-block;
-  padding: var(--space-sm) var(--space-md);
-  background: var(--color-bg);
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  color: var(--color-text-dim);
-  font-family: monospace;
-  margin-bottom: var(--space-xl);
-}
-
-.iconWrapper {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100px;
-  height: 100px;
-  border-radius: var(--radius-xl);
-  margin-bottom: var(--space-xl);
-  box-shadow: var(--shadow-lg);
-}
-
-.iconWrapper::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-xl);
-  filter: blur(10px);
-}
-
-.icon {
-  position: relative;
-  width: 50px;
-  height: 50px;
-  color: white;
+  color: #1a1a1a;
+  margin-bottom: 16px;
 }
 
 .description {
-  font-size: 1.125rem;
-  color: var(--color-text-muted);
-  max-width: 600px;
-  margin: 0 auto var(--space-xl);
+  font-size: 15px;
+  color: #666;
   line-height: 1.7;
 }
 
-/* Sync Rate */
-.syncRate {
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-.syncRateHeader {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-sm);
-}
-
-.syncRateValue {
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.syncRateBar {
-  height: 12px;
-  background: var(--color-border);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.syncRateFill {
-  height: 100%;
-  border-radius: 6px;
-  transition: width 1s ease-out;
-  position: relative;
-}
-
-.syncRateFill::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  animation: shimmer 2s infinite;
-}
-
-/* Details Grid */
-.detailsGrid {
+/* Scores Grid */
+.scoresGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
-.detailCard {
-  border-radius: var(--radius-xl);
-  padding: var(--space-lg);
-}
-
-.detailHeader {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-}
-
-.detailHeader h3 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-text);
-}
-
-.detailIconBlue {
-  width: 24px;
-  height: 24px;
-  color: var(--color-blue);
-}
-
-.detailIconPink {
-  width: 24px;
-  height: 24px;
-  color: var(--color-pink);
-}
-
-.advice {
-  font-style: italic;
-  color: var(--color-text-muted);
-}
-
-/* Axis Card */
-.axisCard {
-  border-radius: var(--radius-xl);
-  padding: var(--space-xl);
-  margin-bottom: var(--space-xl);
-}
-
-.axisTitle {
-  font-size: 1.25rem;
-  font-weight: 700;
+.scoreCard {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
   text-align: center;
-  color: var(--color-text);
-  margin-bottom: var(--space-lg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+}
+
+.scoreLabel {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 8px;
+}
+
+.scoreValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+/* Axis Section */
+.axisSection {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .axisGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-md);
-  margin-bottom: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.axisItem {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: var(--radius-lg);
-  padding: var(--space-md);
+.axisCard {
+  padding: 16px;
+  background: #fafafa;
+  border-radius: 12px;
 }
 
-.axisItemHeader {
+.axisHeader {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-xs);
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
-.axisEmoji {
-  font-size: 1.25rem;
-}
-
-.axisLabel {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-}
-
-.axisValue {
-  font-size: 1.125rem;
+.axisCode {
+  font-size: 18px;
   font-weight: 700;
-  margin-bottom: var(--space-xs);
+  color: #1a1a1a;
 }
 
-.axisDesc {
-  font-size: 0.75rem;
-  color: var(--color-text-dim);
-  margin-bottom: var(--space-sm);
+.axisName {
+  font-size: 14px;
+  color: #666;
+  flex: 1;
+}
+
+.axisSide {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.axisBarContainer {
+  padding: 0 4px;
+}
+
+.axisLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 6px;
 }
 
 .axisBar {
-  height: 4px;
-  background: var(--color-border);
-  border-radius: 2px;
+  position: relative;
+  height: 24px;
+  background: #e0e0e0;
+  border-radius: 12px;
+  overflow: visible;
+}
+
+.axisMarker {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.axisThreshold {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #999;
+  transform: translateX(-50%);
+}
+
+.axisLegend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #666;
+}
+
+.legendDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* Recommend Section */
+.recommendSection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.recommendCard {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+}
+
+.recommendCard h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.recommendCard p {
+  font-size: 14px;
+  color: #1a1a1a;
+  line-height: 1.6;
+}
+
+/* Comparison Section */
+.comparisonSection {
+  background: white;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
   overflow: hidden;
 }
 
-.axisBarFill {
-  height: 100%;
-  border-radius: 2px;
+.comparisonToggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  background: white;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  cursor: pointer;
 }
 
-/* Comments */
-.comments {
-  padding-top: var(--space-lg);
-  border-top: 1px solid var(--color-border);
+.comparisonToggle svg {
+  width: 20px;
+  height: 20px;
+  color: #999;
 }
 
-.comments h4 {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-text-muted);
-  margin-bottom: var(--space-md);
+.comparisonContent {
+  padding: 0 24px 24px;
+  border-top: 1px solid #f0f0f0;
 }
 
-.comments ul {
+.comparisonAxis {
+  margin-top: 20px;
+}
+
+.comparisonAxisHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #fafafa;
+  border-radius: 8px;
+  border-left: 4px solid;
+  margin-bottom: 12px;
+}
+
+.comparisonAxisCode {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.comparisonAxisName {
+  font-size: 14px;
+  color: #666;
+  flex: 1;
+}
+
+.comparisonAxisRange {
+  font-size: 12px;
+  color: #999;
+}
+
+.comparisonQuestions {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 8px;
 }
 
-.comments li {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  color: var(--color-text-muted);
-}
-
-.commentIcon {
-  width: 18px;
-  height: 18px;
-  color: var(--color-blue);
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-/* Matrix Card */
-.matrixCard {
-  border-radius: var(--radius-xl);
-  padding: var(--space-xl);
-  margin-bottom: var(--space-xl);
-}
-
-.matrixTitle {
-  font-size: 1.25rem;
-  font-weight: 700;
-  text-align: center;
-  color: var(--color-text);
-  margin-bottom: var(--space-lg);
-}
-
-.matrixGrid {
+.comparisonRow {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-sm);
+  grid-template-columns: 50px 1fr 80px 70px;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  background: #fafafa;
+  border-radius: 8px;
 }
 
-.matrixItem {
-  padding: var(--space-sm);
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: var(--radius-sm);
-  font-size: 0.625rem;
-  color: var(--color-text-dim);
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: all 0.2s ease;
-}
-
-.matrixItemActive {
-  background: var(--gradient-primary);
-  color: white;
+.comparisonQ {
+  font-size: 13px;
   font-weight: 600;
-  box-shadow: var(--shadow-glow-blue);
+  color: #999;
+}
+
+.comparisonText {
+  font-size: 14px;
+  color: #1a1a1a;
+  line-height: 1.5;
+}
+
+.comparisonValues {
+  display: flex;
+  gap: 8px;
+}
+
+.comparisonValue {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+}
+
+.comparisonGap {
+  font-size: 12px;
+  font-weight: 500;
+  text-align: right;
 }
 
 /* Actions */
 .actions {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
+  gap: 12px;
 }
 
 .shareButton,
 .restartButton {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-xl);
-  border-radius: var(--radius-lg);
+  gap: 8px;
+  padding: 16px;
+  border-radius: 10px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .shareButton {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: var(--color-text);
+  background: white;
+  color: #1a1a1a;
+  border: 1px solid #e0e0e0;
 }
 
 .shareButton:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: #f9f9f9;
 }
 
 .restartButton {
-  background: var(--gradient-primary);
-  border: none;
+  background: #3498db;
   color: white;
+  border: none;
   text-decoration: none;
 }
 
 .restartButton:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-glow-blue);
+  background: #2980b9;
 }
 
 .actionIcon {
-  width: 20px;
-  height: 20px;
-}
-
-/* Animations */
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  width: 18px;
+  height: 18px;
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .rank {
-    font-size: 3.5rem;
+@media (max-width: 640px) {
+  .typeCode {
+    font-size: 44px;
+    letter-spacing: 4px;
   }
-  
+
+  .mainCard {
+    padding: 24px;
+  }
+
   .typeName {
-    font-size: 1.5rem;
+    font-size: 24px;
   }
-  
-  .detailsGrid,
-  .axisGrid {
+
+  .scoresGrid {
     grid-template-columns: 1fr;
   }
-  
-  .matrixGrid {
-    grid-template-columns: repeat(2, 1fr);
+
+  .recommendSection {
+    grid-template-columns: 1fr;
+  }
+
+  .comparisonRow {
+    grid-template-columns: 40px 1fr 70px;
+    gap: 8px;
+  }
+
+  .comparisonText {
+    grid-column: 1 / -1;
+    order: -1;
+    margin-bottom: 4px;
+  }
+
+  .comparisonGap {
+    text-align: left;
+  }
+
+  .actions {
+    flex-direction: column;
   }
 }
