@@ -3,28 +3,32 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { User, ChevronLeft, ChevronRight } from 'lucide-react';
-import Layout from '../../../components/Layout';
-import ScaleSelector from '../../../components/ScaleSelector';
-import { useDiagnose } from '../../../context/DiagnoseContext';
-import { questions, TOTAL_QUESTIONS } from '../../../data/questions';
+import Layout from '../../../../components/Layout';
+import ScaleSelector from '../../../../components/ScaleSelector';
+import { useDiagnose } from '../../../../context/DiagnoseContext';
+import { questions, TOTAL_QUESTIONS } from '../../../../data/questions';
 import styles from './page.module.css';
 
-export default function User1Questions() {
+export default function User2Questions() {
   const router = useRouter();
-  const { user1Name, user1Answers, setUser1Answer } = useDiagnose();
+  const { user1Name, user2Name, user2Answers, setUser2Answer } = useDiagnose();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     if (!user1Name) {
       router.push('/diagnose');
+      return;
     }
-  }, [user1Name, router]);
+    if (!user2Name) {
+      router.push('/diagnose/user2');
+    }
+  }, [user1Name, user2Name, router]);
 
   const currentQuestion = questions[currentIndex];
   const progress = ((currentIndex + 1) / TOTAL_QUESTIONS) * 100;
 
   const handleAnswer = (value) => {
-    setUser1Answer(currentQuestion.id, value);
+    setUser2Answer(currentQuestion.id, value);
     if (currentIndex < TOTAL_QUESTIONS - 1) {
       setTimeout(() => setCurrentIndex(prev => prev + 1), 300);
     }
@@ -34,7 +38,7 @@ export default function User1Questions() {
     if (currentIndex < TOTAL_QUESTIONS - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
-      router.push('/diagnose/user2');
+      router.push('/diagnose/loading');
     }
   };
 
@@ -44,7 +48,7 @@ export default function User1Questions() {
     }
   };
 
-  const currentAnswer = user1Answers[currentQuestion?.id];
+  const currentAnswer = user2Answers[currentQuestion?.id];
 
   const getAxisInfo = (q) => {
     const axisNames = {
@@ -69,7 +73,7 @@ export default function User1Questions() {
     };
   };
 
-  if (!user1Name || !currentQuestion) return null;
+  if (!user1Name || !user2Name || !currentQuestion) return null;
 
   const axisInfo = getAxisInfo(currentQuestion);
 
@@ -83,11 +87,11 @@ export default function User1Questions() {
             </span>
             <span className={styles.userBadge}>
               <User className={styles.userIcon} />
-              {user1Name}
+              {user2Name}
             </span>
           </div>
           <div className={styles.progressBar}>
-            <div className={styles.progressFill} style={{ width: `${progress}%` }} />
+            <div className={`${styles.progressFill} ${styles.progressFillPurple}`} style={{ width: `${progress}%` }} />
           </div>
           <div className={styles.axisIndicator}>
             <span className={styles.axisIcon}>{axisInfo.icon}</span>
@@ -124,7 +128,7 @@ export default function User1Questions() {
             <button
               key={idx}
               onClick={() => setCurrentIndex(idx)}
-              className={`${styles.dot} ${idx === currentIndex ? styles.dotActive : ''} ${user1Answers[questions[idx].id] !== undefined ? styles.dotAnswered : ''}`}
+              className={`${styles.dot} ${idx === currentIndex ? styles.dotActive : ''} ${user2Answers[questions[idx].id] !== undefined ? styles.dotAnswered : ''}`}
             />
           ))}
         </div>
