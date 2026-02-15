@@ -1,8 +1,6 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { User, ChevronLeft, ChevronRight } from 'lucide-react';
 import Layout from '../../../../components/Layout';
@@ -12,7 +10,7 @@ import { completeSession, getSession } from '../../../../lib/db';
 import { calculateAxisScores, diagnose } from '../../../../logic/diagnostic';
 import styles from './page.module.css';
 
-export default function User2Questions() {
+function User2QuestionsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sid = searchParams.get('sid');
@@ -33,7 +31,6 @@ export default function User2Questions() {
     setSessionId(sid);
     getSession(sid).then(session => {
       setUser1Name(session.host_name);
-      // user2ページで入力した名前がlocalStorageにあれば取得
       const storedName = localStorage.getItem(`user2_name_${sid}`);
       if (storedName) {
         setUser2Name(storedName);
@@ -70,17 +67,13 @@ export default function User2Questions() {
   const completeAndShowResult = async () => {
     setLoading(true);
     try {
-      // ホストのデータを取得
       const session = await getSession(sessionId);
       const hostAnswers = session.host_answers;
       
-      // ゲストのスコア計算
       const guestScores = calculateAxisScores(answers);
       
-      // 診断実行
       const result = diagnose(hostAnswers, answers, session.host_name, user2Name);
       
-      // DBに保存
       const guestData = {
         name: user2Name,
         answers: answers,
@@ -88,7 +81,6 @@ export default function User2Questions() {
       };
       await completeSession(sessionId, guestData, result);
       
-      // 結果ページへ（user2は即座に結果を見る）
       router.push(`/result?sid=${sessionId}`);
     } catch (err) {
       console.error(err);
@@ -128,65 +120,73 @@ export default function User2Questions() {
   const axisInfo = getAxisInfo(currentQuestion);
 
   return (
-    <Layout>
-      <div className={styles.container}>
-        <div className={styles.progress}>
-          <div className={styles.progressHeader}>
-            <span className={styles.progressText}>
-              質問 {currentIndex + 1} / {TOTAL_QUESTIONS}
-            </span>
-            <span className={styles.userBadge}>
-              <User className={styles.userIcon} />
-              {user2Name || '相手'}
-            </span>
-          </div>
-          <div className={styles.progressBar}>
-            <div className={`${styles.progressFill} ${styles.progressFillPurple}`} style={{ width: `${progress}%` }} />
-          </div>
-          <div className={styles.axisIndicator}>
-            <span className={styles.axisIcon}>{axisInfo.icon}</span>
-            <span className={styles.axisName}>{axisInfo.name}軸</span>
-            <span className={styles.axisDirection}>({axisInfo.direction}・{axisInfo.perspective})</span>
-          </div>
+    <div className={styles.container}>
+      <div className={styles.progress}>
+        <div className={styles.progressHeader}>
+          <span className={styles.progressText}>
+            質問 {currentIndex + 1} / {TOTAL_QUESTIONS}
+          </span>
+          <span className={styles.userBadge}>
+            <User className={styles.userIcon} />
+            {user2Name || '相手'}
+          </span>
         </div>
-
-        <div className={`glass ${styles.card}`}>
-          <h2 className={styles.question}>{currentQuestion.text}</h2>
-          <ScaleSelector value={currentAnswer} onChange={handleAnswer} />
-          
-          <div className={styles.navigation}>
-            <button
-              onClick={handlePrev}
-              disabled={currentIndex === 0}
-              className={`${styles.navButton} ${styles.navButtonSecondary} ${currentIndex === 0 ? styles.navButtonHidden : ''}`}
-            >
-              <ChevronLeft className={styles.navIcon} />
-              前へ
-            </button>
-
-            {currentAnswer !== undefined && currentIndex === TOTAL_QUESTIONS - 1 && (
-              <button 
-                onClick={handleNext} 
-                className={`${styles.navButton} ${styles.navButtonPrimary}`}
-                disabled={loading}
-              >
-                {loading ? '保存中...' : '回答を完了する'}
-                <ChevronRight className={styles.navIcon} />
-              </button>
-            )}
-          </div>
+        <div className={styles.progressBar}>
+          <div className={`${styles.progressFill} ${styles.progressFillPurple}`} style={{ width: `${progress}%` }} />
         </div>
-
-        <div className={styles.dots}>
-          {questions.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentIndex(idx)}
-              className={`${styles.dot} ${idx === currentIndex ? styles.dotActive : ''} ${answers[questions[idx].id] !== undefined ? styles.dotAnswered : ''}`}
-            />
-          ))}
+        <div className={styles.axisIndicator}>
+          <span className={styles.axisIcon}>{axisInfo.icon}</span>
+          <span className={styles.axisName}>{axisInfo.name}軸</span>
+          <span className={styles.axisDirection}>({axisInfo.direction}・{axisInfo.perspective})</span>
         </div>
       </div>
+
+      <div className={`glass ${styles.card}`}>
+        <h2 className={styles.question}>{currentQuestion.text}</h2>
+        <ScaleSelector value={currentAnswer} onChange={handleAnswer} />
+        
+        <div className={styles.navigation}>
+          <button
+            onClick={handlePrev}
+            disabled={currentIndex === 0}
+            className={`${styles.navButton} ${styles.navButtonSecondary} ${currentIndex === 0 ? styles.navButtonHidden : ''}`}
+          >
+            <ChevronLeft className={styles.navIcon} />
+            前へ
+          </button>
+
+          {currentAnswer !== undefined && currentIndex === TOTAL_QUESTIONS - 1 && (
+            <button 
+              onClick={handleNext} 
+              className={`${styles.navButton} ${styles.navButtonPrimary}`}
+              disabled={loading}
+            >
+              {loading ? '保存中...' : '回答を完了する'}
+              <ChevronRight className={styles.navIcon} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className={styles.dots}>
+        {questions.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentIndex(idx)}
+            className={`${styles.dot} ${idx === currentIndex ? styles.dotActive : ''} ${answers[questions[idx].id] !== undefined ? styles.dotAnswered : ''}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function User2Questions() {
+  return (
+    <Layout>
+      <Suspense fallback={<div className={styles.container}><div className={styles.loading}>読み込み中...</div></div>}>
+        <User2QuestionsContent />
+      </Suspense>
     </Layout>
   );
 }

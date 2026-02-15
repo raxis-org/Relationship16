@@ -1,8 +1,6 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { User, ChevronLeft, ChevronRight, Share2, Check } from 'lucide-react';
 import Layout from '../../../../components/Layout';
@@ -12,7 +10,7 @@ import { updateHostAnswers, getSession } from '../../../../lib/db';
 import { calculateAxisScores } from '../../../../logic/diagnostic';
 import styles from './page.module.css';
 
-export default function User1Questions() {
+function QuestionsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sid = searchParams.get('sid');
@@ -123,37 +121,35 @@ export default function User1Questions() {
   if (!currentQuestion || showShare) {
     if (showShare) {
       return (
-        <Layout>
-          <div className={styles.container}>
-            <div className={`glass ${styles.shareCard}`}>
-              <div className={styles.shareIcon}>
-                <Check className={styles.checkIcon} />
-              </div>
-              <h1 className={styles.shareTitle}>回答が完了しました！</h1>
-              <p className={styles.shareText}>
-                以下のURLをコピーして、相手に送信してください。<br />
-                相手が回答すると、結果を見ることができます。
-              </p>
-              
-              <div className={styles.urlBox}>
-                <input type="text" value={shareUrl} readOnly className={styles.urlInput} />
-                <button onClick={copyToClipboard} className={styles.copyButton}>
-                  <Share2 className={styles.copyIcon} />
-                  コピー
-                </button>
-              </div>
+        <div className={styles.container}>
+          <div className={`glass ${styles.shareCard}`}>
+            <div className={styles.shareIcon}>
+              <Check className={styles.checkIcon} />
+            </div>
+            <h1 className={styles.shareTitle}>回答が完了しました！</h1>
+            <p className={styles.shareText}>
+              以下のURLをコピーして、相手に送信してください。<br />
+              相手が回答すると、結果を見ることができます。
+            </p>
+            
+            <div className={styles.urlBox}>
+              <input type="text" value={shareUrl} readOnly className={styles.urlInput} />
+              <button onClick={copyToClipboard} className={styles.copyButton}>
+                <Share2 className={styles.copyIcon} />
+                コピー
+              </button>
+            </div>
 
-              <div className={styles.shareHint}>
-                <p>💡 LINEで送る場合:</p>
-                <ol>
-                  <li>「コピー」ボタンをタップ</li>
-                  <li>LINEを開く</li>
-                  <li>相手のチャットに貼り付け</li>
-                </ol>
-              </div>
+            <div className={styles.shareHint}>
+              <p>💡 LINEで送る場合:</p>
+              <ol>
+                <li>「コピー」ボタンをタップ</li>
+                <li>LINEを開く</li>
+                <li>相手のチャットに貼り付け</li>
+              </ol>
             </div>
           </div>
-        </Layout>
+        </div>
       );
     }
     return null;
@@ -162,61 +158,69 @@ export default function User1Questions() {
   const axisInfo = getAxisInfo(currentQuestion);
 
   return (
-    <Layout>
-      <div className={styles.container}>
-        <div className={styles.progress}>
-          <div className={styles.progressHeader}>
-            <span className={styles.progressText}>
-              質問 {currentIndex + 1} / {TOTAL_QUESTIONS}
-            </span>
-            <span className={styles.userBadge}>
-              <User className={styles.userIcon} />
-              {user1Name || 'あなた'}
-            </span>
-          </div>
-          <div className={styles.progressBar}>
-            <div className={styles.progressFill} style={{ width: `${progress}%` }} />
-          </div>
-          <div className={styles.axisIndicator}>
-            <span className={styles.axisIcon}>{axisInfo.icon}</span>
-            <span className={styles.axisName}>{axisInfo.name}軸</span>
-            <span className={styles.axisDirection}>({axisInfo.direction}・{axisInfo.perspective})</span>
-          </div>
+    <div className={styles.container}>
+      <div className={styles.progress}>
+        <div className={styles.progressHeader}>
+          <span className={styles.progressText}>
+            質問 {currentIndex + 1} / {TOTAL_QUESTIONS}
+          </span>
+          <span className={styles.userBadge}>
+            <User className={styles.userIcon} />
+            {user1Name || 'あなた'}
+          </span>
         </div>
-
-        <div className={`glass ${styles.card}`}>
-          <h2 className={styles.question}>{currentQuestion.text}</h2>
-          <ScaleSelector value={currentAnswer} onChange={handleAnswer} />
-          
-          <div className={styles.navigation}>
-            <button
-              onClick={handlePrev}
-              disabled={currentIndex === 0}
-              className={`${styles.navButton} ${styles.navButtonSecondary} ${currentIndex === 0 ? styles.navButtonHidden : ''}`}
-            >
-              <ChevronLeft className={styles.navIcon} />
-              前へ
-            </button>
-
-            {currentAnswer !== undefined && currentIndex === TOTAL_QUESTIONS - 1 && (
-              <button onClick={handleNext} className={`${styles.navButton} ${styles.navButtonPrimary}`} disabled={loading}>
-                {loading ? '保存中...' : '回答を完了する'}
-                <ChevronRight className={styles.navIcon} />
-              </button>
-            )}
-          </div>
+        <div className={styles.progressBar}>
+          <div className={styles.progressFill} style={{ width: `${progress}%` }} />
         </div>
-
-        <div className={styles.dots}>
-          {questions.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrentIndex(idx)}
-              className={`${styles.dot} ${idx === currentIndex ? styles.dotActive : ''} ${answers[questions[idx].id] !== undefined ? styles.dotAnswered : ''}`}
-            />
-          ))}
+        <div className={styles.axisIndicator}>
+          <span className={styles.axisIcon}>{axisInfo.icon}</span>
+          <span className={styles.axisName}>{axisInfo.name}軸</span>
+          <span className={styles.axisDirection}>({axisInfo.direction}・{axisInfo.perspective})</span>
         </div>
       </div>
+
+      <div className={`glass ${styles.card}`}>
+        <h2 className={styles.question}>{currentQuestion.text}</h2>
+        <ScaleSelector value={currentAnswer} onChange={handleAnswer} />
+        
+        <div className={styles.navigation}>
+          <button
+            onClick={handlePrev}
+            disabled={currentIndex === 0}
+            className={`${styles.navButton} ${styles.navButtonSecondary} ${currentIndex === 0 ? styles.navButtonHidden : ''}`}
+          >
+            <ChevronLeft className={styles.navIcon} />
+            前へ
+          </button>
+
+          {currentAnswer !== undefined && currentIndex === TOTAL_QUESTIONS - 1 && (
+            <button onClick={handleNext} className={`${styles.navButton} ${styles.navButtonPrimary}`} disabled={loading}>
+              {loading ? '保存中...' : '回答を完了する'}
+              <ChevronRight className={styles.navIcon} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className={styles.dots}>
+        {questions.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setCurrentIndex(idx)}
+            className={`${styles.dot} ${idx === currentIndex ? styles.dotActive : ''} ${answers[questions[idx].id] !== undefined ? styles.dotAnswered : ''}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function User1Questions() {
+  return (
+    <Layout>
+      <Suspense fallback={<div className={styles.container}><div className={styles.loading}>読み込み中...</div></div>}>
+        <QuestionsContent />
+      </Suspense>
     </Layout>
   );
 }
