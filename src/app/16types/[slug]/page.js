@@ -166,30 +166,19 @@ export default function TypeDetail() {
 
         {/* Characteristics */}
         <div className={`glass ${styles.characteristicsCard}`}>
-          <h2 className={styles.characteristicsTitle}>このタイプの特徴</h2>
+          <h2 className={styles.characteristicsTitle}>このタイプの4軸属性</h2>
           <ul className={styles.characteristicsList}>
             <li>
-              <strong>シンクロ率:</strong> {type.syncRate.min}~{type.syncRate.max}% - 
-              {type.syncRate.max >= 80 ? '非常に高い同期' : 
-               type.syncRate.max >= 60 ? '高い同期' :
-               type.syncRate.max >= 40 ? '中程度の同期' :
-               type.syncRate.max >= 20 ? '低い同期' : '非常に低い同期'}
+              <strong>熱量軸:</strong> {type.axes.temperature === 'hot' ? 'Hot（感情的・能動的）' : 'Cold（冷静・ドライ）'}
             </li>
             <li>
-              <strong>熱量:</strong> {type.axes.temperature === 'hot' ? '感情的・能動的' : 
-                           type.axes.temperature === 'cold' ? '冷静・ドライ' : 'バランス型'}
+              <strong>重心軸:</strong> {type.axes.balance === 'equal' ? 'Equal（対等な関係）' : 'Lean（どちらかに偏りあり）'}
             </li>
             <li>
-              <strong>重心:</strong> {type.axes.balance === 'equal' ? '対等な関係' : 
-                           type.axes.balance === 'lean' ? 'どちらかに偏りあり' : 'バランス型'}
+              <strong>目的軸:</strong> {type.axes.purpose === 'value' ? 'Value（成長・生産性重視）' : 'Loose（心地よさ・安定重視）'}
             </li>
             <li>
-              <strong>目的:</strong> {type.axes.purpose === 'value' ? '成長・生産性重視' : 
-                           type.axes.purpose === 'loose' ? '心地よさ・惰性重視' : 'バランス型'}
-            </li>
-            <li>
-              <strong>同期:</strong> {type.axes.sync === 'sync' ? '価値観が一致' : 
-                           type.axes.sync === 'desync' ? '価値観が異なる' : 'バランス型'}
+              <strong>同期軸:</strong> {type.axes.sync === 'sync' ? 'Sync（価値観が一致）' : 'Desync（価値観が異なる）'}
             </li>
           </ul>
         </div>
