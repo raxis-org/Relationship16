@@ -93,7 +93,7 @@ function ResultContent() {
           <Link href="/" className={styles.backButton}>
             トップに戻る
           </Link>
-        </section>
+        </div>
       </div>
     );
   }

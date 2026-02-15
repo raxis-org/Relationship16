@@ -1,92 +1,123 @@
-/* ============================================
-   16 Types Page - Premium Design
-   ============================================ */
-
 .container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 0 24px 64px;
+  padding: var(--space-xl);
 }
 
 /* Header */
 .header {
-  text-align: center;
-  padding: 60px 0 40px;
+  margin-bottom: var(--space-2xl);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  margin-bottom: var(--space-md);
+  transition: color 0.2s ease;
+}
+
+.backLink:hover {
+  color: var(--color-text);
+}
+
+.backIcon {
+  width: 18px;
+  height: 18px;
 }
 
 .title {
-  font-size: 42px;
-  font-weight: 800;
-  color: #1a1a1a;
-  margin-bottom: 16px;
+  font-size: 2rem;
+  font-weight: 700;
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+
+.titleIcon {
+  width: 32px;
+  height: 32px;
 }
 
 .subtitle {
-  font-size: 18px;
-  color: #666;
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.6;
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
 }
 
-/* Types Section */
-.typesSection {
-  display: flex;
-  flex-direction: column;
-  gap: 48px;
-}
-
+/* Rank Section */
 .rankSection {
-  padding-top: 24px;
-  border-top: 2px solid #f0f0f0;
+  margin-bottom: var(--space-xl);
 }
 
-.rankTitle {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 24px;
+.rankHeader {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
 }
 
-/* Types Grid */
-.typesGrid {
+.rankBadge {
+  font-size: 1.25rem;
+  font-weight: 700;
+  padding: var(--space-xs) var(--space-md);
+  border: 2px solid;
+  border-radius: var(--radius-md);
+}
+
+.rankDescription {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* Type Grid */
+.typeGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+  gap: var(--space-md);
 }
 
 .typeCard {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background: rgba(26, 26, 46, 0.6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: all 0.2s ease;
   text-decoration: none;
-  transition: all 0.3s ease;
-  border: 1px solid #f0f0f0;
+  color: inherit;
 }
 
 .typeCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
-.typeImageContainer {
-  position: relative;
-  width: 80px;
-  height: 80px;
-  border-radius: 12px;
-  overflow: hidden;
+.iconWrapper {
   flex-shrink: 0;
-  background: #f8f8f8;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.typeImage {
-  object-fit: cover;
+.icon {
+  width: 28px;
+  height: 28px;
+  color: white;
 }
 
 .typeInfo {
@@ -94,97 +125,84 @@
   min-width: 0;
 }
 
-.typeCode {
-  display: inline-block;
-  padding: 4px 8px;
-  background: #1a1a1a;
-  color: white;
-  font-size: 12px;
+.typeRank {
+  font-size: 0.75rem;
   font-weight: 700;
-  border-radius: 4px;
-  margin-bottom: 4px;
+  display: block;
+  margin-bottom: 2px;
 }
 
 .typeName {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .typeDesc {
-  font-size: 13px;
-  color: #999;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-size: 0.75rem;
+  color: var(--color-text-dim);
+  margin-bottom: 4px;
 }
 
-.arrowIcon {
-  color: #ccc;
-  flex-shrink: 0;
-  transition: color 0.2s ease;
+.syncRate {
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
 }
 
-.typeCard:hover .arrowIcon {
-  color: #666;
+.arrow {
+  color: var(--color-text-dim);
+  font-size: 1.25rem;
+  transition: transform 0.2s ease;
 }
 
-/* CTA */
-.cta {
-  margin-top: 64px;
-  padding: 48px;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  border-radius: 20px;
+.typeCard:hover .arrow {
+  transform: translateX(4px);
+  color: var(--color-blue);
+}
+
+/* Matrix Section */
+.matrixSection {
+  margin-top: var(--space-2xl);
   text-align: center;
-  color: white;
 }
 
-.cta h2 {
-  font-size: 28px;
-  font-weight: 700;
-  margin-bottom: 24px;
-}
-
-.ctaButton {
+.matrixLink {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 16px 40px;
-  background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  background: var(--gradient-primary);
   color: white;
-  font-size: 16px;
   font-weight: 600;
-  border-radius: 50px;
-  text-decoration: none;
-  transition: all 0.3s ease;
+  border-radius: var(--radius-lg);
+  transition: all 0.2s ease;
 }
 
-.ctaButton:hover {
+.matrixLink:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(255, 107, 107, 0.4);
+  box-shadow: var(--shadow-glow-blue);
+}
+
+.matrixIcon {
+  width: 20px;
+  height: 20px;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
+  .container {
+    padding: var(--space-md);
+  }
+  
   .title {
-    font-size: 32px;
+    font-size: 1.5rem;
   }
   
-  .typesGrid {
+  .typeGrid {
     grid-template-columns: 1fr;
-  }
-  
-  .cta {
-    padding: 32px 24px;
-  }
-  
-  .cta h2 {
-    font-size: 22px;
   }
 }
