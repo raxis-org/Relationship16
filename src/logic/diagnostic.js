@@ -192,10 +192,9 @@ function generateTypeCode(labels, totalDivergence) {
 /**
  * タイプコードから16タイプを特定
  * @param {string} typeCode - タイプコード
- * @param {number} syncRate - シンクロ率
  * @returns {Object} 関係性タイプ
  */
-function findRelationType(typeCode, syncRate) {
+function findRelationType(typeCode) {
   // 完全一致を探す
   let match = relationTypes.find(t => t.code === typeCode);
   
@@ -214,18 +213,13 @@ function findRelationType(typeCode, syncRate) {
       if (tPurpose === purpose) score += 2;
       if (tSync === sync) score += 2;
       
-      // シンクロ率の範囲も考慮
-      if (syncRate >= type.syncRate.min && syncRate <= type.syncRate.max) {
-        score += 3;
-      }
-      
       if (score > bestScore) {
         bestScore = score;
         bestMatch = type;
       }
     }
     
-    match = bestMatch || relationTypes[relationTypes.length - 1];
+    match = bestMatch || relationTypes[0];
   }
   
   return match;
@@ -356,7 +350,7 @@ export function diagnose(answers1, answers2, user1Name = 'パートナーA', use
   const typeCode = generateTypeCode(labels, divergence.total);
 
   // 16タイプを特定
-  const relationType = findRelationType(typeCode, syncRate);
+  const relationType = findRelationType(typeCode);
 
   // 詳細結果を生成
   const details = generateResultDetails(relationType, syncRate, scores1, scores2, divergence);

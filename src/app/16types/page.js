@@ -42,9 +42,6 @@ const axisGroups = [
 const getGroupColor = (key) => {
   if (key.startsWith('hot')) return '#f97316';
   return '#3b82f6';
-  if (rank.startsWith('D')) return '#f87171';
-  if (rank.startsWith('E')) return '#c084fc';
-  return '#6b7280';
 };
 
 export default function TypesList() {

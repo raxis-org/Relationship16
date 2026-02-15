@@ -23,6 +23,72 @@
   line-height: 1.6;
 }
 
+/* Flow Section */
+.flowSection {
+  margin-bottom: 48px;
+}
+
+.flowGrid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.flowStep {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  min-width: 140px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+  position: relative;
+}
+
+.stepNumber {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 24px;
+  background: #3498db;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepIcon {
+  width: 32px;
+  height: 32px;
+  color: #3498db;
+  margin: 0 auto 12px;
+}
+
+.stepTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.stepDesc {
+  font-size: 12px;
+  color: #999;
+}
+
+.flowArrow {
+  font-size: 24px;
+  color: #ccc;
+  font-weight: 300;
+}
+
 /* Axes Section */
 .axesSection {
   margin-bottom: 48px;
@@ -148,6 +214,21 @@
 
   .subtitle {
     font-size: 15px;
+  }
+
+  .flowGrid {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .flowArrow {
+    transform: rotate(90deg);
+  }
+
+  .flowStep {
+    width: 100%;
+    max-width: 280px;
+    padding: 20px;
   }
 
   .axesGrid {

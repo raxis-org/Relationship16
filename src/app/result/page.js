@@ -1,229 +1,169 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { RefreshCw, Share2, ChevronDown, ChevronUp } from 'lucide-react';
+import { RefreshCw, Share2 } from 'lucide-react';
 import Layout from '../../components/Layout';
-import { useDiagnose } from '../../context/DiagnoseContext';
-import { AXES } from '../../data/questions';
+import { getSession } from '../../lib/db';
+import { diagnose } from '../../logic/diagnostic';
+import { relationTypes } from '../../data/relationTypes';
 import styles from './page.module.css';
+
+// アイコンマッピング
+import {
+  Flame, Swords, Briefcase, Users, Sparkles, Coffee,
+  Heart, Leaf, Ghost, ArrowRight, Zap, Candy, Scale, Mask, Anchor
+} from 'lucide-react';
+
+const iconMap = {
+  Flame, Swords, Briefcase, Users, Sparkles, Coffee,
+  Heart, Leaf, Ghost, ArrowRight, Zap, Candy, Scale, Mask, Anchor,
+};
 
 export default function Result() {
   const router = useRouter();
-  const { result, reset } = useDiagnose();
-  const [showComparison, setShowComparison] = useState(false);
+  const searchParams = useSearchParams();
+  const sid = searchParams.get('sid');
+  
+  const [loading, setLoading] = useState(true);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!result) {
-      router.push('/diagnose');
+    if (!sid) {
+      router.push('/');
+      return;
     }
-  }, [result, router]);
 
-  if (!result) return null;
+    loadResult();
+  }, [sid, router]);
 
-  const { type, typeCode, scores, users, answerComparison } = result;
+  const loadResult = async () => {
+    try {
+      const session = await getSession(sid);
+      
+      if (!session.completed) {
+        setError('相手の回答がまだ完了していません');
+        setLoading(false);
+        return;
+      }
+
+      // 診断実行
+      const diagnosis = diagnose(
+        session.host_answers,
+        session.guest_answers,
+        session.host_name,
+        session.guest_name
+      );
+
+      setResult({
+        type: diagnosis.type,
+        syncRate: diagnosis.syncRate,
+        divergence: diagnosis.divergence,
+        hostName: session.host_name,
+        guestName: session.guest_name,
+        hostScores: diagnosis.user1.scores,
+        guestScores: diagnosis.user2.scores,
+      });
+    } catch (err) {
+      console.error(err);
+      setError('データの読み込みに失敗しました');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleShare = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url).then(() => {
+    navigator.clipboard.writeText(window.location.href).then(() => {
       alert('結果のURLをコピーしました！');
     });
   };
 
-  // 軸データ
-  const axisData = [
-    { key: 'P', ...AXES.P },
-    { key: 'M', ...AXES.M },
-    { key: 'G', ...AXES.G },
-    { key: 'V', ...AXES.V },
-  ];
+  if (loading) {
+    return (
+      <Layout>
+        <div className={styles.container}>
+          <div className={styles.loading}>読み込み中...</div>
+        </div>
+      </Layout>
+    );
+  }
 
-  // スコアを0-100%に変換
-  const normalizeScore = (score) => ((score - 1) / 4) * 100;
+  if (error) {
+    return (
+      <Layout>
+        <div className={styles.container}>
+          <div className={`glass ${styles.errorCard}`}>
+            <h1>{error}</h1>
+            <Link href="/" className={styles.backButton}>
+              トップに戻る
+            </Link>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  const IconComponent = iconMap[result.type.icon] || Briefcase;
 
   return (
     <Layout>
       <div className={styles.container}>
-        {/* Partners */}
-        <div className={styles.partners}>
-          <span>{users.user1.name}</span>
-          <span className={styles.times}>×</span>
-          <span>{users.user2.name}</span>
-        </div>
-
-        {/* Type Code */}
-        <div className={styles.codeSection}>
-          <div className={styles.typeCode}>{typeCode}</div>
-          <div className={styles.codeLabel}>あなたたちの関係性タイプ</div>
+        {/* Header */}
+        <div className={styles.header}>
+          <div className={styles.partners}>
+            <span>{result.hostName}</span>
+            <span>×</span>
+            <span>{result.guestName}</span>
+          </div>
         </div>
 
         {/* Main Result */}
-        <div className={styles.mainCard}>
-          <div className={styles.rank}>{type.rank}ランク</div>
-          <h1 className={styles.typeName}>{type.name}</h1>
-          <p className={styles.description}>{type.description}</p>
-        </div>
-
-        {/* Scores */}
-        <div className={styles.scoresGrid}>
-          <div className={styles.scoreCard}>
-            <div className={styles.scoreLabel}>関係性フィット度</div>
-            <div className={styles.scoreValue}>{scores.fitScore}%</div>
-          </div>
-          <div className={styles.scoreCard}>
-            <div className={styles.scoreLabel}>関係性安定度</div>
-            <div className={styles.scoreValue}>{scores.stabilityScore}%</div>
-          </div>
-          <div className={styles.scoreCard}>
-            <div className={styles.scoreLabel}>絆スコア</div>
-            <div className={styles.scoreValue}>{scores.kizunaScore}%</div>
-          </div>
-        </div>
-
-        {/* 4 Axis Scores */}
-        <div className={styles.axisSection}>
-          <h2 className={styles.sectionTitle}>4軸分析</h2>
-          <div className={styles.axisGrid}>
-            {axisData.map((axis) => {
-              const detail = scores.axisDetails[axis.key];
-              const u1Pct = normalizeScore(detail.user1);
-              const u2Pct = normalizeScore(detail.user2);
-              
-              return (
-                <div key={axis.key} className={styles.axisCard}>
-                  <div className={styles.axisHeader}>
-                    <span className={styles.axisCode}>{axis.key}</span>
-                    <span className={styles.axisName}>{axis.nameJa}</span>
-                    <span 
-                      className={styles.axisSide}
-                      style={{ color: axis.color }}
-                    >
-                      {detail.isRight ? axis.right.code : axis.left.code}
-                    </span>
-                  </div>
-                  <div className={styles.axisBarContainer}>
-                    <div className={styles.axisLabels}>
-                      <span>{axis.left.code}</span>
-                      <span>{axis.right.code}</span>
-                    </div>
-                    <div className={styles.axisBar}>
-                      <div 
-                        className={styles.axisMarker}
-                        style={{ 
-                          left: `${u1Pct}%`,
-                          background: '#666',
-                        }}
-                        title={`${users.user1.name}: ${detail.user1.toFixed(1)}`}
-                      />
-                      <div 
-                        className={styles.axisMarker}
-                        style={{ 
-                          left: `${u2Pct}%`,
-                          background: axis.color,
-                        }}
-                        title={`${users.user2.name}: ${detail.user2.toFixed(1)}`}
-                      />
-                      <div 
-                        className={styles.axisThreshold}
-                        style={{ 
-                          left: `${normalizeScore(detail.threshold)}%`,
-                        }}
-                      />
-                    </div>
-                    <div className={styles.axisLegend}>
-                      <span className={styles.legendItem}>
-                        <span className={styles.legendDot} style={{ background: '#666' }} />
-                        {users.user1.name}
-                      </span>
-                      <span className={styles.legendItem}>
-                        <span className={styles.legendDot} style={{ background: axis.color }} />
-                        {users.user2.name}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Recommendations */}
-        <div className={styles.recommendSection}>
-          <div className={styles.recommendCard}>
-            <h3>おすすめの過ごし方</h3>
-            <p>{type.recommendedActivity}</p>
-          </div>
-          <div className={styles.recommendCard}>
-            <h3>避けるべきこと</h3>
-            <p>{type.badActivity}</p>
-          </div>
-        </div>
-
-        {/* Answer Comparison */}
-        <div className={styles.comparisonSection}>
-          <button 
-            className={styles.comparisonToggle}
-            onClick={() => setShowComparison(!showComparison)}
-          >
-            <span>質問ごとの回答比較</span>
-            {showComparison ? <ChevronUp /> : <ChevronDown />}
-          </button>
+        <div className={`glass ${styles.mainCard}`}>
+          <code className={styles.typeCode}>{result.type.code}</code>
           
-          {showComparison && (
-            <div className={styles.comparisonContent}>
-              {['P', 'M', 'G', 'V'].map(axisKey => {
-                const axis = AXES[axisKey];
-                const axisQuestions = answerComparison.filter(q => q.axis === axisKey);
-                
-                return (
-                  <div key={axisKey} className={styles.comparisonAxis}>
-                    <div 
-                      className={styles.comparisonAxisHeader}
-                      style={{ borderLeftColor: axis.color }}
-                    >
-                      <span className={styles.comparisonAxisCode}>{axisKey}</span>
-                      <span className={styles.comparisonAxisName}>{axis.nameJa}</span>
-                      <span className={styles.comparisonAxisRange}>
-                        {axis.left.code} ←→ {axis.right.code}
-                      </span>
-                    </div>
-                    <div className={styles.comparisonQuestions}>
-                      {axisQuestions.map((q) => (
-                        <div key={q.questionId} className={styles.comparisonRow}>
-                          <div className={styles.comparisonQ}>{q.code}</div>
-                          <div className={styles.comparisonText}>{q.text}</div>
-                          <div className={styles.comparisonValues}>
-                            <div 
-                              className={styles.comparisonValue}
-                              style={{ background: '#666' }}
-                            >
-                              {q.user1.raw}
-                            </div>
-                            <div 
-                                      className={styles.comparisonValue}
-                                      style={{ background: axis.color }}
-                                    >
-                                      {q.user2.raw}
-                                    </div>
-                                  </div>
-                                  <div 
-                                    className={styles.comparisonGap}
-                                    style={{ 
-                                      color: q.gap > 2 ? '#e74c3c' : q.gap > 1 ? '#f1c40f' : '#27ae60'
-                                    }}
-                                  >
-                                    差: {q.gap.toFixed(1)}
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+          <div className={styles.iconWrapper} style={{ background: result.type.color }}>
+            <IconComponent className={styles.icon} />
+          </div>
+
+          <h1 className={styles.typeName}>{result.type.name}</h1>
+          <p className={styles.tagline}>{result.type.tagline}</p>
+          <p className={styles.description}>{result.type.description}</p>
+
+          <div className={styles.syncRate}>
+            <span>シンクロ率</span>
+            <span className={styles.syncRateValue}>{result.syncRate}%</span>
+          </div>
+        </div>
+
+        {/* Strengths & Weaknesses */}
+        <div className={styles.detailsGrid}>
+          <div className={`glass ${styles.detailCard}`}>
+            <h3>強み</h3>
+            <ul>
+              {result.type.strengths.map((s, i) => <li key={i}>{s}</li>)}
+            </ul>
+          </div>
+          <div className={`glass ${styles.detailCard}`}>
+            <h3>弱点</h3>
+            <ul>
+              {result.type.weaknesses.map((w, i) => <li key={i}>{w}</li>)}
+            </ul>
+          </div>
+        </div>
+
+        {/* Advice & Activity */}
+        <div className={styles.detailsGrid}>
+          <div className={`glass ${styles.detailCard}`}>
+            <h3>アドバイス</h3>
+            <p>{result.type.advice}</p>
+          </div>
+          <div className={`glass ${styles.detailCard}`}>
+            <h3>おすすめの過ごし方</h3>
+            <p>{result.type.activity}</p>
+          </div>
+        </div>
 
         {/* Actions */}
         <div className={styles.actions}>
@@ -231,7 +171,7 @@ export default function Result() {
             <Share2 className={styles.actionIcon} />
             結果をシェア
           </button>
-          <Link href="/" onClick={reset} className={styles.restartButton}>
+          <Link href="/" className={styles.restartButton}>
             <RefreshCw className={styles.actionIcon} />
             もう一度診断する
           </Link>

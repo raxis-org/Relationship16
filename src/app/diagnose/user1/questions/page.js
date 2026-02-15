@@ -2,42 +2,38 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { User, ChevronLeft, ChevronRight } from 'lucide-react';
+import { User, ChevronLeft, ChevronRight, Share2, Check } from 'lucide-react';
 import Layout from '../../../../components/Layout';
 import ScaleSelector from '../../../../components/ScaleSelector';
 import { questions, TOTAL_QUESTIONS } from '../../../../data/questions';
-import { completeSession, getSession } from '../../../../lib/db';
-import { calculateAxisScores, diagnose } from '../../../../logic/diagnostic';
+import { updateHostAnswers, getSession } from '../../../../lib/db';
+import { calculateAxisScores } from '../../../../logic/diagnostic';
 import styles from './page.module.css';
 
-export default function User2Questions() {
+export default function User1Questions() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sid = searchParams.get('sid');
   
   const [sessionId, setSessionId] = useState(sid);
   const [user1Name, setUser1Name] = useState('');
-  const [user2Name, setUser2Name] = useState('');
   const [answers, setAnswers] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  const [showShare, setShowShare] = useState(false);
 
   useEffect(() => {
     if (!sid) {
-      router.push('/');
+      router.push('/diagnose');
       return;
     }
     
     setSessionId(sid);
     getSession(sid).then(session => {
       setUser1Name(session.host_name);
-      // user2ページで入力した名前がlocalStorageにあれば取得
-      const storedName = localStorage.getItem(`user2_name_${sid}`);
-      if (storedName) {
-        setUser2Name(storedName);
-      }
     }).catch(() => {
-      router.push('/');
+      router.push('/diagnose');
     });
   }, [sid, router]);
 
@@ -55,7 +51,7 @@ export default function User2Questions() {
     if (currentIndex < TOTAL_QUESTIONS - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
-      await completeAndShowResult();
+      await saveAndShowShare();
     }
   };
 
@@ -65,34 +61,35 @@ export default function User2Questions() {
     }
   };
 
-  const completeAndShowResult = async () => {
+  const saveAndShowShare = async () => {
     setLoading(true);
     try {
-      // ホストのデータを取得
-      const session = await getSession(sessionId);
-      const hostAnswers = session.host_answers;
+      const scores = calculateAxisScores(answers);
+      await updateHostAnswers(sessionId, answers, scores);
       
-      // ゲストのスコア計算
-      const guestScores = calculateAxisScores(answers);
-      
-      // 診断実行
-      const result = diagnose(hostAnswers, answers, session.host_name, user2Name);
-      
-      // DBに保存
-      const guestData = {
-        name: user2Name,
-        answers: answers,
-        scores: guestScores
-      };
-      await completeSession(sessionId, guestData, result);
-      
-      // 結果ページへ（user2は即座に結果を見る）
-      router.push(`/result?sid=${sessionId}`);
+      const url = `${window.location.origin}/diagnose/user2?sid=${sessionId}`;
+      setShareUrl(url);
+      setShowShare(true);
     } catch (err) {
       console.error(err);
       alert('保存に失敗しました');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      alert('URLをコピーしました！LINEで送信してください。');
+    } catch (err) {
+      const input = document.createElement('input');
+      input.value = shareUrl;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      alert('URLをコピーしました！LINEで送信してください。');
     }
   };
 
@@ -121,7 +118,44 @@ export default function User2Questions() {
     };
   };
 
-  if (!currentQuestion) return null;
+  if (!currentQuestion || showShare) {
+    if (showShare) {
+      return (
+        <Layout>
+          <div className={styles.container}>
+            <div className={`glass ${styles.shareCard}`}>
+              <div className={styles.shareIcon}>
+                <Check className={styles.checkIcon} />
+              </div>
+              <h1 className={styles.shareTitle}>回答が完了しました！</h1>
+              <p className={styles.shareText}>
+                以下のURLをコピーして、相手に送信してください。<br />
+                相手が回答すると、結果を見ることができます。
+              </p>
+              
+              <div className={styles.urlBox}>
+                <input type="text" value={shareUrl} readOnly className={styles.urlInput} />
+                <button onClick={copyToClipboard} className={styles.copyButton}>
+                  <Share2 className={styles.copyIcon} />
+                  コピー
+                </button>
+              </div>
+
+              <div className={styles.shareHint}>
+                <p>💡 LINEで送る場合:</p>
+                <ol>
+                  <li>「コピー」ボタンをタップ</li>
+                  <li>LINEを開く</li>
+                  <li>相手のチャットに貼り付け</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </Layout>
+      );
+    }
+    return null;
+  }
 
   const axisInfo = getAxisInfo(currentQuestion);
 
@@ -135,11 +169,11 @@ export default function User2Questions() {
             </span>
             <span className={styles.userBadge}>
               <User className={styles.userIcon} />
-              {user2Name || '相手'}
+              {user1Name || 'あなた'}
             </span>
           </div>
           <div className={styles.progressBar}>
-            <div className={`${styles.progressFill} ${styles.progressFillPurple}`} style={{ width: `${progress}%` }} />
+            <div className={styles.progressFill} style={{ width: `${progress}%` }} />
           </div>
           <div className={styles.axisIndicator}>
             <span className={styles.axisIcon}>{axisInfo.icon}</span>
@@ -163,11 +197,7 @@ export default function User2Questions() {
             </button>
 
             {currentAnswer !== undefined && currentIndex === TOTAL_QUESTIONS - 1 && (
-              <button 
-                onClick={handleNext} 
-                className={`${styles.navButton} ${styles.navButtonPrimary}`}
-                disabled={loading}
-              >
+              <button onClick={handleNext} className={`${styles.navButton} ${styles.navButtonPrimary}`} disabled={loading}>
                 {loading ? '保存中...' : '回答を完了する'}
                 <ChevronRight className={styles.navIcon} />
               </button>

@@ -1,35 +1,61 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Users, ChevronRight } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Users, ArrowRight } from 'lucide-react';
 import Layout from '../../../components/Layout';
-import { useDiagnose } from '../../../context/DiagnoseContext';
+import { getSession } from '../../../lib/db';
 import styles from './page.module.css';
 
-export default function User2NameInput() {
+export default function User2Landing() {
   const router = useRouter();
-  const { user1Name, user2Name, setUser2Name } = useDiagnose();
-  const [name, setName] = useState(user2Name || '');
+  const searchParams = useSearchParams();
+  const sid = searchParams.get('sid');
+  
+  const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [hostName, setHostName] = useState('');
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    if (!user1Name) {
-      router.push('/diagnose');
+    if (!sid) {
+      router.push('/');
+      return;
     }
-  }, [user1Name, router]);
 
-  const handleSubmit = (e) => {
+    // セッション確認
+    getSession(sid).then(session => {
+      setHostName(session.host_name);
+      setChecking(false);
+    }).catch(() => {
+      alert('無効なURLです');
+      router.push('/');
+    });
+  }, [sid, router]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim()) {
       setError('名前を入力してください');
       return;
     }
-    setUser2Name(name.trim());
-    router.push('/diagnose/user2/questions');
+
+    setLoading(true);
+    // localStorageに保存
+    localStorage.setItem(`user2_name_${sid}`, name.trim());
+    router.push(`/diagnose/user2/questions?sid=${sid}`);
   };
 
-  if (!user1Name) return null;
+  if (checking) {
+    return (
+      <Layout>
+        <div className={styles.container}>
+          <div className={styles.loading}>読み込み中...</div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -39,15 +65,16 @@ export default function User2NameInput() {
             <div className={`${styles.iconBox} ${styles.iconPurple}`}>
               <Users className={styles.icon} />
             </div>
-            <div>
-              <h2 className={styles.title}>パートナーB</h2>
-              <p className={styles.subtitle}>{user1Name}さんとの関係性を診断します</p>
-            </div>
+            <h1 className={styles.title}>{hostName}さんからの招待です</h1>
+            <p className={styles.subtitle}>
+              {hostName}さんとの関係性を診断します。<br />
+              あなたの名前を入力してください。
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.inputGroup}>
-              <label className={styles.label}>お名前（ニックネーム可）</label>
+              <label className={styles.label}>あなたの名前（ニックネーム可）</label>
               <input
                 type="text"
                 value={name}
@@ -57,26 +84,23 @@ export default function User2NameInput() {
                 }}
                 placeholder="佐藤花子"
                 className={styles.input}
+                disabled={loading}
                 autoFocus
               />
               {error && <p className={styles.error}>{error}</p>}
             </div>
 
-            <div className={styles.infoBox}>
-              <p className={styles.infoText}>
-                <span className={styles.infoHighlight}>{user1Name}</span> さんと
-                <span className={styles.infoHighlightPurple}> {name || 'パートナー'}</span> さんの
-                関係性を診断します。
-              </p>
-            </div>
-
             <button
               type="submit"
-              disabled={!name.trim()}
+              disabled={!name.trim() || loading}
               className={styles.submitButton}
             >
-              診断を始める
-              <ChevronRight className={styles.submitIcon} />
+              {loading ? '読み込み中...' : (
+                <>
+                  診断を始める
+                  <ArrowRight className={styles.submitIcon} />
+                </>
+              )}
             </button>
           </form>
         </div>
