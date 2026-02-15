@@ -1,3 +1,8 @@
+/* ============================================
+   Result Page - Premium Design
+   World-class quality for global audience
+   ============================================ */
+
 .container {
   max-width: 800px;
   margin: 0 auto;
@@ -130,6 +135,9 @@
 }
 
 .actions {
+  max-width: 600px;
+  margin: 0 auto 80px;
+  padding: 0 24px;
   display: flex;
   gap: var(--space-md);
   justify-content: center;
