@@ -1,47 +1,44 @@
 'use client';
 
 import Link from 'next/link';
-import { Flame, Swords, Briefcase, Users, Sparkles, Coffee, Heart, Leaf, Ghost, ArrowRight, Zap, Candy, Scale, Mask, Anchor, ChevronLeft, Grid3X3 } from 'lucide-react';
+import Image from 'next/image';
+import { ChevronLeft, Grid3X3 } from 'lucide-react';
 import Layout from '../../components/Layout';
-import { relationTypes } from '../../data/relationTypes';
+import { relationTypes, getTypeAssetPath } from '../../data/relationTypes';
 import styles from './page.module.css';
 
-const iconMap = {
-  Flame, Swords, Briefcase, Users, Sparkles, Coffee,
-  Heart, Leaf, Ghost, ArrowRight, Zap, Candy, Scale, Mask, Anchor,
-};
-
 // 4軸の組み合わせでグループ化
+// 4軸（P, M, G, V）でグループ化
 const axisGroups = [
   { 
-    key: 'hot-equal', 
-    label: '熱量：Hot × 重心：Equal', 
-    description: '情熱的で対等な関係',
-    types: ['HOT-EQUAL-VALUE-SYNC', 'HOT-EQUAL-VALUE-DESYNC', 'HOT-EQUAL-LOOSE-SYNC', 'HOT-EQUAL-LOOSE-DESYNC']
+    key: 'E-B', 
+    label: '対等 × 存在的', 
+    description: '対等な立場で相手の存在を大切にする関係',
+    filter: (t) => t.code.startsWith('EB')
   },
   { 
-    key: 'hot-lean', 
-    label: '熱量：Hot × 重心：Lean', 
-    description: '情熱的で片方がリードする関係',
-    types: ['HOT-LEAN-VALUE-SYNC', 'HOT-LEAN-VALUE-DESYNC', 'HOT-LEAN-LOOSE-SYNC', 'HOT-LEAN-LOOSE-DESYNC']
+    key: 'E-I', 
+    label: '対等 × 手段的', 
+    description: '対等な立場で目的を重視する関係',
+    filter: (t) => t.code.startsWith('EI')
   },
   { 
-    key: 'cold-equal', 
-    label: '熱量：Cold × 重心：Equal', 
-    description: '冷静で対等な関係',
-    types: ['COLD-EQUAL-VALUE-SYNC', 'COLD-EQUAL-VALUE-DESYNC', 'COLD-EQUAL-LOOSE-SYNC', 'COLD-EQUAL-LOOSE-DESYNC']
+    key: 'H-B', 
+    label: '階層的 × 存在的', 
+    description: '上下関係で相手の存在を大切にする関係',
+    filter: (t) => t.code.startsWith('HB')
   },
   { 
-    key: 'cold-lean', 
-    label: '熱量：Cold × 重心：Lean', 
-    description: '冷静で片方がリードする関係',
-    types: ['COLD-LEAN-VALUE-SYNC', 'COLD-LEAN-VALUE-DESYNC', 'COLD-LEAN-LOOSE-SYNC', 'COLD-LEAN-LOOSE-DESYNC']
+    key: 'H-I', 
+    label: '階層的 × 手段的', 
+    description: '上下関係で目的を重視する関係',
+    filter: (t) => t.code.startsWith('HI')
   },
 ];
 
 const getGroupColor = (key) => {
-  if (key.startsWith('hot')) return '#f97316';
-  return '#3b82f6';
+  if (key.startsWith('E')) return '#3498db';
+  return '#9b59b6';
 };
 
 export default function TypesList() {
@@ -65,7 +62,7 @@ export default function TypesList() {
 
         {/* Axis Groups */}
         {axisGroups.map((group) => {
-          const types = relationTypes.filter(t => group.types.includes(t.code));
+          const types = relationTypes.filter(group.filter);
           
           return (
             <section key={group.key} className={styles.rankSection}>
@@ -81,23 +78,28 @@ export default function TypesList() {
               
               <div className={styles.typeGrid}>
                 {types.map((type) => {
-                  const IconComponent = iconMap[type.icon] || Briefcase;
+                  const iconPath = getTypeAssetPath(type.code);
                   return (
                     <Link
-                      key={type.id}
-                      href={`/16types/${type.slug}`}
+                      key={type.code}
+                      href={`/16types/${type.code}`}
                       className={styles.typeCard}
                     >
-                      <div 
-                        className={styles.iconWrapper}
-                        style={{ background: type.color }}
-                      >
-                        <IconComponent className={styles.icon} />
+                      <div className={styles.iconWrapper}>
+                        <Image
+                          src={iconPath}
+                          alt={type.name}
+                          width={56}
+                          height={56}
+                          className={styles.typeIcon}
+                        />
                       </div>
                       <div className={styles.typeInfo}>
-                        <code className={styles.typeCode}>{type.code}</code>
+                        <span className={styles.typeRank} style={{ color: type.rankColor }}>
+                          {type.rank}ランク
+                        </span>
                         <h3 className={styles.typeName}>{type.name}</h3>
-                        <p className={styles.typeDesc}>{type.tagline}</p>
+                        <p className={styles.typeNameEn}>{type.nameEn}</p>
                       </div>
                       <div className={styles.arrow}>→</div>
                     </Link>
@@ -108,13 +110,7 @@ export default function TypesList() {
           );
         })}
 
-        {/* Matrix View Link */}
-        <div className={styles.matrixSection}>
-          <Link href="/16types/matrix" className={styles.matrixLink}>
-            <Grid3X3 className={styles.matrixIcon} />
-            マトリックス表示で見る
-          </Link>
-        </div>
+
       </div>
     </Layout>
   );

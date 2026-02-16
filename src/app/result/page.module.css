@@ -1,190 +1,596 @@
 /* ============================================
    Result Page - Premium Design
-   World-class quality for global audience
+   Inspired by 16personalities
    ============================================ */
 
 .container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: var(--space-lg);
 }
 
-.loading,
+.loading {
+  text-align: center;
+  padding: var(--space-3xl);
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+}
+
 .errorCard {
   text-align: center;
-  padding: var(--space-2xl);
+  padding: var(--space-3xl);
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: var(--radius-xl);
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .errorCard h1 {
   color: var(--color-danger);
   margin-bottom: var(--space-lg);
+  font-size: var(--font-size-xl);
 }
 
-.header {
-  text-align: center;
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
   margin-bottom: var(--space-lg);
+  transition: color 0.2s ease;
+  text-decoration: none;
+}
+
+.backLink:hover {
+  color: var(--color-text);
+}
+
+/* ============================================
+   Hero Section
+   ============================================ */
+
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  padding: 48px;
+  border-radius: 24px;
+  color: white;
+  margin-bottom: 32px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.heroContent {
+  flex: 1;
 }
 
 .partners {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: var(--space-sm);
-  font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin-bottom: var(--space-md);
+  opacity: 0.9;
 }
 
-.partners span:nth-child(2) {
-  opacity: 0.5;
+.multiply {
+  opacity: 0.6;
+  font-size: 1.5rem;
 }
 
-.mainCard {
-  text-align: center;
-  padding: var(--space-2xl);
-  margin-bottom: var(--space-lg);
-}
-
-.typeCode {
-  font-size: var(--font-size-sm);
-  background: rgba(255, 255, 255, 0.1);
-  padding: 0.25rem 0.75rem;
-  border-radius: var(--radius-full);
-  letter-spacing: 0.05em;
-  opacity: 0.7;
-}
-
-.iconWrapper {
-  width: 100px;
-  height: 100px;
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: var(--space-lg) auto;
-}
-
-.icon {
-  width: 48px;
-  height: 48px;
-  color: white;
+.typeBadge {
+  display: inline-block;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 50px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  margin-bottom: 16px;
 }
 
 .typeName {
-  font-size: var(--font-size-2xl);
+  font-size: 42px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.typeNameEn {
+  font-size: 18px;
+  opacity: 0.9;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.rankBadge {
+  display: inline-block;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 14px;
   font-weight: 700;
-  margin-bottom: var(--space-xs);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.tagline {
-  font-size: var(--font-size-lg);
-  opacity: 0.8;
-  margin-bottom: var(--space-md);
+.heroImage {
+  flex-shrink: 0;
 }
 
-.description {
-  opacity: 0.7;
-  margin-bottom: var(--space-xl);
-  line-height: 1.6;
+.typeIcon {
+  border-radius: 20px;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
 }
 
-.syncRate {
+/* ============================================
+   Sync Rate Section
+   ============================================ */
+
+.syncSection {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 32px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.syncHeader {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-md);
-  font-size: var(--font-size-lg);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.syncHeader h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.syncIcon {
+  color: #fbbf24;
+  width: 24px;
+  height: 24px;
+}
+
+.syncValueWrapper {
+  margin-bottom: 16px;
 }
 
 .syncRateValue {
-  font-size: var(--font-size-2xl);
-  font-weight: 700;
-  color: #ef4444;
+  font-size: 64px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  line-height: 1;
 }
 
-.detailsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
+.syncBarBg {
+  height: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  overflow: hidden;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
-.detailCard {
-  padding: var(--space-lg);
+.syncBar {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 1s ease;
 }
 
-.detailCard h3 {
-  font-size: var(--font-size-md);
-  font-weight: 600;
-  margin-bottom: var(--space-sm);
-  color: var(--color-primary);
-}
-
-.detailCard ul {
-  list-style: disc;
-  padding-left: var(--space-lg);
-}
-
-.detailCard li {
-  margin-bottom: var(--space-xs);
-  opacity: 0.8;
-}
-
-.detailCard p {
-  opacity: 0.8;
+.syncDescription {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  max-width: 500px;
+  margin: 0 auto;
   line-height: 1.6;
 }
 
-.actions {
-  max-width: 600px;
-  margin: 0 auto 80px;
-  padding: 0 24px;
+/* ============================================
+   Section Common Styles
+   ============================================ */
+
+.section {
+  margin-bottom: 48px;
+}
+
+.sectionHeader {
   display: flex;
-  gap: var(--space-md);
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.sectionIcon {
+  color: var(--color-primary);
+  width: 24px;
+  height: 24px;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.sectionDesc {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  margin-bottom: 24px;
+  margin-left: 36px;
+}
+
+/* ============================================
+   4軸分析
+   ============================================ */
+
+.axesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.axisCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.axisHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.axisName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.axisValue {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.axisBarContainer {
+  margin-bottom: 12px;
+}
+
+.axisLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-bottom: 8px;
+}
+
+.axisBarBg {
+  position: relative;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: visible;
+}
+
+.axisBarCenter {
+  position: absolute;
+  left: 50%;
+  top: -2px;
+  bottom: -2px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateX(-50%);
+}
+
+.axisBarIndicator {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: left 0.5s ease;
+}
+
+.axisDesc {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* ============================================
+   回答比較
+   ============================================ */
+
+.questionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.axisQuestions {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.axisQuestionsTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.questionsList {
+  padding: 12px;
+}
+
+.questionItem {
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.questionItem:last-child {
+  border-bottom: none;
+}
+
+.questionText {
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  margin-bottom: 12px;
+  line-height: 1.5;
+  display: flex;
+  gap: 12px;
+}
+
+.questionNum {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.answersRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-left: 36px;
+}
+
+.answerBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.answerName {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.answerBadge {
+  display: inline-flex;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.answerDiff {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+}
+
+.matchBadge {
+  padding: 4px 10px;
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border-radius: 12px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.diffBadge {
+  padding: 4px 10px;
+  background: rgba(249, 115, 22, 0.2);
+  color: #f97316;
+  border-radius: 12px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+/* ============================================
+   関係性の詳細
+   ============================================ */
+
+.descriptionCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+}
+
+.descriptionPara {
+  font-size: 1rem;
+  line-height: 1.9;
+  color: var(--color-text);
+  margin-bottom: 20px;
+}
+
+.descriptionPara:last-child {
+  margin-bottom: 0;
+}
+
+/* 特徴 */
+.characteristicsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.characteristicCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.characteristicCard h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 10px;
+}
+
+.characteristicCard p {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/* 強みと注意点 */
+.swGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.swCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.swTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.swList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.swList li {
+  position: relative;
+  padding-left: 16px;
+  margin-bottom: 10px;
+  font-size: 0.875rem;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+.swList li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+/* おすすめ */
+.recommendCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border);
+  border-left: 4px solid #27ae60;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+
+.recommendCard p {
+  font-size: 0.9375rem;
+  color: var(--color-text);
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* ============================================
+   Actions
+   ============================================ */
+
+.actions {
+  display: flex;
+  gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
+  padding: 32px 0 64px;
 }
 
 .actions button,
 .actions a {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-md) var(--space-xl);
+  gap: 10px;
+  padding: 16px 32px;
   border-radius: var(--radius-lg);
   font-weight: 600;
+  font-size: 1rem;
   transition: all 0.2s ease;
   text-decoration: none;
-}
-
-.shareButton {
-  background: var(--color-primary);
-  color: white;
   border: none;
   cursor: pointer;
 }
 
+.shareButton {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+}
+
 .shareButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
 }
 
 .restartButton {
   background: rgba(255, 255, 255, 0.1);
-  color: white;
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
 }
 
 .restartButton:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .actionIcon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
 }
 
 .backButton {
   display: inline-block;
-  padding: var(--space-md) var(--space-xl);
+  padding: 14px 28px;
   background: var(--color-primary);
   color: white;
   border-radius: var(--radius-lg);
@@ -193,26 +599,58 @@
   margin-top: var(--space-lg);
 }
 
-@media (max-width: 640px) {
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
   .container {
-    padding: var(--space-md);
+    padding: 16px;
   }
 
-  .mainCard {
-    padding: var(--space-xl);
-  }
-
-  .iconWrapper {
-    width: 80px;
-    height: 80px;
-  }
-
-  .icon {
-    width: 40px;
-    height: 40px;
+  .hero {
+    flex-direction: column;
+    padding: 32px 24px;
+    text-align: center;
   }
 
   .typeName {
-    font-size: var(--font-size-xl);
+    font-size: 32px;
+  }
+
+  .heroImage {
+    order: -1;
+  }
+
+  .typeIcon {
+    width: 180px;
+    height: 180px;
+  }
+
+  .axesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .swGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .characteristicsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .answersRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .answerDiff {
+    width: auto;
+    padding-left: 0;
+  }
+
+  .syncRateValue {
+    font-size: 48px;
   }
 }
