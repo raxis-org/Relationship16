@@ -1,0 +1,100 @@
+.container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: rgba(30, 30, 40, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 280px;
+  max-width: 90vw;
+}
+
+.visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.leaving {
+  transform: translateX(-50%) translateY(-20px);
+  opacity: 0;
+}
+
+.success {
+  border-left: 4px solid #4ade80;
+}
+
+.error {
+  border-left: 4px solid #f87171;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.success .icon {
+  color: #4ade80;
+}
+
+.error .icon {
+  color: #f87171;
+}
+
+.message {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.closeIcon {
+  width: 16px;
+  height: 16px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 640px) {
+  .container {
+    top: auto;
+    bottom: 20px;
+    transform: translateX(-50%) translateY(100px);
+    padding: 14px 16px;
+    min-width: auto;
+    width: calc(100vw - 40px);
+  }
+
+  .visible {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .leaving {
+    transform: translateX(-50%) translateY(20px);
+  }
+}

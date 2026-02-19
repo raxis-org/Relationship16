@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { RefreshCw, Share2 } from 'lucide-react';
 import Layout from '../../components/Layout';
+import Toast from '../../components/Toast';
+import ShareMenu from '../../components/ShareMenu';
 import { getSession, getSessionWithGuestResponse } from '../../lib/db';
 import { diagnose } from '../../logic/diagnostic';
 import styles from './page.module.css';
@@ -28,6 +30,8 @@ function ResultContent() {
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [toast, setToast] = useState(null);
 
 
   useEffect(() => {
@@ -106,9 +110,15 @@ function ResultContent() {
   };
 
   const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      alert('結果のURLをコピーしました！');
-    });
+    setShowShareMenu(true);
+  };
+
+  const handleShareMenuClose = () => {
+    setShowShareMenu(false);
+  };
+
+  const handleCopySuccess = () => {
+    setToast({ message: '結果のURLをコピーしました', type: 'success' });
   };
 
   if (loading) {
@@ -197,6 +207,25 @@ function ResultContent() {
           もう一度診断する
         </Link>
       </div>
+
+      {/* シェアメニュー */}
+      <ShareMenu
+        url={typeof window !== 'undefined' ? window.location.href : ''}
+        title={`${result.hostName} × ${result.guestName} の関係性診断結果`}
+        text={`${result.type.name} - シンクロ率${result.syncRate}%`}
+        isOpen={showShareMenu}
+        onClose={handleShareMenuClose}
+        onCopy={handleCopySuccess}
+      />
+
+      {/* トースト通知 */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

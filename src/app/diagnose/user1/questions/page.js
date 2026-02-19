@@ -2,9 +2,11 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { User, ChevronLeft, ChevronRight, Share2, Check } from 'lucide-react';
+import { User, ChevronLeft, ChevronRight, Share2, Check, ArrowRight } from 'lucide-react';
 import Layout from '../../../../components/Layout';
 import ScaleSelector from '../../../../components/ScaleSelector';
+import Toast from '../../../../components/Toast';
+import ShareMenu from '../../../../components/ShareMenu';
 import { questions, TOTAL_QUESTIONS } from '../../../../data/questions';
 import { updateHostAnswers, getSession } from '../../../../lib/db';
 import { calculateAxisScores } from '../../../../logic/diagnostic';
@@ -20,8 +22,12 @@ function QuestionsContent() {
   const [answers, setAnswers] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
-  const [showShare, setShowShare] = useState(false);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [showCompleteModal, setShowCompleteModal] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false); // 連打防止用
+  const [toast, setToast] = useState(null); // トースト通知
 
   useEffect(() => {
     if (!sid) {
@@ -41,13 +47,27 @@ function QuestionsContent() {
   const progress = ((currentIndex + 1) / TOTAL_QUESTIONS) * 100;
 
   const handleAnswer = (value) => {
+    // 連打防止：処理中は無視
+    if (isProcessing || saving) return;
+    
+    setIsProcessing(true);
     setAnswers(prev => ({ ...prev, [currentQuestion.id]: value }));
+    
     if (currentIndex < TOTAL_QUESTIONS - 1) {
-      setTimeout(() => setCurrentIndex(prev => prev + 1), 300);
+      setTimeout(() => {
+        setCurrentIndex(prev => prev + 1);
+        setIsProcessing(false);
+      }, 300);
+    } else {
+      // 最後の質問の場合は処理完了
+      setIsProcessing(false);
     }
   };
 
   const handleNext = async () => {
+    // 保存中または連打防止中は無視
+    if (saving || isProcessing) return;
+    
     if (currentIndex < TOTAL_QUESTIONS - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
@@ -56,42 +76,74 @@ function QuestionsContent() {
   };
 
   const handlePrev = () => {
+    // 保存中は操作無効
+    if (saving) return;
+    
     if (currentIndex > 0) {
       setCurrentIndex(prev => prev - 1);
     }
   };
 
+  // 全質問に回答済みかチェック
+  const isAllAnswered = () => {
+    return questions.every(q => answers[q.id] !== undefined);
+  };
+
+  // 回答済み質問数
+  const answeredCount = Object.keys(answers).length;
+
   const saveAndShowShare = async () => {
+    // 全質問回答済みチェック
+    if (!isAllAnswered()) {
+      const unanswered = questions.filter(q => answers[q.id] === undefined);
+      setToast({
+        message: `未回答の質問が ${unanswered.length} 問あります`,
+        type: 'error'
+      });
+      // 最初の未回答質問に移動
+      const firstUnanswered = questions.findIndex(q => answers[q.id] === undefined);
+      if (firstUnanswered !== -1) {
+        setCurrentIndex(firstUnanswered);
+      }
+      return;
+    }
+
+    // 既に保存中なら無視（二重送信防止）
+    if (saving) return;
+
+    setSaving(true);
     setLoading(true);
+    
     try {
       const scores = calculateAxisScores(answers);
       await updateHostAnswers(sessionId, answers, scores);
       
       const url = `${window.location.origin}/diagnose/user2?sid=${sessionId}`;
       setShareUrl(url);
-      setShowShare(true);
+      setShowCompleteModal(true);
     } catch (err) {
       console.error(err);
-      alert('保存に失敗しました');
+      setToast({ message: '保存に失敗しました', type: 'error' });
+      setSaving(false);
     } finally {
       setLoading(false);
     }
   };
 
-  const copyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      alert('URLをコピーしました！LINEで送信してください。');
-    } catch (err) {
-      const input = document.createElement('input');
-      input.value = shareUrl;
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand('copy');
-      document.body.removeChild(input);
-      alert('URLをコピーしました！LINEで送信してください。');
-    }
+  const handleShareMenuClose = () => {
+    setShowShareMenu(false);
   };
+
+  const handleCopySuccess = () => {
+    setToast({ message: 'URLをコピーしました', type: 'success' });
+  };
+
+  const handleOpenShareMenu = () => {
+    setShowCompleteModal(false);
+    setTimeout(() => setShowShareMenu(true), 300);
+  };
+
+
 
   const currentAnswer = answers[currentQuestion?.id];
 
@@ -118,40 +170,7 @@ function QuestionsContent() {
     };
   };
 
-  if (!currentQuestion || showShare) {
-    if (showShare) {
-      return (
-        <div className={styles.container}>
-          <div className={`glass ${styles.shareCard}`}>
-            <div className={styles.shareIcon}>
-              <Check className={styles.checkIcon} />
-            </div>
-            <h1 className={styles.shareTitle}>回答が完了しました！</h1>
-            <p className={styles.shareText}>
-              以下のURLをコピーして、相手に送信してください。<br />
-              相手が回答すると、結果を見ることができます。
-            </p>
-            
-            <div className={styles.urlBox}>
-              <input type="text" value={shareUrl} readOnly className={styles.urlInput} />
-              <button onClick={copyToClipboard} className={styles.copyButton}>
-                <Share2 className={styles.copyIcon} />
-                コピー
-              </button>
-            </div>
-
-            <div className={styles.shareHint}>
-              <p>💡 LINEで送る場合:</p>
-              <ol>
-                <li>「コピー」ボタンをタップ</li>
-                <li>LINEを開く</li>
-                <li>相手のチャットに貼り付け</li>
-              </ol>
-            </div>
-          </div>
-        </div>
-      );
-    }
+  if (!currentQuestion) {
     return null;
   }
 
@@ -175,27 +194,34 @@ function QuestionsContent() {
         <div className={styles.axisIndicator}>
           <span className={styles.axisIcon}>{axisInfo.icon}</span>
           <span className={styles.axisName}>{axisInfo.name}軸</span>
-          <span className={styles.axisDirection}>({axisInfo.direction}・{axisInfo.perspective})</span>
         </div>
       </div>
 
       <div className={`glass ${styles.card}`}>
         <h2 className={styles.question}>{currentQuestion.text}</h2>
-        <ScaleSelector value={currentAnswer} onChange={handleAnswer} />
+        <ScaleSelector 
+          value={currentAnswer} 
+          onChange={handleAnswer} 
+          disabled={isProcessing || saving}
+        />
         
         <div className={styles.navigation}>
           <button
             onClick={handlePrev}
-            disabled={currentIndex === 0}
+            disabled={currentIndex === 0 || saving}
             className={`${styles.navButton} ${styles.navButtonSecondary} ${currentIndex === 0 ? styles.navButtonHidden : ''}`}
           >
             <ChevronLeft className={styles.navIcon} />
             前へ
           </button>
 
-          {currentAnswer !== undefined && currentIndex === TOTAL_QUESTIONS - 1 && (
-            <button onClick={handleNext} className={`${styles.navButton} ${styles.navButtonPrimary}`} disabled={loading}>
-              {loading ? '保存中...' : '回答を完了する'}
+          {currentIndex === TOTAL_QUESTIONS - 1 && (
+            <button 
+              onClick={handleNext} 
+              className={`${styles.navButton} ${styles.navButtonPrimary}`} 
+              disabled={saving || isProcessing || !isAllAnswered()}
+            >
+              {saving ? '保存中...' : `回答を完了する (${answeredCount}/${TOTAL_QUESTIONS})`}
               <ChevronRight className={styles.navIcon} />
             </button>
           )}
@@ -206,11 +232,60 @@ function QuestionsContent() {
         {questions.map((_, idx) => (
           <button
             key={idx}
-            onClick={() => setCurrentIndex(idx)}
+            onClick={() => !saving && !isProcessing && setCurrentIndex(idx)}
+            disabled={saving || isProcessing}
             className={`${styles.dot} ${idx === currentIndex ? styles.dotActive : ''} ${answers[questions[idx].id] !== undefined ? styles.dotAnswered : ''}`}
           />
         ))}
       </div>
+
+      {/* 完了モーダル */}
+      {showCompleteModal && (
+        <div className={styles.modalBackdrop} onClick={() => setShowCompleteModal(false)}>
+          <div className={styles.modalContent}>
+            <div className={styles.modalIcon}>
+              <Check className={styles.modalCheckIcon} />
+            </div>
+            <h2 className={styles.modalTitle}>回答が完了しました！</h2>
+            <p className={styles.modalText}>
+              相手にリンクを送信してください
+            </p>
+            <button 
+              className={styles.modalShareButton}
+              onClick={handleOpenShareMenu}
+            >
+              <Share2 className={styles.modalShareIcon} />
+              リンクを共有する
+              <ArrowRight className={styles.modalArrowIcon} />
+            </button>
+            <button 
+              className={styles.modalCloseButton}
+              onClick={() => setShowCompleteModal(false)}
+            >
+              閉じる
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* シェアメニュー */}
+      <ShareMenu
+        url={shareUrl}
+        title="RelationCheck 16 - 関係性診断"
+        text={`${user1Name}さんがあなたを関係性診断に招待しています`}
+        isOpen={showShareMenu}
+        onClose={handleShareMenuClose}
+        onCopy={handleCopySuccess}
+      />
+
+      {/* トースト通知 */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

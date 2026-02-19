@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Users, ArrowRight } from 'lucide-react';
 import Layout from '../../../components/Layout';
+import Toast from '../../../components/Toast';
 import { getSession } from '../../../lib/db';
 import styles from './page.module.css';
 
@@ -17,6 +18,7 @@ function User2LandingContent() {
   const [error, setError] = useState('');
   const [hostName, setHostName] = useState('');
   const [checking, setChecking] = useState(true);
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     if (!sid) {
@@ -28,8 +30,8 @@ function User2LandingContent() {
       setHostName(session.host_name);
       setChecking(false);
     }).catch(() => {
-      alert('無効なURLです');
-      router.push('/');
+      setToast({ message: '無効なURLです', type: 'error' });
+      setTimeout(() => router.push('/'), 1500);
     });
   }, [sid, router]);
 
@@ -99,6 +101,15 @@ function User2LandingContent() {
           </button>
         </form>
       </div>
+
+      {/* トースト通知 */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }
