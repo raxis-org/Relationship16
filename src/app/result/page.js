@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { RefreshCw, Share2 } from 'lucide-react';
 import Layout from '../../components/Layout';
-import { getSession } from '../../lib/db';
+import { getSession, getSessionWithGuestResponse } from '../../lib/db';
 import { diagnose } from '../../logic/diagnostic';
 import styles from './page.module.css';
 
@@ -23,10 +23,12 @@ function ResultContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sid = searchParams.get('sid');
+  const gid = searchParams.get('gid');
   
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+
 
   useEffect(() => {
     if (!sid) {
@@ -39,30 +41,62 @@ function ResultContent() {
 
   const loadResult = async () => {
     try {
-      const session = await getSession(sid);
-      
-      if (!session.completed) {
-        setError('相手の回答がまだ完了していません');
-        setLoading(false);
-        return;
+      // gidがある場合は新方式（複数回答対応）、ない場合は後方互換性のため旧方式
+      if (gid) {
+        // 新方式：特定のゲスト回答を取得
+        const { session, guestResponse } = await getSessionWithGuestResponse(sid, gid);
+        
+        if (!guestResponse) {
+          setError('指定された回答が見つかりません');
+          setLoading(false);
+          return;
+        }
+
+        const diagnosis = diagnose(
+          session.host_answers,
+          guestResponse.guest_answers,
+          session.host_name,
+          guestResponse.guest_name
+        );
+
+        setResult({
+          type: diagnosis.type,
+          syncRate: diagnosis.syncRate,
+          divergence: diagnosis.divergence,
+          hostName: session.host_name,
+          guestName: guestResponse.guest_name,
+          hostScores: diagnosis.user1.scores,
+          guestScores: diagnosis.user2.scores,
+        });
+
+
+      } else {
+        // 旧方式：後方互換性のため（既存の単一回答セッション用）
+        const session = await getSession(sid);
+        
+        if (!session.completed) {
+          setError('相手の回答がまだ完了していません');
+          setLoading(false);
+          return;
+        }
+
+        const diagnosis = diagnose(
+          session.host_answers,
+          session.guest_answers,
+          session.host_name,
+          session.guest_name
+        );
+
+        setResult({
+          type: diagnosis.type,
+          syncRate: diagnosis.syncRate,
+          divergence: diagnosis.divergence,
+          hostName: session.host_name,
+          guestName: session.guest_name,
+          hostScores: diagnosis.user1.scores,
+          guestScores: diagnosis.user2.scores,
+        });
       }
-
-      const diagnosis = diagnose(
-        session.host_answers,
-        session.guest_answers,
-        session.host_name,
-        session.guest_name
-      );
-
-      setResult({
-        type: diagnosis.type,
-        syncRate: diagnosis.syncRate,
-        divergence: diagnosis.divergence,
-        hostName: session.host_name,
-        guestName: session.guest_name,
-        hostScores: diagnosis.user1.scores,
-        guestScores: diagnosis.user2.scores,
-      });
     } catch (err) {
       console.error(err);
       setError('データの読み込みに失敗しました');
