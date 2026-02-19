@@ -6,7 +6,7 @@ import { User, ChevronLeft, ChevronRight } from 'lucide-react';
 import Layout from '../../../../components/Layout';
 import ScaleSelector from '../../../../components/ScaleSelector';
 import { questions, TOTAL_QUESTIONS } from '../../../../data/questions';
-import { completeSession, getSession } from '../../../../lib/db';
+import { createGuestResponse, getSession } from '../../../../lib/db';
 import { calculateAxisScores, diagnose } from '../../../../logic/diagnostic';
 import styles from './page.module.css';
 
@@ -79,9 +79,12 @@ function User2QuestionsContent() {
         answers: answers,
         scores: guestScores
       };
-      await completeSession(sessionId, guestData, result);
       
-      router.push(`/result?sid=${sessionId}`);
+      // 複数人回答対応：新しいゲスト回答を作成（既存データを上書きしない）
+      const guestResponse = await createGuestResponse(sessionId, guestData, result);
+      
+      // 結果ページにはセッションIDとゲスト回答IDの両方を渡す
+      router.push(`/result?sid=${sessionId}&gid=${guestResponse.id}`);
     } catch (err) {
       console.error(err);
       alert('保存に失敗しました');
