@@ -42,7 +42,7 @@ export async function completeSession(sessionId, guestData, result) {
       guest_name: guestData.name,
       guest_answers: guestData.answers,
       guest_scores: guestData.scores,
-      result_type_id: result.type.id,
+      result_type_id: result.type.code,
       sync_rate: result.syncRate,
       completed: true
     })
@@ -69,7 +69,7 @@ export async function createGuestResponse(sessionId, guestData, result) {
       guest_name: guestData.name,
       guest_answers: guestData.answers,
       guest_scores: guestData.scores,
-      result_type_id: result.type.id,
+      result_type_id: result.type.code,
       sync_rate: result.syncRate
     }])
     .select()
