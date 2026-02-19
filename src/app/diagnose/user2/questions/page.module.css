@@ -129,16 +129,22 @@
   background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
   color: white;
   margin-left: auto;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
 }
 
-.navButtonPrimary:hover {
+.navButtonPrimary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
 }
 
 .navButtonHidden {
   opacity: 0;
   pointer-events: none;
+}
+
+.navButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .navIcon {
@@ -181,6 +187,11 @@
 
 .dotAnswered.dotActive {
   background: var(--color-purple);
+}
+
+.dot:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
 }
 
 @media (max-width: 600px) {
