@@ -271,7 +271,7 @@ function QuestionsContent() {
       {/* シェアメニュー */}
       <ShareMenu
         url={shareUrl}
-        title="RelationCheck 16 - 関係性診断"
+        title="PMGV診断 - 4軸16タイプ関係性診断"
         text={`${user1Name}さんがあなたを関係性診断に招待しています`}
         isOpen={showShareMenu}
         onClose={handleShareMenuClose}

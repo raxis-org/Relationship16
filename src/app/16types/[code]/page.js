@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import Layout from '../../../components/Layout';
-import { getTypeByCode, getAllTypes, getTypeAssetPath } from '../../../data/relationTypes';
+import { getTypeByCode, getAllTypes } from '../../../data/relationTypes';
 import styles from './page.module.css';
 
 export default function TypeDetailPage() {
@@ -24,6 +24,7 @@ export default function TypeDetailPage() {
       <Layout>
         <div className={styles.notFound}>
           <h1>タイプが見つかりません</h1>
+          <p>コード: {code}</p>
           <Link href="/16types" className={styles.backLink}>
             16タイプ一覧に戻る
           </Link>
@@ -31,8 +32,6 @@ export default function TypeDetailPage() {
       </Layout>
     );
   }
-
-  const typeIconPath = getTypeAssetPath(type.code);
 
   return (
     <Layout>
@@ -49,17 +48,15 @@ export default function TypeDetailPage() {
             <div className={styles.typeBadge}>{type.code}</div>
             <h1 className={styles.typeName}>{type.name}</h1>
             <p className={styles.typeNameEn}>{type.nameEn}</p>
-            <div className={styles.rankBadge} style={{ background: type.rankColor }}>
-              {type.rank}ランク
-            </div>
           </div>
           <div className={styles.heroImage}>
             <Image 
-              src={typeIconPath}
+              src={`/assets/${type.code}.png`}
               alt={type.name}
               width={280}
               height={280}
               className={styles.typeIcon}
+              priority
             />
           </div>
         </section>
@@ -73,21 +70,6 @@ export default function TypeDetailPage() {
             ))}
           </div>
         </section>
-
-        {/* Characteristics */}
-        {type.characteristics && (
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>特徴</h2>
-            <div className={styles.characteristicsGrid}>
-              {type.characteristics.map((char, idx) => (
-                <div key={idx} className={styles.characteristicCard}>
-                  <h3>{char.title}</h3>
-                  <p>{char.content}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* Strengths & Weaknesses */}
         <section className={styles.section}>
@@ -116,6 +98,37 @@ export default function TypeDetailPage() {
           <h2 className={styles.sectionTitle} style={{ marginTop: '32px' }}>避けるべきこと</h2>
           <div className={styles.recommendCard} style={{ borderLeftColor: '#e74c3c' }}>
             <p>{type.badActivity}</p>
+          </div>
+        </section>
+
+        {/* Code Breakdown */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>タイプコードの意味</h2>
+          <div className={styles.codeBreakdown}>
+            <div className={styles.codeItem}>
+              <span className={styles.codeLetter} style={{ background: '#ff6b6b' }}>{type.code[0]}</span>
+              <span className={styles.codeLabel}>
+                {type.code[0] === 'H' ? 'Hot (情熱的)' : 'Cool (冷静的)'}
+              </span>
+            </div>
+            <div className={styles.codeItem}>
+              <span className={styles.codeLetter} style={{ background: '#feca57' }}>{type.code[1]}</span>
+              <span className={styles.codeLabel}>
+                {type.code[1] === 'E' ? 'Equal (対等)' : 'Lean (偏り)'}
+              </span>
+            </div>
+            <div className={styles.codeItem}>
+              <span className={styles.codeLetter} style={{ background: '#1dd1a1' }}>{type.code[2]}</span>
+              <span className={styles.codeLabel}>
+                {type.code[2] === 'V' ? 'Value (価値重視)' : 'Loose (緩やか)'}
+              </span>
+            </div>
+            <div className={styles.codeItem}>
+              <span className={styles.codeLetter} style={{ background: '#54a0ff' }}>{type.code[3]}</span>
+              <span className={styles.codeLabel}>
+                {type.code[3] === 'S' ? 'Sync (同期)' : 'Desync (非同期)'}
+              </span>
+            </div>
           </div>
         </section>
 
