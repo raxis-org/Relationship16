@@ -1,7 +1,7 @@
 {
-  "name": "relationcheck-16",
+  "name": "pmgv-diagnosis",
   "version": "1.0.0",
-  "description": "16タイプ関係性診断Webアプリ「RelationCheck 16」- Next.js版",
+  "description": "4軸16タイプ関係性診断「PMGV診断」- Passion・Motive・Goal・Valueの4軸で二人の関係性を分析",
   "private": true,
   "scripts": {
     "dev": "next dev",

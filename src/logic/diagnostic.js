@@ -1,18 +1,22 @@
 /**
- * RelationCheck 16 - 診断ロジック（改良版）
+ * PMGV診断 - 診断ロジック（4軸16タイプ版）
  * 
  * 【4軸の定義】
- * P軸（Power/権力均衡）: H(Hierarchical/階層的) vs E(Equal/対等的)
- * M軸（Motive/関与動機）: I(Instrumental/手段的) vs B(Being/存在的)
- * G軸（Goal/目的整合）: A(Autonomous/自律的) vs S(Synergetic/共鳴的)
- * V軸（Value/価値共感）: D(Diverse/多様的) vs C(Congruent/一致的)
+ * P(Passion)軸: Hot(H) vs Cool(C)
+ * M(Motive)軸: Equal(E) vs Lean(L)
+ * G(Goal)軸:  Value(V) vs Loose(L)
+ * V(Value)軸: Sync(S) vs Desync(D)
  * 
- * 【16タイプのコード】
- * 例: EBSC = Equal + Being + Synergetic + Congruent
+ * 【16タイプコード】4文字
+ * 例: CEVS = Cool + Equal + Value + Sync
+ * 1文字目: H/C = Hot/Cool
+ * 2文字目: E/L = Equal/Lean
+ * 3文字目: V/L = Value/Loose
+ * 4文字目: S/D = Sync/Desync
  */
 
 import { relationTypes } from '../data/relationTypes';
-import { QUESTIONS, REVERSE_ITEMS, AXES } from '../data/questions';
+import { QUESTIONS, REVERSE_ITEMS } from '../data/questions';
 
 /**
  * 回答値を正規化（1-5 → -2〜+2）
@@ -37,15 +41,21 @@ function normalizeAnswer(value, isReverse = false) {
 
 /**
  * 各軸のスコアを計算
+ * 新定義:
+ * - P軸: Hot(+) vs Cool(-) → コード: H/C
+ * - M軸: Equal(+) vs Lean(-) → コード: E/L
+ * - G軸: Value(+) vs Loose(-) → コード: V/L
+ * - V軸: Sync(+) vs Desync(-) → コード: S/D
+ * 
  * @param {Object} answers - { questionId: number (1-5) }
  * @returns {Object} 各軸のスコア (-3 〜 +3)
  */
 export function calculateAxisScores(answers) {
   const scores = {
-    P: 0, // Power: H(-) vs E(+)
-    M: 0, // Motive: I(-) vs B(+)
-    G: 0, // Goal: A(-) vs S(+)
-    V: 0, // Value: D(-) vs C(+)
+    P: 0, // Passion: Hot(+) vs Cool(-) → H/C
+    M: 0, // Motive: Equal(+) vs Lean(-) → E/L
+    G: 0, // Goal: Value(+) vs Loose(-) → V/L
+    V: 0, // Value: Sync(+) vs Desync(-) → S/D
   };
 
   // 各軸ごとに計算
@@ -65,8 +75,6 @@ export function calculateAxisScores(answers) {
     }
 
     // 平均を計算し、-3〜+3の範囲にスケーリング
-    // 最大: 8問 × 2 = 16 → 8問とも+2なら +3
-    // 最小: 8問 × (-2) = -16 → 8問とも-2なら -3
     if (count > 0) {
       const average = sum / count; // -2〜+2
       scores[axis] = Math.round(average * 1.5 * 10) / 10; // -3〜+3、小数点第1位
@@ -94,7 +102,6 @@ export function calculateDivergence(answers1, answers2) {
     for (const q of axisQuestions) {
       const a1 = normalizeAnswer(answers1[q.id], REVERSE_ITEMS.includes(q.id));
       const a2 = normalizeAnswer(answers2[q.id], REVERSE_ITEMS.includes(q.id));
-      // 回答の差の絶対値を加算（最大4）
       diffSum += Math.abs(a1 - a2);
     }
 
@@ -165,36 +172,42 @@ function classifyAxis(score) {
 }
 
 /**
- * スコアからタイプコードを生成
- * @param {Object} scores - 各軸のスコア
+ * スコアからタイプコードを生成（新16タイプ）
+ * @param {Object} scores - 各軸のスコア {P, M, G, V}
  * @param {number} totalDivergence - 総合乖離度
- * @returns {string} 4文字のタイプコード（例: EBSC）
+ * @returns {string} 4文字のタイプコード
+ * 
+ * P(Passion): Hot(H) vs Cool(C) → score >= 0 は Hot(H)
+ * M(Motive): Equal(E) vs Lean(L) → score >= 0 は Equal(E)
+ * G(Goal): Value(V) vs Loose(L) → score >= 0 は Value(V)
+ * V(Value): Sync(S) vs Desync(D) → score >= 0 は Sync(S)
  */
 function generateTypeCode(scores, totalDivergence) {
   // 各軸を分類
   const classifications = {
-    P: classifyAxis(scores.P), // H(-) vs E(+)
-    M: classifyAxis(scores.M), // I(-) vs B(+)
-    G: classifyAxis(scores.G), // A(-) vs S(+)
-    V: classifyAxis(scores.V), // D(-) vs C(+)
+    P: classifyAxis(scores.P), // Hot(+) vs Cool(-)
+    M: classifyAxis(scores.M), // Equal(+) vs Lean(-)
+    G: classifyAxis(scores.G), // Value(+) vs Loose(-)
+    V: classifyAxis(scores.V), // Sync(+) vs Desync(-)
   };
 
   // マッピング: positive → 右側のコード, negative → 左側のコード
+  // 画像ファイル名: C=Cool, H=Hot, E=Equal, L=Lean, V=Value, L=Loose, S=Sync, D=Desync
   const codeMap = {
-    P: { positive: 'E', negative: 'H' },
-    M: { positive: 'B', negative: 'I' },
-    G: { positive: 'S', negative: 'A' },
-    V: { positive: 'C', negative: 'D' },
+    P: { positive: 'H', negative: 'C' },  // Hot vs Cool
+    M: { positive: 'E', negative: 'L' },  // Equal vs Lean
+    G: { positive: 'V', negative: 'L' },  // Value vs Loose
+    V: { positive: 'S', negative: 'D' },  // Sync vs Desync
   };
 
-  // 乖離度が高い場合（45%以上）、V軸をDiverseに傾ける傾向
-  // 価値観が大きく異なる場合は、一致ではなく多様として扱う
+  // 乖離度が高い場合（50%以上）、Sync/Desyncを調整
   let vCode = codeMap.V[classifications.V];
-  if (totalDivergence > 45 && classifications.V === 'positive' && scores.V < 0.5) {
-    vCode = 'D'; // わずかにプラスでも乖離度が高ければDiverseに
+  if (totalDivergence > 50 && classifications.V === 'positive' && scores.V < 0.5) {
+    vCode = 'D'; // わずかにプラスでも乖離度が高ければDesyncに
   }
 
   // タイプコードを生成（P-M-G-Vの順）
+  // 例: Cool + Equal + Value + Sync = CEVS
   return codeMap.P[classifications.P] + 
          codeMap.M[classifications.M] + 
          codeMap.G[classifications.G] + 

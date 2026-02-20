@@ -55,7 +55,7 @@ export default function ShareMenu({ url, title, text, isOpen, onClose, onCopy })
     if (navigator.share) {
       try {
         await navigator.share({
-          title: title || 'RelationCheck 16',
+          title: title || 'PMGV診断',
           text: text || '',
           url: url,
         });
