@@ -19,16 +19,17 @@ const options = [
   { value: -2, label: 'いいえ', subLabel: '', size: 'large', type: 'negative' },
 ];
 
-export default function ScaleSelector({ value, onChange, variant = 'default' }) {
+export default function ScaleSelector({ value, onChange, variant = 'default', disabled = false }) {
   return (
-    <div className={`${styles.container} ${styles[variant]}`}>
+    <div className={`${styles.container} ${styles[variant]} ${disabled ? styles.disabled : ''}`}>
       {options.map((option) => (
         <button
           key={option.value}
-          onClick={() => onChange(option.value)}
+          onClick={() => !disabled && onChange(option.value)}
+          disabled={disabled}
           className={`${styles.option} ${styles[option.size]} ${styles[option.type]} ${
             value === option.value ? styles.selected : ''
-          }`}
+          } ${disabled ? styles.optionDisabled : ''}`}
         >
           <div className={styles.circle}>
             <div className={styles.inner} />

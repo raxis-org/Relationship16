@@ -145,6 +145,21 @@
   background: #9ca3af;
 }
 
+/* Disabled state */
+.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.optionDisabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.optionDisabled .circle {
+  transform: none !important;
+}
+
 /* Label */
 .label {
   display: flex;

@@ -6,7 +6,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { RefreshCw, Share2, ChevronLeft, Users, Target, Heart, Zap } from 'lucide-react';
 import Layout from '../../components/Layout';
-import { getSession } from '../../lib/db';
+import Toast from '../../components/Toast';
+import ShareMenu from '../../components/ShareMenu';
+import { getSession, getSessionWithGuestResponse } from '../../lib/db';
 import { diagnose } from '../../logic/diagnostic';
 import { getTypeAssetPath, getTypeByCode, RELATION_TYPES } from '../../data/relationTypes';
 import { QUESTIONS, AXES, getQuestionsByAxis } from '../../data/questions';
@@ -63,10 +65,14 @@ function ResultContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const sid = searchParams.get('sid');
+  const gid = searchParams.get('gid');
   
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [toast, setToast] = useState(null);
+
 
   useEffect(() => {
     if (!sid) {
@@ -79,34 +85,62 @@ function ResultContent() {
 
   const loadResult = async () => {
     try {
-      const session = await getSession(sid);
-      
-      if (!session.completed) {
-        setError('相手の回答がまだ完了していません');
-        setLoading(false);
-        return;
+      // gidがある場合は新方式（複数回答対応）、ない場合は後方互換性のため旧方式
+      if (gid) {
+        // 新方式：特定のゲスト回答を取得
+        const { session, guestResponse } = await getSessionWithGuestResponse(sid, gid);
+        
+        if (!guestResponse) {
+          setError('指定された回答が見つかりません');
+          setLoading(false);
+          return;
+        }
+
+        const diagnosis = diagnose(
+          session.host_answers,
+          guestResponse.guest_answers,
+          session.host_name,
+          guestResponse.guest_name
+        );
+
+        setResult({
+          type: diagnosis.type,
+          syncRate: diagnosis.syncRate,
+          divergence: diagnosis.divergence,
+          hostName: session.host_name,
+          guestName: guestResponse.guest_name,
+          hostScores: diagnosis.user1.scores,
+          guestScores: diagnosis.user2.scores,
+        });
+
+
+      } else {
+        // 旧方式：後方互換性のため（既存の単一回答セッション用）
+        const session = await getSession(sid);
+        
+        if (!session.completed) {
+          setError('相手の回答がまだ完了していません');
+          setLoading(false);
+          return;
+        }
+
+        const diagnosis = diagnose(
+          session.host_answers,
+          session.guest_answers,
+          session.host_name,
+          session.guest_name
+        );
+
+        setResult({
+          type: diagnosis.type,
+          syncRate: diagnosis.syncRate,
+          divergence: diagnosis.divergence,
+          hostName: session.host_name,
+          guestName: session.guest_name,
+          hostScores: diagnosis.user1.scores,
+          guestScores: diagnosis.user2.scores,
+        });
       }
-
-      const diagnosis = diagnose(
-        session.host_answers,
-        session.guest_answers,
-        session.host_name,
-        session.guest_name
-      );
-
-      setResult({
-        type: diagnosis.type,
-        typeCode: diagnosis.typeCode,
-        syncRate: diagnosis.syncRate,
-        divergence: diagnosis.divergence,
-        hostName: session.host_name,
-        guestName: session.guest_name,
-        hostAnswers: session.host_answers,
-        guestAnswers: session.guest_answers,
-        hostScores: diagnosis.user1.scores,
-        guestScores: diagnosis.user2.scores,
-        details: diagnosis.details,
-      });
     } catch (err) {
       console.error(err);
       setError('データの読み込みに失敗しました');
@@ -116,9 +150,15 @@ function ResultContent() {
   };
 
   const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      alert('結果のURLをコピーしました！');
-    });
+    setShowShareMenu(true);
+  };
+
+  const handleShareMenuClose = () => {
+    setShowShareMenu(false);
+  };
+
+  const handleCopySuccess = () => {
+    setToast({ message: '結果のURLをコピーしました', type: 'success' });
   };
 
   if (loading) {
@@ -419,6 +459,25 @@ function ResultContent() {
           もう一度診断する
         </Link>
       </div>
+
+      {/* シェアメニュー */}
+      <ShareMenu
+        url={typeof window !== 'undefined' ? window.location.href : ''}
+        title={`${result.hostName} × ${result.guestName} の関係性診断結果`}
+        text={`${result.type.name} - シンクロ率${result.syncRate}%`}
+        isOpen={showShareMenu}
+        onClose={handleShareMenuClose}
+        onCopy={handleCopySuccess}
+      />
+
+      {/* トースト通知 */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

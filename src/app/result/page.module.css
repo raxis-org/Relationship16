@@ -558,8 +558,14 @@
   font-size: 1rem;
   transition: all 0.2s ease;
   text-decoration: none;
+}
+
+.shareButton {
+  background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  color: white;
   border: none;
   cursor: pointer;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
 }
 
 .shareButton {
@@ -570,17 +576,34 @@
 
 .shareButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
 }
 
 .restartButton {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
+  background: linear-gradient(145deg, #2a2a3e 0%, #1e1e2e 100%);
+  color: white;
+  border: 2px solid rgba(139, 92, 246, 0.5);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .restartButton:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: linear-gradient(145deg, #33334d 0%, #26263a 100%);
+  border-color: rgba(139, 92, 246, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 25px rgba(139, 92, 246, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.restartButton:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 10px rgba(139, 92, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .actionIcon {
