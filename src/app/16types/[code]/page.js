@@ -49,9 +49,7 @@ export default function TypeDetailPage() {
             <div className={styles.typeBadge}>{type.code}</div>
             <h1 className={styles.typeName}>{type.name}</h1>
             <p className={styles.typeNameEn}>{type.nameEn}</p>
-            <div className={styles.rankBadge} style={{ background: type.rankColor }}>
-              {type.rank}ランク
-            </div>
+            <p className={styles.typeCategory}>{type.shortDescription}</p>
           </div>
           <div className={styles.heroImage}>
             <Image 

@@ -105,19 +105,22 @@ function ResultContent() {
 
         setResult({
           type: diagnosis.type,
+          typeCode: diagnosis.typeCode,
           syncRate: diagnosis.syncRate,
           divergence: diagnosis.divergence,
           hostName: session.host_name,
           guestName: guestResponse.guest_name,
           hostScores: diagnosis.user1.scores,
           guestScores: diagnosis.user2.scores,
+          hostAnswers: session.host_answers,
+          guestAnswers: guestResponse.guest_answers,
         });
 
 
       } else {
         // 旧方式：後方互換性のため（既存の単一回答セッション用）
         const session = await getSession(sid);
-        
+
         if (!session.completed) {
           setError('相手の回答がまだ完了していません');
           setLoading(false);
@@ -133,12 +136,15 @@ function ResultContent() {
 
         setResult({
           type: diagnosis.type,
+          typeCode: diagnosis.typeCode,
           syncRate: diagnosis.syncRate,
           divergence: diagnosis.divergence,
           hostName: session.host_name,
           guestName: session.guest_name,
           hostScores: diagnosis.user1.scores,
           guestScores: diagnosis.user2.scores,
+          hostAnswers: session.host_answers,
+          guestAnswers: session.guest_answers,
         });
       }
     } catch (err) {
@@ -182,8 +188,8 @@ function ResultContent() {
     );
   }
 
-  const relationType = getTypeByCode(result.typeCode);
-  const iconPath = getTypeAssetPath(result.typeCode);
+  const relationType = result.type;
+  const iconPath = getTypeAssetPath(result.type?.code);
   
   // 4軸のスコア（平均）
   const axisScores = {
@@ -209,12 +215,10 @@ function ResultContent() {
             <span className={styles.multiply}>×</span>
             <span>{result.guestName}</span>
           </div>
-          <div className={styles.typeBadge}>{result.typeCode}</div>
+          <div className={styles.typeBadge}>{result.type?.code}</div>
           <h1 className={styles.typeName}>{relationType?.name || '未知のタイプ'}</h1>
           <p className={styles.typeNameEn}>{relationType?.nameEn || 'Unknown Type'}</p>
-          <div className={styles.rankBadge} style={{ background: relationType?.rankColor }}>
-            {relationType?.rank}ランク
-          </div>
+          <p className={styles.typeShortDesc}>{relationType?.shortDescription}</p>
         </div>
         <div className={styles.heroImage}>
           <Image 
@@ -321,8 +325,8 @@ function ResultContent() {
               </h3>
               <div className={styles.questionsList}>
                 {getQuestionsByAxis(axisKey).map((q, idx) => {
-                  const hostAnswer = result.hostAnswers[q.id];
-                  const guestAnswer = result.guestAnswers[q.id];
+                  const hostAnswer = result.hostAnswers?.[q.id];
+                  const guestAnswer = result.guestAnswers?.[q.id];
                   const diff = Math.abs(hostAnswer - guestAnswer);
                   const hostLabel = ANSWER_LABELS[hostAnswer];
                   const guestLabel = ANSWER_LABELS[guestAnswer];
